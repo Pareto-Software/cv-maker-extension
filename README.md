@@ -32,6 +32,22 @@
 $ npm install
 ```
 
+To run Supabase, you have at least two options:
+
+Either run the supabase cli with homebrew: 
+https://supabase.com/docs/guides/cli/getting-started?queryGroups=platform&platform=linux
+
+Or self-host with a docker:
+https://supabase.com/docs/guides/self-hosting/docker#securing-your-services
+
+## Accessing Supabase dashboard
+You can access the Supabase Dashboard through the API gateway on port 8000. For example: http://<your-ip>:8000, or localhost:8000 if you are running Docker locally.
+
+You will be prompted for a username and password. By default, the credentials are:
+
+Username: supabase
+Password: this_password_is_insecure_and_should_be_updated
+
 ## Compile and run the project
 
 ```bash
@@ -44,6 +60,11 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+It probably complains about:
+(node:214039) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Issue is being talked about at: https://github.com/vercel/next.js/discussions/66289
 
 ## Run tests
 

@@ -9,4 +9,11 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get('fetch-data')
+  async fetchData() {
+    const data = await this.appService.fetchData();
+    console.log(data);
+    return 'test data from some_table: ' + data;
+  }
 }
