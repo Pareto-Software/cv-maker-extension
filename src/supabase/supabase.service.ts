@@ -15,9 +15,6 @@ export class SupabaseService {
       this.configService.get<string>('SUPABASE_KEY') ||
       'failed to get KEY from .env';
 
-    console.log('url is:' + supabaseUrl);
-    console.log('key is:' + supabaseKey);
-
     this.supabase = createClient(supabaseUrl, supabaseKey);
   }
 

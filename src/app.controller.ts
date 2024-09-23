@@ -14,6 +14,6 @@ export class AppController {
   async fetchData() {
     const data = await this.appService.fetchData();
     console.log(data);
-    return 'test data from some_table: ' + data;
+    return 'test data from some_table: ' + JSON.stringify(data, null, 2);
   }
 }
