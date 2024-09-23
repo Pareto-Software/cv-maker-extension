@@ -38,7 +38,7 @@ Either run the supabase cli with homebrew:
 https://supabase.com/docs/guides/cli/getting-started?queryGroups=platform&platform=linux
 
 Or self-host with a docker:
-https://supabase.com/docs/guides/self-hosting/docker#securing-your-services
+https://supabase.com/docs/guides/self-hosting/docker
 
 ## Accessing Supabase dashboard
 You can access the Supabase Dashboard through the API gateway on port 8000. For example: http://<your-ip>:8000, or localhost:8000 if you are running Docker locally.
@@ -47,6 +47,15 @@ You will be prompted for a username and password. By default, the credentials ar
 
 Username: supabase
 Password: this_password_is_insecure_and_should_be_updated
+
+## Setup .env file
+
+Make a copy of the .env.example file at project root:
+```bash
+cp .env.example .env
+```
+
+To the .env file edit your SUPABASE_URL and SUPABASE_KEY from your Supabase installation's config.
 
 ## Compile and run the project
 
@@ -78,6 +87,9 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+## Test routes:
+The project has 2 routes for now: Get() and Get('fetch-data'). The fetch-data route makes a 'SELECT * FROM some_table;' query from your local Supabase installation. In order to try it out you need to create a table called 'some_table' and populate it with data from the Supabase web interface or with some other way, like directly connecting to the supabase postgres database with psql.
 
 ## Resources
 
