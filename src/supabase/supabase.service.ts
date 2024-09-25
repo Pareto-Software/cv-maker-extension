@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { Database } from './database.types';
 
 // ChatGPT generated placeholder code
 @Injectable()
@@ -15,7 +16,7 @@ export class SupabaseService {
       this.configService.get<string>('SUPABASE_KEY') ||
       'failed to get KEY from .env';
 
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+    this.supabase = createClient<Database>(supabaseUrl, supabaseKey);
   }
 
   async getData(table: string) {
