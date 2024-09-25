@@ -10,7 +10,11 @@ export class AppService {
   }
 
   async fetchData() {
-    const data = await this.supabaseService.getData('some_table');
-    return data;
+    try {
+      const data = await this.supabaseService.getData('profiles');
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
   }
 }
