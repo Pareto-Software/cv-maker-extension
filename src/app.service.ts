@@ -8,9 +8,21 @@ export class AppService {
   getHello(): string {
     return 'Hello World!';
   }
-
-  async fetchData() {
-    const data = await this.supabaseService.getData('some_table');
-    return data;
+  async fetchTable(tableName: string) {
+    try {
+      const data = await this.supabaseService.getTableData(tableName);
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
   }
+  async fetchProfiles() {
+    try {
+      const data = await this.supabaseService.getProfilesData();
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  }
+  
 }
