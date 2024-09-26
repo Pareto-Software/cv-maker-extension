@@ -19,13 +19,22 @@ export class SupabaseService {
     this.supabase = createClient<Database>(supabaseUrl, supabaseKey);
   }
 
-  async getData(table: string) {
+  async getTableData(table: string) {
     const { data, error } = await this.supabase.from(table).select('*');
     if (error) {
       throw new Error(`Error fetching data from ${table}: ${error.message}`);
     }
     return data;
   }
+
+  async getProfilesData() {
+    const { data, error } = await this.supabase.from("profiles").select('*');
+    if (error) {
+      throw new Error(`Error fetching data from profiles: ${error.message}`);
+    }
+    return data;
+  }
+
 
   async insertData(table: string, values: any) {
     const { data, error } = await this.supabase.from(table).insert(values);
