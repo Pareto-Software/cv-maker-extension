@@ -6,7 +6,7 @@ import { Database } from './database.types';
 // ChatGPT generated placeholder code
 @Injectable()
 export class SupabaseService {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClient<Database>;
 
   constructor(private configService: ConfigService) {
     const supabaseUrl =
