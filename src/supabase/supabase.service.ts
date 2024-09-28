@@ -5,7 +5,7 @@ import { Database } from './database.types';
 
 @Injectable()
 export class SupabaseService {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClient<Database>;
 
   constructor(private configService: ConfigService) {
     const supabaseUrl =
