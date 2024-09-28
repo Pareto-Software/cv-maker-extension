@@ -1,7 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { ZodValidationPipe } from 'nestjs-zod';
-import { tableNameSchema, ValidTableName } from './table-name.schema';
-import { UsePipes } from '@nestjs/common';
+import { Controller, Get, HttpCode } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
