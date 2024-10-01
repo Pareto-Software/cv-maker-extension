@@ -13,7 +13,7 @@ export class SupabaseService {
       'failed to get URL from .env';
     const supabaseKey =
       this.configService.get<string>('SUPABASE_KEY') ||
-      'failed to get KEY from .env';
+      'failed to get KEY from';
 
     this.supabase = createClient<Database>(supabaseUrl, supabaseKey);
   }
@@ -27,13 +27,12 @@ export class SupabaseService {
   }
 
   async getProfilesData() {
-    const { data, error } = await this.supabase.from("profiles").select('*');
+    const { data, error } = await this.supabase.from('profiles').select('*');
     if (error) {
       throw new Error(`Error fetching data from profiles: ${error.message}`);
     }
     return data;
   }
-
 
   async insertData(table: string, values: any) {
     const { data, error } = await this.supabase.from(table).insert(values);
