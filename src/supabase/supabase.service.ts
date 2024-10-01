@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Database } from './database.types';
+import { ValidTableName } from './table-name.schema';
 
 @Injectable()
 export class SupabaseService {
-  private supabase: SupabaseClient;
+  private supabase: SupabaseClient<Database>;
 
   constructor(private configService: ConfigService) {
     const supabaseUrl =
@@ -18,7 +19,7 @@ export class SupabaseService {
     this.supabase = createClient<Database>(supabaseUrl, supabaseKey);
   }
 
-  async getTableData(table: string) {
+  async getTableData(table: ValidTableName) {
     const { data, error } = await this.supabase.from(table).select('*');
     if (error) {
       throw new Error(`Error fetching data from ${table}: ${error.message}`);
@@ -35,7 +36,7 @@ export class SupabaseService {
   }
 
 
-  async insertData(table: string, values: any) {
+  async insertData(table: ValidTableName, values: any) {
     const { data, error } = await this.supabase.from(table).insert(values);
     if (error) {
       throw new Error(`Error inserting data into ${table}: ${error.message}`);
