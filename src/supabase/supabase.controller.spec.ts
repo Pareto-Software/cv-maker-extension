@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseController } from './supabase.controller';
 import { SupabaseService } from './supabase.service';
-import { ValidTableName } from './table-name.schema';
 
 describe('SupabaseController', () => {
   let controller: SupabaseController;
