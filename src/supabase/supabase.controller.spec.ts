@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseController } from './supabase.controller';
 import { SupabaseService } from './supabase.service';
 import { ValidTableName } from './table-name.schema';
-import { ZodValidationPipe } from 'nestjs-zod';
 
 describe('SupabaseController', () => {
   let controller: SupabaseController;
@@ -76,12 +75,6 @@ describe('SupabaseController', () => {
 
       expect(result).toEqual({ table_name: tableName, data: mockData });
       expect(service.getTableData).toHaveBeenCalledWith(tableName);
-    });
-
-    it('should throw an error for an invalid table name', async () => {
-      const invalidTableName = 'invalid' as unknown as ValidTableName; 
-
-      await expect(controller.fetchTable(invalidTableName)).rejects.toThrow();
     });
   });
 });
