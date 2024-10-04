@@ -28,13 +28,12 @@ export class SupabaseService {
   }
 
   async getProfilesData() {
-    const { data, error } = await this.supabase.from("profiles").select('*');
+    const { data, error } = await this.supabase.from('profiles').select('*');
     if (error) {
       throw new Error(`Error fetching data from profiles: ${error.message}`);
     }
     return data;
   }
-
 
   async insertData(table: ValidTableName, values: any) {
     const { data, error } = await this.supabase.from(table).insert(values);
