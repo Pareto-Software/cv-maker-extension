@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import {SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClientProvider } from './supabase-client.provider';
 import { Database } from './database.types';
 import { ValidTableName } from './table-name.schema';
 
@@ -8,15 +8,8 @@ import { ValidTableName } from './table-name.schema';
 export class SupabaseService {
   private supabase: SupabaseClient<Database>;
 
-  constructor(private configService: ConfigService) {
-    const supabaseUrl =
-      this.configService.get<string>('SUPABASE_URL') ||
-      'failed to get URL from .env';
-    const supabaseKey =
-      this.configService.get<string>('SUPABASE_KEY') ||
-      'failed to get KEY from .env';
-
-    this.supabase = createClient<Database>(supabaseUrl, supabaseKey);
+  constructor(private supabaseClientProvider: SupabaseClientProvider) {
+    this.supabase = this.supabaseClientProvider.supabase;
   }
 
   async getTableData(table: ValidTableName) {
