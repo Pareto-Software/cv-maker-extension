@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
@@ -10,7 +10,10 @@ export class AppController {
 
   @Get()
   @ApiOperation({ summary: 'Get Hello message' })
-  @ApiResponse({status: 200, description: 'Successfully returned hello message'})
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully returned hello message',
+  })
   getHello(): string {
     return this.appService.getHello();
   }
