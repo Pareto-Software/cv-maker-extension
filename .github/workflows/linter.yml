@@ -16,5 +16,9 @@ jobs:
         run: npm install 
 
       - name: Lint Code Base
+<<<<<<< HEAD
         run: npm run lint
+=======
+        uses: npm run lint
+>>>>>>> 665b2ef (added github actions workflow)
         

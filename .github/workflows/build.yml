@@ -16,4 +16,8 @@ jobs:
         run: npm install 
 
       - name: Build
+<<<<<<< HEAD
         run: npm run build
+=======
+        uses: npm run build
+>>>>>>> 665b2ef (added github actions workflow)
