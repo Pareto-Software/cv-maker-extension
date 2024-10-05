@@ -8,6 +8,7 @@ import { ValidTableName } from './table-name.schema';
 export class SupabaseService {
   private supabase: SupabaseClient<Database>;
 
+
   constructor(private supabaseClientProvider: SupabaseClientProvider) {
     this.supabase = this.supabaseClientProvider.supabase;
   }

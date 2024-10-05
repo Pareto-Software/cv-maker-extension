@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
   imports: [ConfigModule],
   controllers: [SupabaseController],
   providers: [SupabaseService,SupabaseClientProvider],
+  providers: [SupabaseService],
   exports: [SupabaseService],
 })
 export class SupabaseModule {}
