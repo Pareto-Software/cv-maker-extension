@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseClientProvider } from './supabase-client.provider';
 import { Database } from './database.types';
 import { ValidTableName } from './table-name.schema';
