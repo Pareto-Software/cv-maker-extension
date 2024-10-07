@@ -71,13 +71,15 @@ describe('SupabaseController', () => {
           user_id: 'user_1',
         },
       ];
-      const tableNameDto = { tableName: 'profiles' };
+      const tableNameDto = {
+        tableName: 'profiles',
+        description: 'Description',
+      };
       jest.spyOn(service, 'getTableData').mockResolvedValue(mockData);
 
       const result = await controller.fetchTable(tableNameDto);
-
-      expect(result).toEqual({ table_name: tableName, data: mockData });
-      expect(service.getTableData).toHaveBeenCalledWith(tableName);
+      expect(result).toEqual({ table_name: tableNameDto.table_name, data: mockData });
+      expect(service.getTableData).toHaveBeenCalledWith(tableNameDto.table_name);
     });
   });
 });
