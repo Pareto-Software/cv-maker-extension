@@ -3,7 +3,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import { tableNameWithDescriptionSchema } from './table-name.schema';
 import { SupabaseService } from './supabase.service';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { TableNameDto } from '../dto/table-name.dto';
+import { TableNameDto } from './dto/table-name.dto';
 
 @ApiTags('Supabase ')
 @Controller()
