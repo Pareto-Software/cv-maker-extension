@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseController } from './supabase.controller';
 import { SupabaseService } from './supabase.service';
+import { TableNameDto } from '../dto/table-name.dto';
 
 describe('SupabaseController', () => {
   let controller: SupabaseController;
@@ -71,15 +72,21 @@ describe('SupabaseController', () => {
           user_id: 'user_1',
         },
       ];
-      const tableNameDto = {
-        tableName: 'profiles',
-        description: 'Description',
+      // Ensure tableNameDto conforms to TableNameDto type
+      const tableNameDto: TableNameDto = {
+        table_name: 'profiles',  // Must match the allowed values in tableNameSchema
+        description: 'Profile description',
       };
       jest.spyOn(service, 'getTableData').mockResolvedValue(mockData);
 
       const result = await controller.fetchTable(tableNameDto);
-      expect(result).toEqual({ table_name: tableNameDto.table_name, data: mockData });
-      expect(service.getTableData).toHaveBeenCalledWith(tableNameDto.table_name);
+      expect(result).toEqual({
+        table_name: tableNameDto.table_name,
+        data: mockData,
+      });
+      expect(service.getTableData).toHaveBeenCalledWith(
+        tableNameDto.table_name,
+      );
     });
   });
 });
