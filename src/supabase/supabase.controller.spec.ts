@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseController } from './supabase.controller';
 import { SupabaseService } from './supabase.service';
-import { TableNameDto } from '../dto/table-name.dto';
+import { TableNameDto } from './dto/table-name.dto';
 
 describe('SupabaseController', () => {
   let controller: SupabaseController;
@@ -73,7 +73,7 @@ describe('SupabaseController', () => {
         },
       ];
       const tableNameDto: TableNameDto = {
-        table_name: 'profiles',  
+        table_name: 'profiles',
         description: 'Profile description',
       };
       jest.spyOn(service, 'getTableData').mockResolvedValue(mockData);
