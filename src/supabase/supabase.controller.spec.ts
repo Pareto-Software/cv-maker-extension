@@ -72,13 +72,11 @@ describe('SupabaseController', () => {
           user_id: 'user_1',
         },
       ];
-      // Ensure tableNameDto conforms to TableNameDto type
       const tableNameDto: TableNameDto = {
-        table_name: 'profiles',  // Must match the allowed values in tableNameSchema
+        table_name: 'profiles',  
         description: 'Profile description',
       };
       jest.spyOn(service, 'getTableData').mockResolvedValue(mockData);
-
       const result = await controller.fetchTable(tableNameDto);
       expect(result).toEqual({
         table_name: tableNameDto.table_name,
