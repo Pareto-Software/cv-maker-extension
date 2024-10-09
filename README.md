@@ -17,24 +17,26 @@ AUTHORIZATION_URL=
 TOKEN_URL=
 SCOPE=
 ```
-### setup ngrok for exposing localhost to internet
+-> setup ngrok for exposing localhost to internet
+
 https://dashboard.ngrok.com/get-started/setup
--> click the link and create an account
--> select your operating system from the top right under Agents(https://dashboard.ngrok.com/get-started/setup)
--> follow the steps. authtoken can be found on left sidebar
--> you should create a static domain:
+1. click the link and create an account
+2. select your operating system from the top right under Agents(https://dashboard.ngrok.com/get-started/setup)
+3. follow the steps. authtoken can be found on left sidebar
+4. you should create a static domain:
 <img width="404" alt="image" src="https://github.com/user-attachments/assets/994bcebf-a3e3-44fc-b0fc-f204d536dba4">
 
 ### run the app through ngrok
 ```bash
 npm run start
 ```
--> on a separate terminal window run the ngrok:
+then open a separate terminal window to run the ngrok:
 ```bash
 ngrok http --domain=<your static domain here> 3000
 ```
 in the above command the 3000 is the port that your app is running locally(npm run start)
--> open up the browser to <your static url> and you should see the app
+
+open up the browser to <your static url> and you should see the app
 
 ## Different run modes
 ```bash
