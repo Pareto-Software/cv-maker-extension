@@ -73,7 +73,7 @@ describe('SupabaseController', () => {
         },
       ];
       const tableNameDto: TableNameDto = {
-        table_name: 'profiles',  
+        table_name: 'profiles',
         description: 'Profile description',
       };
       jest.spyOn(service, 'getTableData').mockResolvedValue(mockData);

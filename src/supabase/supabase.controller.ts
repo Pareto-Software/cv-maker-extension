@@ -49,10 +49,10 @@ export class SupabaseController {
   @Get('fetch-table/:table_name')
   @HttpCode(200)
   @ApiOperation({ summary: 'Fetch table name' })
-  @ApiResponse({ 
+  @ApiResponse({
     status: 200,
     description: 'Successfully fetched table name',
-    schema: { 
+    schema: {
       type: 'object',
       properties: {
         table_name: { type: 'string' },
@@ -63,13 +63,13 @@ export class SupabaseController {
             properties: {
               id: { type: 'integer' },
               name: { type: 'string' },
-            }
-          }
-        }
-      }
-    }
+            },
+          },
+        },
+      },
+    },
   })
-  @ApiResponse({ 
+  @ApiResponse({
     status: 400,
     description: 'Bad request, Invalid table name',
   })
