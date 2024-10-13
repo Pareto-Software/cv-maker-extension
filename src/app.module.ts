@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { SupabaseModule } from './supabase/supabase.module';
 import { AllocationModule } from './allocation/allocation.module';
 import { SheetModule } from './sheet/sheet.module';
+import { EmployeesModule } from './employees/employees.module';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { SheetModule } from './sheet/sheet.module';
     SupabaseModule,
     AllocationModule,
     SheetModule,
-  ],
+  ,  EmployeesModule],
   controllers: [AppController],
   providers: [AppService],
 })
