@@ -4,8 +4,7 @@ import { AllocationController } from './allocation.controller';
 import { SheetService } from '../sheet/sheet.service';
 
 @Module({
-  imports: [SheetService],
-  providers: [AllocationService],
+  providers: [AllocationService, SheetService],
   controllers: [AllocationController],
 })
 export class AllocationModule {}

@@ -14,9 +14,17 @@ describe('AppController', () => {
     appController = app.get<AppController>(AppController);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toEqual('Hello World!');
+  describe('getHello', () => {
+    it('should return "Hello World!" when no headers are provided', () => {
+      const result = appController.getHello();  // Call without headers
+      expect(result).toEqual({ message: 'Hello World!' });
+    });
+
+    it('should return "Hello World!" with the authorization header', () => {
+      const headers = { authorization: 'Bearer test-token' };
+      const result = appController.getHello(headers);
+      expect(result).toEqual({ message: 'Hello World!' });
     });
   });
 });
+

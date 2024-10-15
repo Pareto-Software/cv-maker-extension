@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, HttpCode, Headers } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
@@ -9,11 +9,11 @@ export class AppController {
 
   @Get()
   @ApiOperation({ summary: 'Get Hello message' })
-  @ApiResponse({
-    status: 200,
-    description: 'Successfully returned hello message',
-  })
-  getHello(): string {
-    return this.appService.getHello();
+  @ApiResponse({status: 200, description: 'Successfully returned hello message'})
+  @HttpCode(200)
+  getHello(@Headers() headers?: Record<string, string | undefined>) {
+    const authHeader = headers?.authorization || 'No Auth Header';
+    console.log('Auth Header:', authHeader);
+    return { message: this.appService.getHello() };
   }
 }

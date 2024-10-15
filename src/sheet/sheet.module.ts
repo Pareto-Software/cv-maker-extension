@@ -3,5 +3,6 @@ import { SheetService } from './sheet.service';
 
 @Module({
   providers: [SheetService],
+  exports: [SheetService],
 })
 export class SheetModule {}
