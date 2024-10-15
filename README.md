@@ -25,7 +25,7 @@ GOOGLE_API_KEY=
   4. you should create a static domain:
   <img width="404" alt="image" src="https://github.com/user-attachments/assets/994bcebf-a3e3-44fc-b0fc-f204d536dba4">
 
-# run instructions for app with reverse proxy
+# run instructions
 1. install docker desktop on your computer and keep it running while developing (https://docs.docker.com/engine/install/)
 2. run nginx reverse proxy inside docker container with the command:
 ```bash
