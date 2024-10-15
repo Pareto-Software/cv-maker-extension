@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode} from '@nestjs/common';
+import { Controller, Get, Headers, HttpCode} from '@nestjs/common';
 import {AllocationService} from './allocation.service';
 
 @Controller('allocation')
@@ -7,7 +7,8 @@ export class AllocationController {
 
   @Get('sheetdata')
   @HttpCode(200)
-  async fetchSheetData() {
+  async fetchSheetData(@Headers() headers: Record<string, string>) {
+    console.log('Auth Header:', headers.authorization);
     console.log("Trying to fetch sheetdata");
     const access_token = "access_token";
     const data = await this.allocationService.getSheetData(access_token);
