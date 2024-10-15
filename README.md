@@ -27,19 +27,23 @@ GOOGLE_API_KEY=
 
 # run instructions
 1. install docker desktop on your computer and keep it running while developing (https://docs.docker.com/engine/install/)
-2. run nginx reverse proxy inside docker container with the command:
+
+3. run nginx reverse proxy inside docker container with the command:
 ```bash
 docker-compose up
 ```
 you can keep the container running on other tab while developing
+
 3. run ngrok to expose the reverse proxy to the internet with the command:
 ```bash
 ngrok http --domain=<your static domain here> 3000
 ```
+
 4. check if installations are available:
 ```bash
 npm install
 ```
+
 5. run the app
 ```bash
 npm run start
