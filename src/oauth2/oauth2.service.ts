@@ -1,16 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
+import {Oauth2ClientProvider} from './oauth2-client.provider';
 
 @Injectable()
 export class OAuth2Service {
   private readonly oauth2Client: OAuth2Client;
 
-  constructor() {
-    const clientId = process.env.GOOGLE_CLIENT_ID; // Set your client ID
-    const clientSecret = process.env.GOOGLE_CLIENT_SECRET; // Set your client secret
-    const redirectUrl = process.env.REDIRECT_URL; // Set your redirect URL
-
-    this.oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUrl);
+  constructor(private oauth2ClientProvider: Oauth2ClientProvider ) {
+      this.oauth2Client = this.oauth2ClientProvider.oauth2Client;
   }
 
   async getToken(code: string) {
