@@ -13,7 +13,8 @@ import { EmployeesModule } from './employees/employees.module';
     SupabaseModule,
     AllocationModule,
     SheetModule,
-  ,  EmployeesModule],
+    EmployeesModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
