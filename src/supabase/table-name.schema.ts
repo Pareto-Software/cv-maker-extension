@@ -12,4 +12,9 @@ export const tableNameSchema = z.enum([
   'skills',
 ]);
 
+export const tableNameWithDescriptionSchema = z.object({
+  table_name: tableNameSchema,
+  description: z.string(),
+});
+
 export type ValidTableName = z.infer<typeof tableNameSchema>;
