@@ -28,6 +28,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.4.2",
     "@supabase/supabase-js": "^2.45.4",
+    "googleapis": "^144.0.0",
     "nestjs-zod": "^3.0.0",
     "openapi3-ts": "^4.4.0",
     "punycode": "^2.3.1",
