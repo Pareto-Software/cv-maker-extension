@@ -29,6 +29,7 @@
     "@nestjs/swagger": "^7.4.2",
     "@supabase/supabase-js": "^2.45.4",
     "google-auth-library": "^9.14.1",
+    "googleapis": "^144.0.0",
     "nestjs-zod": "^3.0.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
