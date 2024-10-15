@@ -1,5 +1,5 @@
 # Project setup
-1. setup .env file from telegram
+**1. setup .env file from telegram**
 ```
 # Supabase
 SUPABASE_URL=
@@ -16,7 +16,7 @@ SPREADSHEET_ID=
 REDIRECT_URL=<your ngrok url here>
 GOOGLE_API_KEY=
 ```
-2. setup ngrok on the website
+**2. setup ngrok on the website**
 
   https://dashboard.ngrok.com/get-started/setup
   1. click the link and create an account
