@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AllocationService } from './allocation.service';
+import { AllocationService,AllocationResponseDTO } from './allocation.service';
 import { SheetService } from '../sheet/sheet.service';
 import { SheetDataDTO } from 'src/sheet/dtos';
 
@@ -101,5 +101,30 @@ describe('AllocationService', () => {
   });
   it('should return sample data', async () => {
     expect(await sheetService.getSheetData()).toEqual(sampleData);
+  });
+
+  it('should return allocation data for an existing employee', async () => {
+    const name = 'Test person';
+    const expectedResult: AllocationResponseDTO = {
+      name: 'Test person',
+      capacity: 0.8,
+      data: {
+        '2015': {
+          May: {
+            reservationPercentage: 0.8,
+            status: 'unavailable',
+          },
+        },
+        '2024': {
+          Jun: {
+            reservationPercentage: 0,
+            status: 'available',
+          },
+        },
+      },
+    };
+
+    const result = await service.getAllocationByName(name);
+    expect(result).toEqual(expectedResult);
   });
 });
