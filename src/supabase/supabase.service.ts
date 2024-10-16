@@ -3,6 +3,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseClientProvider } from './supabase-client.provider'; 
 import { Database } from './database.types';
 import { ValidTableName } from './table-name.schema';
+import { EmployeeDTO } from './dto/employees-response.dto';
 
 @Injectable()
 export class SupabaseService {
@@ -28,21 +29,18 @@ export class SupabaseService {
     return data;
   }
 
-  async getEmployeesSkillsAndProject(){
+  async getEmployeesSkillsAndProject(): Promise<EmployeeDTO[]>{
     const { data: profiles, error: profileError } = await this.supabase
       .from('profiles')
       .select('user_id, first_name')
-      .throwOnError();
 
     if (profileError) {
       throw new Error(`Error fetching profiles : ${profileError.message}`);
-      }
+    }
 
     const { data: skills, error: skillsError } = await this.supabase
       .from('skills')
       .select('user_id, skill')
-      .throwOnError();
-     
 
     if (skillsError) {
       throw new Error(`Error fetching skills : ${skillsError.message}`);
@@ -51,20 +49,20 @@ export class SupabaseService {
     const { data: projects, error: projectsError } = await this.supabase
       .from('projects')
       .select('user_id, name');
-      
+
     if (projectsError) {
       throw new Error(`Error fetching projects : ${projectsError.message}`);
     }
 
-    const employees = profiles.map((profile) => {
+    const employees: EmployeeDTO[] = profiles.map((profile) => {
       return {
-        name: profile.first_name,
+        name: profile.first_name ?? '',
         skills: skills
           .filter((skill) => skill.user_id === profile.user_id)
-          .map((skill) => skill.skill),
+          .map((skill) => skill.skill ?? ''),
         projects: projects
           .filter((project) => project.user_id === profile.user_id)
-          .map((project) => project.name),
+          .map((project) => project.name ?? ''),
       };
     });
     return employees; 

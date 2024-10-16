@@ -4,6 +4,7 @@ import { tableNameWithDescriptionSchema } from './table-name.schema';
 import { SupabaseService } from './supabase.service';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { TableNameDto } from './dto/table-name.dto';
+import { EmployeesResponseDTO } from './dto/employees-response.dto';
 
 @ApiTags('Supabase ')
 @Controller()
@@ -79,4 +80,21 @@ export class SupabaseController {
     console.log(data);
     return { table_name: params.table_name, data };
   }
+
+  @Get('employees/skills-projects')
+  @ApiOperation({ summary: 'Fetch employee profiles, skills, and projects' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully fetched employee data',
+    type: EmployeesResponseDTO, 
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Failed to fetch employee data',
+  })
+  async getEmployeesWithSkillsAndProjects(): Promise<EmployeesResponseDTO> {
+    const employees = await this.supabaseService.getEmployeesSkillsAndProject();
+    return { employees };
+  }
+
 }
