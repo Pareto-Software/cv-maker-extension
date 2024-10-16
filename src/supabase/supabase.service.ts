@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseClientProvider } from './supabase-client.provider'; 
+import { SupabaseClientProvider } from './supabase-client.provider'; 
 import { Database } from './database.types';
 import { ValidTableName } from './table-name.schema';
 import { EmployeeDTO } from './dto/employees-response.dto';
