@@ -1,6 +1,6 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-const {google} = require('googleapis');
+import { google } from 'googleapis';
 
 @Injectable({ scope: Scope.REQUEST })
 export class SheetsClientProvider {
@@ -26,11 +26,7 @@ export class SheetsClientProvider {
           this.apiKey = api_key;
       }
     }
-    this.sheetsOAuth2Client = new google.auth.OAuth2(
-      client_id,
-      client_secret,
-      redirect_url,
-    );
+    this.sheetsOAuth2Client = new google.auth.OAuth2();
     this.authMethod = auth_method;
     this.spreadSheetId = spreadsheet_id;
   }

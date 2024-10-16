@@ -1,10 +1,5 @@
-
-## Project setup
--> install dependencies
-```bash
-$ npm install
-```
--> setup .env file from telegram
+# Project setup
+**1. setup .env file from telegram**
 ```
 # Supabase
 SUPABASE_URL=
@@ -16,60 +11,46 @@ CLIENT_SECRET=
 AUTHORIZATION_URL=
 TOKEN_URL=
 SCOPE=
+AUTH_METHOD=oauth # other: oauth
+SPREADSHEET_ID=
+REDIRECT_URL=<your ngrok url here>
+GOOGLE_API_KEY=
 ```
--> setup ngrok for exposing localhost to internet
+**2. setup ngrok on the website**
 
-https://dashboard.ngrok.com/get-started/setup
-1. click the link and create an account
-2. select your operating system from the top right under Agents(https://dashboard.ngrok.com/get-started/setup)
-3. follow the steps. authtoken can be found on left sidebar
-4. you should create a static domain:
-<img width="404" alt="image" src="https://github.com/user-attachments/assets/994bcebf-a3e3-44fc-b0fc-f204d536dba4">
+  https://dashboard.ngrok.com/get-started/setup
+  1. click the link and create an account
+  2. select your operating system from the top right under Agents(https://dashboard.ngrok.com/get-started/setup)
+  3. follow the steps. authtoken can be found on left sidebar
+  4. you should create a static domain:
+  <img width="404" alt="image" src="https://github.com/user-attachments/assets/994bcebf-a3e3-44fc-b0fc-f204d536dba4">
 
-### run the app through ngrok
+# run instructions
+1. install docker desktop on your computer and keep it running while developing (https://docs.docker.com/engine/install/)
+
+3. run nginx reverse proxy inside docker container with the command:
 ```bash
-npm run start
+docker-compose up
 ```
-then open a separate terminal window to run the ngrok:
+you can keep the container running on other tab while developing
+
+3. run ngrok to expose the reverse proxy to the internet with the command:
 ```bash
 ngrok http --domain=<your static domain here> 3000
 ```
-in the above command the 3000 is the port that your app is running locally(npm run start)
 
-open up the browser to <your static url> and you should see the app
-
-## Different run modes
+4. check if installations are available:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-It probably complains about:
-(node:214039) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-Issue is being talked about at: https://github.com/vercel/next.js/discussions/66289
-
-## Run tests
-
+5. run the app
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run start
 ```
-
-## Test routes:
-The project has 2 routes for now: Get() and Get('fetch-data'). The fetch-data route makes a 'SELECT * FROM some_table;' query from your local Supabase installation. In order to try it out you need to create a table called 'some_table' and populate it with data from the Supabase web interface or with some other way, like directly connecting to the supabase postgres database with psql.
+you should see the app on browser at your ngrok url
+(you can see the ngrok url after running ngrok command above, mine is rasmus.ngrok.app like below, but you should have a different one that you created)
+<img width="658" alt="image" src="https://github.com/user-attachments/assets/8ed33e1c-a29a-4635-b4c4-6eef895141da">
 
 ## Resources
 

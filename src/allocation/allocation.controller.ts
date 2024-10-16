@@ -10,7 +10,7 @@ export class AllocationController {
   async fetchSheetData(@Headers() headers: Record<string, string>) {
     console.log('Auth Header:', headers.authorization);
     console.log("Trying to fetch sheetdata");
-    const access_token = "access_token";
+    const access_token = headers.authorization;
     const data = await this.allocationService.getSheetData(access_token);
     console.log(data);
     return { data };
