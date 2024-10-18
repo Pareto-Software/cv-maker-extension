@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AllocationService, AllocationResponseDTO } from './allocation.service';
-import { AllocationController } from './allocation.controller';
 import { SheetService } from '../sheet/sheet.service';
 import { SheetDataDTO } from 'src/sheet/dtos';
 
@@ -84,7 +83,6 @@ const sampleData: SheetDataDTO = {
 
 describe('AllocationService', () => {
   let service: AllocationService;
-  let controller: AllocationController;
   let sheetService: SheetService;
 
   beforeEach(async () => {
