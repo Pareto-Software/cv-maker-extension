@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AllocationService, AllocationResponseDTO } from './allocation.service';
 import { SheetService } from '../sheet/sheet.service';
 import { SheetDataDTO } from 'src/sheet/dtos';
-
+import { SheetsClientProvider } from 'src/sheet/sheets-client.provider';
 const sampleData: SheetDataDTO = {
   rows: [
     {
@@ -80,27 +80,22 @@ const sampleData: SheetDataDTO = {
     },
   ],
 };
-
 describe('AllocationService', () => {
   let service: AllocationService;
   let sheetService: SheetService;
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AllocationService, SheetService],
+      providers: [AllocationService, SheetService, SheetsClientProvider],
     }).compile();
-
     service = module.get<AllocationService>(AllocationService);
     sheetService = module.get<SheetService>(SheetService);
-
     jest.spyOn(sheetService, 'getSheetData').mockResolvedValue(sampleData);
   });
-
   it('should return Test person as first name', () => {
     expect(service).toBeDefined();
   });
   it('should return sample data', async () => {
-    expect(await sheetService.getSheetData()).toEqual(sampleData);
+    expect(await sheetService.getSheetData("access_token")).toEqual(sampleData);
   });
 
   it('should return allocation data for an existing employee', async () => {

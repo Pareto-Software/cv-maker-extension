@@ -21,6 +21,7 @@ export interface AllocationResponseDTO {
 export class AllocationService {
   constructor(private readonly sheetService: SheetService) {}
   // Do functions that transform sheet data here
+
   async getAllocationByName(name: string): Promise<AllocationResponseDTO> {
     // Fetch all sheet data
     const sheetData: SheetDataDTO = await this.sheetService.getSheetData();
@@ -64,5 +65,10 @@ export class AllocationService {
     });
 
     return data;
+  }
+
+  async getSheetData(access_token: string) {
+    return await this.sheetService.getSheetData(access_token);
+
   }
 }
