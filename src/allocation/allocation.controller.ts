@@ -1,4 +1,3 @@
-
 import { Controller, Get, Headers, HttpCode, Param, NotFoundException,UnauthorizedException} from '@nestjs/common'
 import { AllocationService, AllocationResponseDTO } from './allocation.service';
 
@@ -18,6 +17,12 @@ export class AllocationController {
     }
     try {
       const data = await this.allocationService.getAllocationByName(name,access_token);
+      return data;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new Error('An unexpected error occurred.');
     }
   }
 

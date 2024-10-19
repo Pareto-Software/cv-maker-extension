@@ -1,8 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AllocationService, AllocationResponseDTO } from './allocation.service';
 import { SheetService } from '../sheet/sheet.service';
-import { SheetDataDTO } from 'src/sheet/dtos';
-import { SheetsClientProvider } from 'src/sheet/sheets-client.provider';
+import { SheetDataDTO } from '../sheet/dtos';
+import { SheetsClientProvider } from '../sheet/sheets-client.provider';
+import { ConfigService } from '@nestjs/config';
+
+const dummyAccessToken = 'dummy-access-token';
 const sampleData: SheetDataDTO = {
   rows: [
     {
@@ -85,12 +88,26 @@ describe('AllocationService', () => {
   let sheetService: SheetService;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AllocationService, SheetService, SheetsClientProvider],
+      providers: [AllocationService, SheetService, SheetsClientProvider,ConfigService],
     }).compile();
     service = module.get<AllocationService>(AllocationService);
     sheetService = module.get<SheetService>(SheetService);
     jest.spyOn(sheetService, 'getSheetData').mockResolvedValue(sampleData);
   });
+
+  const mockConfigService = {
+    get: jest.fn((key: string) => {
+      const config = {
+        CLIENT_ID: 'dummy-client-id',
+        CLIENT_SECRET: 'dummy-client-secret',
+        REDIRECT_URL: 'http://localhost/redirect',
+        SPREADSHEET_ID: 'dummy-spreadsheet-id',
+        GOOGLE_API_KEY: 'dummy-api-key',
+        AUTH_METHOD: 'api_key',
+      };
+      return config[key];
+    }),
+  };
   it('should return Test person as first name', () => {
     expect(service).toBeDefined();
   });
@@ -119,7 +136,7 @@ describe('AllocationService', () => {
       },
     };
 
-    const result = await service.getAllocationByName(name);
+    const result = await service.getAllocationByName(name,dummyAccessToken);
     expect(result).toEqual(expectedResult);
   });
 });

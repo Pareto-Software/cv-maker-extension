@@ -7,6 +7,10 @@ import { AllocationResponseDTO } from './allocation.service';
 describe('controller', () => {
   let controller: AllocationController;
   let service: AllocationService;
+  const headers = {
+    authorization: 'Bearer dummy-access-token',
+  };
+  
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -15,7 +19,7 @@ describe('controller', () => {
         {
           provide: AllocationService,
           useValue: {
-            // Mock methods of Alservice as needed
+            // Mock methods of AllocationService as needed
             getAllocationByName: jest.fn(),
           },
         },
@@ -55,9 +59,9 @@ describe('controller', () => {
       expectedResult,
     );
 
-    const result = await controller.getAllocationByName(name);
+    const result = await controller.getAllocationByName(name,headers);
     expect(result).toEqual(expectedResult);
-    expect(service.getAllocationByName).toHaveBeenCalledWith(name);
+    expect(service.getAllocationByName).toHaveBeenCalledWith(name,'dummy-access-token');
   });
 
   it('should throw NotFoundException if employee does not exist', async () => {
@@ -67,10 +71,10 @@ describe('controller', () => {
       throw new NotFoundException(`Employee ${name} not found.`);
     });
 
-    await expect(controller.getAllocationByName(name)).rejects.toThrow(
+    await expect(controller.getAllocationByName(name,headers)).rejects.toThrow(
       NotFoundException,
     );
-    expect(service.getAllocationByName).toHaveBeenCalledWith(name);
+    expect(service.getAllocationByName).toHaveBeenCalledWith(name,'dummy-access-token');
   });
 
   it('should handle case-insensitive employee names', async () => {
@@ -98,8 +102,8 @@ describe('controller', () => {
       expectedResult,
     );
 
-    const result = await controller.getAllocationByName(name);
+    const result = await controller.getAllocationByName(name,headers);
     expect(result).toEqual(expectedResult);
-    expect(service.getAllocationByName).toHaveBeenCalledWith(name);
+    expect(service.getAllocationByName).toHaveBeenCalledWith(name,'dummy-access-token');
   });
 });
