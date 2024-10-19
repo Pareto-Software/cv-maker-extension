@@ -137,6 +137,7 @@ describe('AllocationService', () => {
     };
 
     const result = await service.getAllocationByName(name,dummyAccessToken);
+
     expect(result).toEqual(expectedResult);
   });
 });

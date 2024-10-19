@@ -58,7 +58,6 @@ describe('controller', () => {
     (service.getAllocationByName as jest.Mock).mockResolvedValue(
       expectedResult,
     );
-
     const result = await controller.getAllocationByName(name,headers);
     expect(result).toEqual(expectedResult);
     expect(service.getAllocationByName).toHaveBeenCalledWith(name,'dummy-access-token');
@@ -70,6 +69,7 @@ describe('controller', () => {
     (service.getAllocationByName as jest.Mock).mockImplementation(() => {
       throw new NotFoundException(`Employee ${name} not found.`);
     });
+
 
     await expect(controller.getAllocationByName(name,headers)).rejects.toThrow(
       NotFoundException,
@@ -105,5 +105,6 @@ describe('controller', () => {
     const result = await controller.getAllocationByName(name,headers);
     expect(result).toEqual(expectedResult);
     expect(service.getAllocationByName).toHaveBeenCalledWith(name,'dummy-access-token');
+
   });
 });

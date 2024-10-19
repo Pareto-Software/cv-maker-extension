@@ -2,9 +2,11 @@ import { Controller, Get, Headers, HttpCode, Param, NotFoundException,Unauthoriz
 import { AllocationService, AllocationResponseDTO } from './allocation.service';
 
 
+
 @Controller('allocation')
 export class AllocationController {
   constructor(private readonly allocationService: AllocationService) {}
+
 
   @Get(':name')
   async getAllocationByName(
@@ -36,5 +38,6 @@ export class AllocationController {
     const data = await this.allocationService.getSheetData(access_token);
     console.log(data);
     return { data };
+
   }
 }

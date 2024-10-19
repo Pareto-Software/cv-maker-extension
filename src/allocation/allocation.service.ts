@@ -24,6 +24,7 @@ export class AllocationService {
 
   async getSheetData(access_token: string) {
     return await this.sheetService.getSheetData(access_token);
+
   }
 
   async getAllocationByName(name: string,access_token: string): Promise<AllocationResponseDTO> {
