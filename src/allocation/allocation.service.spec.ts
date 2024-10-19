@@ -88,7 +88,12 @@ describe('AllocationService', () => {
   let sheetService: SheetService;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AllocationService, SheetService, SheetsClientProvider,ConfigService],
+      providers: [
+        AllocationService,
+        SheetService,
+        SheetsClientProvider,
+        ConfigService,
+      ],
     }).compile();
     service = module.get<AllocationService>(AllocationService);
     sheetService = module.get<SheetService>(SheetService);
@@ -112,7 +117,7 @@ describe('AllocationService', () => {
     expect(service).toBeDefined();
   });
   it('should return sample data', async () => {
-    expect(await sheetService.getSheetData("access_token")).toEqual(sampleData);
+    expect(await sheetService.getSheetData('access_token')).toEqual(sampleData);
   });
 
   it('should return allocation data for an existing employee', async () => {
@@ -136,8 +141,29 @@ describe('AllocationService', () => {
       },
     };
 
-    const result = await service.getAllocationByName(name,dummyAccessToken);
+    const result = await service.getAllocationByName(name, dummyAccessToken);
 
     expect(result).toEqual(expectedResult);
+  });
+
+  describe('getAllEmployeeNames', () => {
+    it('should return unique employee names', async () => {
+      const expectedNames = ['Test person', 'Test person2', 'Test person3'];
+
+      const result = await service.getAllEmployeeNames(dummyAccessToken);
+
+      expect(result).toEqual(expectedNames);
+      expect(sheetService.getSheetData).toHaveBeenCalledWith(dummyAccessToken);
+    });
+
+    it('should throw an error if getSheetData fails', async () => {
+      jest
+        .spyOn(sheetService, 'getSheetData')
+        .mockRejectedValue(new Error('Failed to fetch data'));
+
+      await expect(
+        service.getAllEmployeeNames(dummyAccessToken),
+      ).rejects.toThrow('Failed to fetch employee names');
+    });
   });
 });

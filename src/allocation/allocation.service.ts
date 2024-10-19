@@ -24,12 +24,15 @@ export class AllocationService {
 
   async getSheetData(access_token: string) {
     return await this.sheetService.getSheetData(access_token);
-
   }
 
-  async getAllocationByName(name: string,access_token: string): Promise<AllocationResponseDTO> {
+  async getAllocationByName(
+    name: string,
+    access_token: string,
+  ): Promise<AllocationResponseDTO> {
     // Fetch all sheet data
-    const sheetData: SheetDataDTO = await this.sheetService.getSheetData(access_token);
+    const sheetData: SheetDataDTO =
+      await this.sheetService.getSheetData(access_token);
 
     // Find the employee by name (case-insensitive)
     const employee = sheetData.rows.find(
@@ -53,6 +56,18 @@ export class AllocationService {
     return response;
   }
 
+  async getAllEmployeeNames(access_token: string): Promise<string[]> {
+    // Fetch sheet data using the access_token
+    const sheetData = await this.sheetService.getSheetData(access_token);
+
+    // Extract unique employee names
+    const employeeNames = new Set<string>();
+    sheetData.rows.forEach((row) => {
+      employeeNames.add(row.name);
+    });
+
+    return Array.from(employeeNames);
+  }
 
   private transformCellsToData(cells: CellValueDTO[]): AllocationDataDTO {
     const data: AllocationDataDTO = {};
@@ -71,7 +86,5 @@ export class AllocationService {
     });
 
     return data;
-
   }
 }
-
