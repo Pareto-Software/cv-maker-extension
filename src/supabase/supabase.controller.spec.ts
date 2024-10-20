@@ -17,6 +17,7 @@ describe('SupabaseController', () => {
           useValue: {
             getProfilesData: jest.fn(),
             getTableData: jest.fn(),
+            getEmployeesFullInformation: jest.fn(),
           },
         },
       ],
@@ -88,6 +89,7 @@ describe('SupabaseController', () => {
       );
     });
   });
+
   describe('getEmployeeByName', () => {
     it('should return an employee profile from SupabaseService', async () => {
       const mockEmployee: EmployeeFullDetailDTO = {
