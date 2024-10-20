@@ -13,28 +13,18 @@ export class SheetService {
   private client;
   private sheets: sheets_v4.Sheets;
   private spreadSheetId: string;
-  private authMethod: string;
-  private apiKey: string;
 
   constructor(private sheetsClientProvider: SheetsClientProvider) {
     this.client = this.sheetsClientProvider.sheetsOAuth2Client;
     this.spreadSheetId = this.sheetsClientProvider.spreadSheetId;
-    this.authMethod = this.sheetsClientProvider.authMethod;
-    this.apiKey = this.sheetsClientProvider.apiKey;
   }
 
   updateSheetsCredentials(access_token: string) {
-    if (this.authMethod === 'api_key') {
-      console.log('Using api key');
-      this.sheets = google.sheets({ version: 'v4', auth: this.apiKey });
-    } else {
-      console.log('Using OAuth');
-      const token = access_token.replace('Bearer ', '').trim();
-      this.client.setCredentials({
-        access_token: token,
-      });
-      this.sheets = google.sheets({ version: 'v4', auth: this.client });
-    }
+    const token = access_token.replace('Bearer ', '').trim();
+    this.client.setCredentials({
+    access_token: token,
+    });
+    this.sheets = google.sheets({ version: 'v4', auth: this.client });
   }
 
   async getSheetColorData() {
