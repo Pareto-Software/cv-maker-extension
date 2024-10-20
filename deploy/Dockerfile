@@ -35,7 +35,6 @@ COPY deploy/supervisord.conf /etc/supervisord.conf
 COPY --from=builder /app /app
 
 EXPOSE 8080
-EXPOSE 3000
 
 # Command to run both NGINX and NestJS via Supervisor
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
