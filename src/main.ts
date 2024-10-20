@@ -9,7 +9,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('CV maker extension')
     .setDescription('cv maker extension for pareto software')
-    .setVersion('1.0')
+    .setVersion('1.1')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
