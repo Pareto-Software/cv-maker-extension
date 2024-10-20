@@ -5,6 +5,8 @@ steps:
       - '-t'
       - 'gcr.io/$PROJECT_ID/cv-maker-extension:$COMMIT_SHA'
       - .
+      - '-f'
+      - 'deploy/Dockerfile'
   - name: gcr.io/cloud-builders/docker
     args:
       - push
