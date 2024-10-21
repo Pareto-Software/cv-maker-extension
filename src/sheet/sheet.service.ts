@@ -5,26 +5,29 @@ import {
   Month,
   StatusValue,
 } from './dtos';
-import { SheetsClientProvider } from './sheets-client.provider';
 import { google, sheets_v4 } from 'googleapis';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SheetService {
-  private client;
   private sheets: sheets_v4.Sheets;
   private spreadSheetId: string;
 
-  constructor(private sheetsClientProvider: SheetsClientProvider) {
-    this.client = this.sheetsClientProvider.sheetsOAuth2Client;
-    this.spreadSheetId = this.sheetsClientProvider.spreadSheetId;
+  constructor(private configService: ConfigService) {
+    const spreadsheet_id = this.configService.get<string>('SPREADSHEET_ID');
+
+    if (!spreadsheet_id) {
+      throw new Error('Google client id, secret and redirect url must be provided');
+    } 
+    this.spreadSheetId = spreadsheet_id;
   }
+
 
   updateSheetsCredentials(access_token: string) {
     const token = access_token.replace('Bearer ', '').trim();
-    this.client.setCredentials({
-    access_token: token,
-    });
-    this.sheets = google.sheets({ version: 'v4', auth: this.client });
+    const client = new google.auth.OAuth2();
+    client.setCredentials({ access_token: token });
+    this.sheets = google.sheets({ version: 'v4', auth: client });
   }
 
   async getSheetColorData() {

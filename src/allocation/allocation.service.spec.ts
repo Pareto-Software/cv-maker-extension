@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AllocationService } from './allocation.service';
 import { SheetService } from '../sheet/sheet.service';
 import { SheetDataDTO } from 'src/sheet/dtos';
-import { SheetsClientProvider } from 'src/sheet/sheets-client.provider';
 const sampleData: SheetDataDTO = {
   rows: [
     {
@@ -85,7 +84,7 @@ describe('AllocationService', () => {
   let sheetService: SheetService;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AllocationService, SheetService, SheetsClientProvider],
+      providers: [AllocationService, SheetService],
     }).compile();
     service = module.get<AllocationService>(AllocationService);
     sheetService = module.get<SheetService>(SheetService);
