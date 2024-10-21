@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AllocationService } from './allocation.service';
 import { SheetService } from '../sheet/sheet.service';
 import { SheetDataDTO } from 'src/sheet/dtos';
+import { ConfigService } from '@nestjs/config'; 
 const sampleData: SheetDataDTO = {
   rows: [
     {
@@ -84,7 +85,21 @@ describe('AllocationService', () => {
   let sheetService: SheetService;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AllocationService, SheetService],
+        providers: [
+        AllocationService,
+        {
+          provide: SheetService,
+          useValue: {
+            getSheetData: jest.fn().mockResolvedValue(sampleData), // Mock getSheetData
+          },
+        },
+        {
+          provide: ConfigService, // Provide ConfigService if it's a dependency
+          useValue: {
+            // Mock methods or properties if necessary
+          },
+        },
+      ],
     }).compile();
     service = module.get<AllocationService>(AllocationService);
     sheetService = module.get<SheetService>(SheetService);
