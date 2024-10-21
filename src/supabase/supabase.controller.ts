@@ -86,7 +86,7 @@ export class SupabaseController {
   @ApiResponse({
     status: 200,
     description: 'Successfully fetched employee data',
-    type: EmployeesResponseDTO, 
+    type: EmployeesResponseDTO,
   })
   @ApiResponse({
     status: 500,
@@ -96,5 +96,4 @@ export class SupabaseController {
     const employees = await this.supabaseService.getEmployeesSkillsAndProject();
     return { employees };
   }
-
 }
