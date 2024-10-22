@@ -4,6 +4,10 @@ import { SheetService } from '../sheet/sheet.service';
 import { SheetDataDTO } from '../sheet/dtos';
 import { SheetsClientProvider } from '../sheet/sheets-client.provider';
 import { ConfigService } from '@nestjs/config';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
 const dummyAccessToken = 'dummy-access-token';
 const sampleData: SheetDataDTO = {
@@ -275,7 +279,89 @@ describe('AllocationService', () => {
       },
     };
 
-    const result = await service.getAllocationByName(name);
+    const result = await service.getAllocationByName(name, dummyAccessToken);
     expect(result).toEqual(expectedResult);
+  });
+
+  describe('getAllocationsByMonthYear', () => {
+    it('should return allocations for a specific month and year', async () => {
+      const year = 2024;
+      const month = 'Jun';
+
+      const expectedResponse = {
+        year,
+        month,
+        allocations: {
+          'Test person': {
+            value: 0,
+            status: 'available',
+          },
+          'Test person2': {
+            value: 1,
+            status: 'unavailable',
+          },
+        },
+      };
+
+      const result = await service.getAllocationsByMonthYear(
+        year,
+        month,
+        dummyAccessToken,
+      );
+
+      expect(result).toEqual(expectedResponse);
+      expect(sheetService.getSheetData).toHaveBeenCalledWith(dummyAccessToken);
+    });
+
+    it('should return allocations regardless of month case sensitivity', async () => {
+      const year = 2024;
+      const month = 'jun'; // Lowercase month
+
+      const expectedResponse = {
+        year,
+        month,
+        allocations: {
+          'Test person': {
+            value: 0,
+            status: 'available',
+          },
+          'Test person2': {
+            value: 1,
+            status: 'unavailable',
+          },
+        },
+      };
+
+      const result = await service.getAllocationsByMonthYear(
+        year,
+        month,
+        dummyAccessToken,
+      );
+
+      expect(result).toEqual(expectedResponse);
+      expect(sheetService.getSheetData).toHaveBeenCalledWith(dummyAccessToken);
+    });
+
+    it('should throw NotFoundException if no data is found for the given month and year', async () => {
+      const year = 2030;
+      const month = 'Dec';
+
+      await expect(
+        service.getAllocationsByMonthYear(year, month, dummyAccessToken),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should handle errors from sheetService.getSheetData', async () => {
+      sheetService.getSheetData = jest
+        .fn()
+        .mockRejectedValue(new Error('Sheet service error'));
+
+      const year = 2024;
+      const month = 'Jun';
+
+      await expect(
+        service.getAllocationsByMonthYear(year, month, dummyAccessToken),
+      ).rejects.toThrow(InternalServerErrorException);
+    });
   });
 });
