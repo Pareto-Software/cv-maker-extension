@@ -16,7 +16,7 @@ describe('AppController', () => {
 
   describe('getHello', () => {
     it('should return "Hello World!" when no headers are provided', () => {
-      const result = appController.getHello();  // Call without headers
+      const result = appController.getHello(); // Call without headers
       expect(result).toEqual({ message: 'Hello World!' });
     });
 
@@ -27,4 +27,3 @@ describe('AppController', () => {
     });
   });
 });
-

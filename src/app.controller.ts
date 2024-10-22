@@ -9,7 +9,10 @@ export class AppController {
 
   @Get()
   @ApiOperation({ summary: 'Get Hello message' })
-  @ApiResponse({status: 200, description: 'Successfully returned hello message'})
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully returned hello message',
+  })
   @HttpCode(200)
   getHello(@Headers() headers?: Record<string, string | undefined>) {
     const authHeader = headers?.authorization || 'No Auth Header';

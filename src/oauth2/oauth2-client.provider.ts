@@ -11,7 +11,6 @@ export class Oauth2ClientProvider {
     const clientSecret = this.configService.get<string>('CLIENT_SECRET');
     const redirectUrl = this.configService.get<string>('REDIRECT_URL');
 
-
     if (!clientId || !clientSecret || !redirectUrl) {
       throw new Error('Client id, secret and redirect url must be provided');
     }

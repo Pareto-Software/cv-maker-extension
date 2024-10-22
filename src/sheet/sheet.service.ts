@@ -27,6 +27,7 @@ export class SheetService {
     const token = access_token.replace('Bearer ', '').trim();
     const client = new google.auth.OAuth2();
     client.setCredentials({ access_token: token });
+    console.log('setting credentials: ', token);
     this.sheets = google.sheets({ version: 'v4', auth: client });
   }
 
@@ -37,6 +38,7 @@ export class SheetService {
         ranges: ['Allocation!A1:Z20'], // Limit to first 20 rows
         includeGridData: true,
       });
+      console.log('response:', response.data);
 
       const sheet = response.data.sheets?.[0];
       if (!sheet || !sheet.data || !sheet.data[0].rowData) {
@@ -172,6 +174,7 @@ export class SheetService {
         spreadsheetId: this.spreadSheetId,
         range: 'Allocation',
       });
+      console.log('response:', response.data);
 
       if (!response.data.values) {
         throw new Error('No data values found');
@@ -217,6 +220,16 @@ export class SheetService {
         sheetData.rows.push(rowValue);
       }
 
+      // print the sheet data
+      for (const row of sheetData.rows) {
+        console.log('Row:', row.name);
+        for (const cell of row.cells) {
+          console.log(
+            `Year: ${cell.year}, Month: ${cell.month}, Status: ${cell.status}`,
+          );
+        }
+      }
+        console.log("leaving sheet service");
       return sheetData;
     } catch (error) {
       console.error('Error fetching data:', error);
