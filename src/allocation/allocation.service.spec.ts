@@ -9,6 +9,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
+
 const dummyAccessToken = 'dummy-access-token';
 const sampleData: SheetDataDTO = {
   rows: [
@@ -169,6 +170,7 @@ describe('AllocationService', () => {
         service.getAllEmployeeNames(dummyAccessToken),
       ).rejects.toThrow('Failed to fetch employee names');
     });
+
   });
 
   describe('getAllocationsByMonthYear', () => {

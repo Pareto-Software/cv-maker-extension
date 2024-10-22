@@ -1,3 +1,4 @@
+
 import {
   Injectable,
   NotFoundException,
@@ -15,6 +16,7 @@ export interface AllocationDataDTO {
   };
 }
 
+
 export interface AllocationByMonthResponseDTO {
   year: number;
   month: string;
@@ -25,6 +27,7 @@ export interface AllocationByMonthResponseDTO {
     };
   };
 }
+
 
 export interface AllocationResponseDTO {
   name: string;
@@ -102,6 +105,7 @@ export class AllocationService {
 
     return data;
   }
+
 
   async getAllocationsByMonthYear(
     year: number,

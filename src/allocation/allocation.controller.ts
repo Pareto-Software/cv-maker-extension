@@ -14,6 +14,7 @@ import {
   AllocationByMonthResponseDTO,
 } from './allocation.service';
 
+
 @Controller('allocation')
 export class AllocationController {
   constructor(private readonly allocationService: AllocationService) {}
@@ -55,6 +56,7 @@ export class AllocationController {
     return { employees: employeeNames };
   }
 
+
   @Get(':year/:month')
   async getAllocationsByMonthYear(
     @Param('year', ParseIntPipe) year: number,
@@ -74,7 +76,7 @@ export class AllocationController {
 
     return response;
   }
-
+  
   @Get('sheetdata')
   @HttpCode(200)
   async fetchSheetData(@Headers() headers: Record<string, string>) {
