@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { SupabaseClientProvider } from './supabase-client.provider'; 
+import { SupabaseClientProvider } from './supabase-client.provider';
 import { Database } from './database.types';
 import { ValidTableName } from './table-name.schema';
 import {
@@ -36,10 +36,10 @@ export class SupabaseService {
     return data;
   }
 
-  async getEmployeesSkillsAndProject(): Promise<EmployeeDTO[]>{
+  async getEmployeesSkillsAndProject(): Promise<EmployeeDTO[]> {
     const { data: profiles, error: profileError } = await this.supabase
       .from('profiles')
-      .select('user_id, first_name')
+      .select('user_id, first_name');
 
     if (profileError) {
       throw new Error(`Error fetching profiles : ${profileError.message}`);
@@ -47,7 +47,7 @@ export class SupabaseService {
 
     const { data: skills, error: skillsError } = await this.supabase
       .from('skills')
-      .select('user_id, skill')
+      .select('user_id, skill');
 
     if (skillsError) {
       throw new Error(`Error fetching skills : ${skillsError.message}`);
@@ -72,7 +72,7 @@ export class SupabaseService {
           .map((project) => project.name ?? ''),
       };
     });
-    return employees; 
+    return employees;
   }
 
   async getEmployeesFullInformation(

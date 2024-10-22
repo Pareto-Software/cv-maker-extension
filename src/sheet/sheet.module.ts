@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { SheetService } from './sheet.service';
-import {SheetsClientProvider} from './sheets-client.provider';
+import { SheetsClientProvider } from './sheets-client.provider';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({

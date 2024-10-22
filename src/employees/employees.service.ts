@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 
-@Injectable() 
+@Injectable()
 export class EmployeesService {
   constructor(private readonly supabaseService: SupabaseService) {}
 

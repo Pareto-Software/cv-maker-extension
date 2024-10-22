@@ -1,10 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  SheetDataDTO,
-  RowValueDTO,
-  Month,
-  StatusValue,
-} from './dtos';
+import { SheetDataDTO, RowValueDTO, Month, StatusValue } from './dtos';
 import { SheetsClientProvider } from './sheets-client.provider';
 import { google, sheets_v4 } from 'googleapis';
 
