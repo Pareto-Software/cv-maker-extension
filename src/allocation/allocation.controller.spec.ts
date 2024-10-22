@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AllocationController } from './allocation.controller';
 import { AllocationService } from './allocation.service';
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  NotFoundException,
+  UnauthorizedException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { AllocationResponseDTO } from './allocation.service';
 
 describe('controller', () => {
@@ -21,6 +25,7 @@ describe('controller', () => {
             // Mock methods of AllocationService as needed
             getAllocationByName: jest.fn(),
             getAllEmployeeNames: jest.fn(),
+            getAllocationsByMonthYear: jest.fn(),
           },
         },
       ],
@@ -135,6 +140,79 @@ describe('controller', () => {
       await expect(controller.getAllEmployees(invalidHeaders)).rejects.toThrow(
         UnauthorizedException,
       );
+    });
+  });
+  describe('getAllocationsByMonthYear', () => {
+    it('should return allocations for a specific month and year', async () => {
+      const year = 2024;
+      const month = 'Jun';
+      const expectedResponse = {
+        year,
+        month,
+        allocations: {
+          'Test person': {
+            value: 0,
+            status: 'available',
+          },
+          'Test person2': {
+            value: 1,
+            status: 'unavailable',
+          },
+        },
+      };
+
+      (service.getAllocationsByMonthYear as jest.Mock).mockResolvedValue(
+        expectedResponse,
+      );
+
+      const result = await controller.getAllocationsByMonthYear(
+        year,
+        month,
+        headers,
+      );
+
+      expect(result).toEqual(expectedResponse);
+      expect(service.getAllocationsByMonthYear).toHaveBeenCalledWith(
+        year,
+        month,
+        'dummy-access-token',
+      );
+    });
+
+    it('should throw UnauthorizedException if access_token is missing', async () => {
+      const year = 2024;
+      const month = 'Jun';
+      const invalidHeaders = {};
+
+      await expect(
+        controller.getAllocationsByMonthYear(year, month, invalidHeaders),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should propagate NotFoundException from the service', async () => {
+      const year = 2030;
+      const month = 'Dec';
+
+      (service.getAllocationsByMonthYear as jest.Mock).mockRejectedValue(
+        new NotFoundException('No allocation data found'),
+      );
+
+      await expect(
+        controller.getAllocationsByMonthYear(year, month, headers),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should handle InternalServerErrorException from the service', async () => {
+      const year = 2024;
+      const month = 'Jun';
+
+      (service.getAllocationsByMonthYear as jest.Mock).mockRejectedValue(
+        new InternalServerErrorException('Failed to fetch allocation data'),
+      );
+
+      await expect(
+        controller.getAllocationsByMonthYear(year, month, headers),
+      ).rejects.toThrow(InternalServerErrorException);
     });
   });
 });
