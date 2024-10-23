@@ -42,7 +42,7 @@ describe('SupabaseController', () => {
           first_name: 'Test',
           last_name: 'User',
           metadata: null,
-          profile_pic: null,   
+          profile_pic: null,
           social_media_links: null,
           title: null,
           user_id: 'user_1',
@@ -134,7 +134,10 @@ describe('SupabaseController', () => {
       const result = await controller.getEmployeeByName('John', 'Doe');
 
       expect(result).toEqual(mockEmployee);
-      expect(service.getEmployeesFullInformation).toHaveBeenCalledWith('John', 'Doe');
+      expect(service.getEmployeesFullInformation).toHaveBeenCalledWith(
+        'John',
+        'Doe',
+      );
     });
 
     it('should throw a NotFoundException if the employee is not found', async () => {
@@ -149,7 +152,10 @@ describe('SupabaseController', () => {
         expect(error.response.message).toBe('Not found');
       }
 
-      expect(service.getEmployeesFullInformation).toHaveBeenCalledWith('John', 'Doe');
+      expect(service.getEmployeesFullInformation).toHaveBeenCalledWith(
+        'John',
+        'Doe',
+      );
     });
   });
 });

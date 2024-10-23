@@ -5,7 +5,7 @@ import { Database } from './database.types';
 import { ValidTableName } from './table-name.schema';
 import {
   EmployeeDTO,
-  SkillDTO,	
+  SkillDTO,
   ProjectDTO,
   CertificationDTO,
   EducationDTO,
@@ -77,7 +77,7 @@ export class SupabaseService {
 
   async getEmployeesFullInformation(
     firstName: string,
-    lastName: string
+    lastName: string,
   ): Promise<EmployeeFullDetailDTO> {
     const { data: profile, error: profileError } = await this.supabase
       .from('profiles')
@@ -116,7 +116,7 @@ export class SupabaseService {
         .from('certifications')
         .select('name, received, valid_until')
         .eq('user_id', profile.user_id);
-      
+
     if (certificationsError) {
       throw new Error(
         `Error fetching certifications : ${certificationsError.message}`,
@@ -151,7 +151,7 @@ export class SupabaseService {
         received: certification.received ?? '',
         valid_until: certification.valid_until ?? '',
       })) as CertificationDTO[],
-    }
+    };
     return employee;
   }
   async insertData(table: ValidTableName, values: any) {

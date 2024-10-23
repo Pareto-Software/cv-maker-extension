@@ -1,4 +1,3 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { AllocationService, AllocationResponseDTO } from './allocation.service';
 import { SheetService } from '../sheet/sheet.service';
 import { SheetDataDTO } from '../sheet/dtos';
@@ -83,36 +82,61 @@ const sampleData: SheetDataDTO = {
     },
   ],
 };
-describe('AllocationService', () => {
-  let service: AllocationService;
-  let sheetService: SheetService;
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AllocationService,
-        SheetService,
-        SheetsClientProvider,
-        ConfigService,
+
+const sampleDataForFuture: SheetDataDTO = {
+  rows: [
+    {
+      capacity: 0.8,
+      name: 'Test person',
+      cells: [
+        {
+          reservationPercentage: 0.8,
+          year: new Date().getFullYear() - 2,
+          month: 'May',
+          status: 'unavailable',
+        },
+        {
+          reservationPercentage: 0,
+          year: new Date().getFullYear() + 2,
+          month: 'Jun',
+          status: 'available',
+        },
+        {
+          reservationPercentage: 0,
+          year: new Date().getFullYear() + 2,
+          month: 'Jun',
+          status: 'flexible_start',
+        },
+        {
+          reservationPercentage: 0.8,
+          year: new Date().getFullYear() + 2,
+          month: 'Jun',
+          status: 'unavailable',
+        },
       ],
-    }).compile();
-    service = module.get<AllocationService>(AllocationService);
-    sheetService = module.get<SheetService>(SheetService);
+    },
+  ],
+};
+
+describe('AllocationService', () => {
+  let sheetService: SheetService;
+  let service: AllocationService;
+  beforeEach(async () => {
+    sheetService = new SheetService(
+      new SheetsClientProvider(
+        new ConfigService({
+          CLIENT_ID: 'dummy-client-id',
+          CLIENT_SECRET: 'dummy-client-secret',
+          REDIRECT_URL: 'http://localhost/redirect',
+          SPREADSHEET_ID: 'dummy-spreadsheet-id',
+          GOOGLE_API_KEY: 'dummy-api-key',
+          AUTH_METHOD: 'api_key',
+        }),
+      ),
+    );
+    service = new AllocationService(sheetService);
     jest.spyOn(sheetService, 'getSheetData').mockResolvedValue(sampleData);
   });
-
-  const mockConfigService = {
-    get: jest.fn((key: string) => {
-      const config = {
-        CLIENT_ID: 'dummy-client-id',
-        CLIENT_SECRET: 'dummy-client-secret',
-        REDIRECT_URL: 'http://localhost/redirect',
-        SPREADSHEET_ID: 'dummy-spreadsheet-id',
-        GOOGLE_API_KEY: 'dummy-api-key',
-        AUTH_METHOD: 'api_key',
-      };
-      return config[key];
-    }),
-  };
   it('should return Test person as first name', () => {
     expect(service).toBeDefined();
   });
@@ -163,7 +187,69 @@ describe('AllocationService', () => {
 
       await expect(
         service.getAllEmployeeNames(dummyAccessToken),
-      ).rejects.toThrow('Failed to fetch employee names');
+      ).rejects.toThrow('Failed to fetch data');
+    });
+  });
+
+  describe('get availableEmployees', () => {
+    it('should return all available employees', async () => {
+      const year = 2024;
+      const month = 'Jun';
+
+      const expectedResult = {
+        year,
+        month,
+        availableEmployees: [
+          {
+            name: 'Test person',
+            status: 'available',
+            value: 0,
+          },
+        ],
+      };
+
+      const result = await service.getAvailableEmployees(
+        year,
+        month,
+        dummyAccessToken,
+      );
+
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe('get future availability', () => {
+    it('should return future availability for an employee', async () => {
+      const person = 'Test person';
+
+      const expectedResult = {
+        name: person,
+        futureAvailability: [
+          {
+            value: 0,
+            year: new Date().getFullYear() + 2,
+            month: 'Jun',
+            status: 'available',
+          },
+          {
+            value: 0,
+            year: new Date().getFullYear() + 2,
+            month: 'Jun',
+            status: 'flexible_start',
+          },
+        ],
+      };
+
+      jest
+        .spyOn(sheetService, 'getSheetData')
+        .mockResolvedValue(sampleDataForFuture);
+
+      const result = await service.getFutureAvailability(
+        person,
+        dummyAccessToken,
+      );
+
+      expect(result).toEqual(expectedResult);
     });
   });
 });
