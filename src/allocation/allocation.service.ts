@@ -5,7 +5,6 @@ import {
   AllocationRow,
   AvailableEmployeesDTO,
   FutureAllocationResponseDTO,
-  FutureAllocationRow,
 } from './dtos';
 
 export interface AllocationDataDTO {

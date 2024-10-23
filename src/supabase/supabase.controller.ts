@@ -107,7 +107,6 @@ export class SupabaseController {
     return { employees };
   }
 
-
   @Get('employees/:first_name/:last_name')
   @HttpCode(200)
   @ApiOperation({ summary: 'Retrieve employee CV information by full name' })
