@@ -83,6 +83,42 @@ const sampleData: SheetDataDTO = {
     },
   ],
 };
+
+const sampleDataForFuture: SheetDataDTO = {
+  rows: [
+    {
+      capacity: 0.8,
+      name: 'Test person',
+      cells: [
+        {
+          reservationPercentage: 0.8,
+          year: new Date().getFullYear() - 2,
+          month: 'May',
+          status: 'unavailable',
+        },
+        {
+          reservationPercentage: 0,
+          year: new Date().getFullYear() + 2,
+          month: 'Jun',
+          status: 'available',
+        },
+        {
+          reservationPercentage: 0.8,
+          year: new Date().getFullYear() + 2,
+          month: 'Jun',
+          status: 'flexible_start',
+        },
+        {
+          reservationPercentage: 0.8,
+          year: new Date().getFullYear() + 2,
+          month: 'Jun',
+          status: 'unavailable',
+        },
+      ],
+    },
+  ],
+};
+
 describe('AllocationService', () => {
   let sheetService: SheetService;
   let service: AllocationService;
@@ -176,6 +212,41 @@ describe('AllocationService', () => {
       const result = await service.getAvailableEmployees(
         year,
         month,
+        dummyAccessToken,
+      );
+
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe('get future availability', () => {
+    it('should return future availability for an employee', async () => {
+      const person = 'Test person';
+
+      const expectedResult = {
+        name: person,
+        futureAvailability: [
+          {
+            value: 0,
+            year: new Date().getFullYear() + 2,
+            month: 'Jun',
+            status: 'available',
+          },
+          {
+            value: 0,
+            year: new Date().getFullYear() + 2,
+            month: 'Jun',
+            status: 'flexible_start',
+          },
+        ],
+      };
+
+      jest
+        .spyOn(sheetService, 'getSheetData')
+        .mockResolvedValue(sampleDataForFuture);
+
+      const result = await service.getFutureAvailability(
+        person,
         dummyAccessToken,
       );
 
