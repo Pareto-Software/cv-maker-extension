@@ -103,7 +103,7 @@ const sampleDataForFuture: SheetDataDTO = {
           status: 'available',
         },
         {
-          reservationPercentage: 0.8,
+          reservationPercentage: 0,
           year: new Date().getFullYear() + 2,
           month: 'Jun',
           status: 'flexible_start',
