@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { SheetService } from '../sheet/sheet.service';
 import { CellValueDTO, SheetDataDTO, StatusValue, Month } from '../sheet/dtos';
+import { AllocationRow, AvailableEmployeesDTO } from './dtos';
 
 export interface AllocationDataDTO {
   [year: string]: {
@@ -67,6 +68,38 @@ export class AllocationService {
     });
 
     return Array.from(employeeNames);
+  }
+
+  async getAvailableEmployees(
+    year: number,
+    month: string,
+    accessToken: string,
+  ): Promise<AvailableEmployeesDTO> {
+    const sheetData = await this.sheetService.getSheetData(accessToken);
+
+    const availableRows: AllocationRow[] = [];
+    for (const row of sheetData.rows) {
+      const cell = row.cells.find(
+        (cell) =>
+          cell.month.toLowerCase() === month.toLowerCase() &&
+          cell.year === year &&
+          (cell.status === 'available' || cell.status === 'flexible_start'),
+      );
+
+      if (cell) {
+        availableRows.push({
+          name: row.name,
+          value: cell.reservationPercentage,
+          status: cell.status,
+        });
+      }
+    }
+
+    return {
+      year,
+      month,
+      availableEmployees: availableRows,
+    };
   }
 
   private transformCellsToData(cells: CellValueDTO[]): AllocationDataDTO {

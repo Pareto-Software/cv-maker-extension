@@ -8,6 +8,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AllocationService, AllocationResponseDTO } from './allocation.service';
+import { ApiResponse } from '@nestjs/swagger';
+import { AvailableEmployeesDTO } from './dtos';
 
 @Controller('allocation')
 export class AllocationController {
@@ -48,6 +50,29 @@ export class AllocationController {
     const employeeNames =
       await this.allocationService.getAllEmployeeNames(access_token);
     return { employees: employeeNames };
+  }
+
+  @Get('available/:year/:month')
+  @HttpCode(200)
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved employee data',
+    type: AvailableEmployeesDTO,
+  })
+  async availableAtSpecificMonth(
+    @Param('year') year: number,
+    @Param('month') month: string,
+    @Headers() headers: Record<string, string>,
+  ): Promise<AvailableEmployeesDTO> {
+    const access_token = headers.authorization?.replace('Bearer ', '').trim();
+    if (!access_token) {
+      throw new UnauthorizedException('Access token is missing or invalid');
+    }
+    return this.allocationService.getAvailableEmployees(
+      year,
+      month,
+      access_token,
+    );
   }
 
   @Get('sheetdata')
