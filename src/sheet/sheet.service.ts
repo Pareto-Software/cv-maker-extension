@@ -1,10 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  SheetDataDTO,
-  RowValueDTO,
-  Month,
-  StatusValue,
-} from './dtos';
+import { SheetDataDTO, RowValueDTO, Month, StatusValue } from './dtos';
 import { google, sheets_v4 } from 'googleapis';
 import { ConfigService } from '@nestjs/config';
 
@@ -17,11 +12,12 @@ export class SheetService {
     const spreadsheet_id = this.configService.get<string>('SPREADSHEET_ID');
 
     if (!spreadsheet_id) {
-      throw new Error('Google client id, secret and redirect url must be provided');
-    } 
+      throw new Error(
+        'Google client id, secret and redirect url must be provided',
+      );
+    }
     this.spreadSheetId = spreadsheet_id;
   }
-
 
   updateSheetsCredentials(access_token: string) {
     const token = access_token.replace('Bearer ', '').trim();
@@ -229,7 +225,7 @@ export class SheetService {
           );
         }
       }
-        console.log("leaving sheet service");
+      console.log('leaving sheet service');
       return sheetData;
     } catch (error) {
       console.error('Error fetching data:', error);
