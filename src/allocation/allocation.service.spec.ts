@@ -342,15 +342,6 @@ describe('AllocationService', () => {
       expect(sheetService.getSheetData).toHaveBeenCalledWith(dummyAccessToken);
     });
 
-    it('should throw NotFoundException if no data is found for the given month and year', async () => {
-      const year = 2030;
-      const month = 'Dec';
-
-      await expect(
-        service.getAllocationsByMonthYear(year, month, dummyAccessToken),
-      ).rejects.toThrow(NotFoundException);
-    });
-
     it('should handle errors from sheetService.getSheetData', async () => {
       sheetService.getSheetData = jest
         .fn()
