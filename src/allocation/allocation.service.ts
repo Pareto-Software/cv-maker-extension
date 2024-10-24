@@ -43,7 +43,10 @@ export class AllocationService {
   // Do functions that transform sheet data here
 
   async getSheetData(access_token: string) {
-    return await this.sheetService.getSheetData(access_token);
+    console.log('Trying to fetch sheetdata in allocation service');
+    const middlevar = await this.sheetService.getSheetData(access_token);
+    console.log('Middlevar');
+    return middlevar;
   }
 
   async getAllocationByName(

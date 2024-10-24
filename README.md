@@ -11,10 +11,8 @@ CLIENT_SECRET=
 AUTHORIZATION_URL=
 TOKEN_URL=
 SCOPE=
-AUTH_METHOD=oauth # other: oauth
 SPREADSHEET_ID=
 REDIRECT_URL=<your ngrok url here>
-GOOGLE_API_KEY=
 ```
 **2. setup ngrok on the website**
 

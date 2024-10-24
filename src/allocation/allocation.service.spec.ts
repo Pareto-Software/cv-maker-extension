@@ -1,7 +1,6 @@
 import { AllocationService, AllocationResponseDTO } from './allocation.service';
 import { SheetService } from '../sheet/sheet.service';
 import { SheetDataDTO } from '../sheet/dtos';
-import { SheetsClientProvider } from '../sheet/sheets-client.provider';
 import { ConfigService } from '@nestjs/config';
 import { InternalServerErrorException } from '@nestjs/common';
 
@@ -124,16 +123,14 @@ describe('AllocationService', () => {
   let service: AllocationService;
   beforeEach(async () => {
     sheetService = new SheetService(
-      new SheetsClientProvider(
-        new ConfigService({
-          CLIENT_ID: 'dummy-client-id',
-          CLIENT_SECRET: 'dummy-client-secret',
-          REDIRECT_URL: 'http://localhost/redirect',
-          SPREADSHEET_ID: 'dummy-spreadsheet-id',
-          GOOGLE_API_KEY: 'dummy-api-key',
-          AUTH_METHOD: 'api_key',
-        }),
-      ),
+      new ConfigService({
+        CLIENT_ID: 'dummy-client-id',
+        CLIENT_SECRET: 'dummy-client-secret',
+        REDIRECT_URL: 'http://localhost/redirect',
+        SPREADSHEET_ID: 'dummy-spreadsheet-id',
+        GOOGLE_API_KEY: 'dummy-api-key',
+        AUTH_METHOD: 'api_key',
+      }),
     );
     service = new AllocationService(sheetService);
     jest.spyOn(sheetService, 'getSheetData').mockResolvedValue(sampleData);
