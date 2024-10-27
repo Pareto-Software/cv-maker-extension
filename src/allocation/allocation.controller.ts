@@ -9,12 +9,12 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
-import { AvailableEmployeesDTO, FutureAllocationResponseDTO } from './dtos';
-import {
-  AllocationService,
-  AllocationResponseDTO,
+import { AvailableEmployeesDTO,
+  FutureAllocationResponseDTO,
   AllocationByMonthResponseDTO,
-} from './allocation.service';
+  AllocationResponseDTO
+} from './dtos';
+import { AllocationService } from './allocation.service';
 
 @Controller('allocation')
 export class AllocationController {
@@ -76,6 +76,10 @@ export class AllocationController {
     type: AvailableEmployeesDTO,
   })
   @Get(':year/:month')
+  @HttpCode(200)
+  @ApiResponse({
+    type: AllocationByMonthResponseDTO,
+  })
   async getAllocationsByMonthYear(
     @Param('year', ParseIntPipe) year: number,
     @Param('month') month: string,
