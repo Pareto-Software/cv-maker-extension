@@ -13,8 +13,7 @@ async function bootstrap() {
     .addServer('https://localhost:3000', 'Local development server')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app,
-    {...document, openapi: '3.1.0' });
+  SwaggerModule.setup('api', app, { ...document, openapi: '3.1.0' });
 
   await app.listen(3000);
 }

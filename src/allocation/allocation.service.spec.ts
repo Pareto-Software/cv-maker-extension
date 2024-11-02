@@ -1,4 +1,4 @@
-import { AllocationService} from './allocation.service';
+import { AllocationService } from './allocation.service';
 import { AllocationResponseDTO } from './dtos';
 import { SheetService } from '../sheet/sheet.service';
 import { SheetDataDTO } from '../sheet/dtos';

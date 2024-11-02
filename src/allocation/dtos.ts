@@ -30,8 +30,7 @@ export class MonthData {
   reservationPercentage: number | null;
 
   @ApiProperty({
-    description:
-      'Determines if employee is available for billing.',
+    description: 'Determines if employee is available for billing.',
     enum: ['available', 'unsure', 'flexible_start', 'unavailable'],
     example: 'available',
   })
@@ -98,8 +97,7 @@ export class AllocationByMonthResponseDTO {
   month: string;
 
   @ApiProperty({
-    description:
-      'An array of employee allocations for the given month',
+    description: 'An array of employee allocations for the given month',
     type: [AllocationRow],
   })
   allocations: AllocationRow[];

@@ -9,10 +9,11 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
-import { AvailableEmployeesDTO,
+import {
+  AvailableEmployeesDTO,
   FutureAllocationResponseDTO,
   AllocationByMonthResponseDTO,
-  AllocationResponseDTO
+  AllocationResponseDTO,
 } from './dtos';
 import { AllocationService } from './allocation.service';
 
