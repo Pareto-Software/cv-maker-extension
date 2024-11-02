@@ -10,7 +10,7 @@ async function bootstrap() {
     .setTitle('CV maker extension')
     .setDescription('cv maker extension for pareto software')
     .setVersion('1.0')
-    .addServer('http://localhost:3000', 'Local development server')
+    .addServer('https://localhost:3000', 'Local development server')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app,
