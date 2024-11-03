@@ -69,11 +69,18 @@ export class SupabaseService {
   async getEmployeesFullInformation(
     firstName: string,
     lastName: string,
-  ): Promise<EmployeeFullDetailDTO> {
+  ): Promise<EmployeeFullDetailDTO> { 
     const { data: profile, error: profileError } = await this.supabase
       .from('profiles')
       .select(
-        'user_id, first_name,last_name, title, description, education->school, education->graduationYear, education->degree, education->field, education->thesis',
+        `
+        user_id,
+        first_name,
+        last_name,
+        title,
+        description,
+        education
+        `,
       )
       .eq('first_name', firstName)
       .eq('last_name', lastName)
@@ -81,16 +88,23 @@ export class SupabaseService {
 
     if (profileError || !profile) {
       throw new Error(
-        `Error fetching profiles : ${profileError?.message || 'Profile not found'}`,
+        `Error fetching profile: ${profileError?.message || 'Profile not found'}`,
       );
     }
+
+    const educationData = profile.education
+      ? JSON.parse(profile.education)
+      : {};
+    const education = educationData as EducationDTO;
+   
+
     const { data: skills, error: skillsError } = await this.supabase
       .from('skills')
       .select('skill, level')
       .eq('user_id', profile.user_id);
 
     if (skillsError) {
-      throw new Error(`Error fetching skills : ${skillsError.message}`);
+      throw new Error(`Error fetching skills: ${skillsError.message}`);
     }
 
     const { data: projects, error: projectsError } = await this.supabase
@@ -99,7 +113,7 @@ export class SupabaseService {
       .eq('user_id', profile.user_id);
 
     if (projectsError) {
-      throw new Error(`Error fetching projects : ${projectsError.message}`);
+      throw new Error(`Error fetching projects: ${projectsError.message}`);
     }
 
     const { data: certifications, error: certificationsError } =
@@ -110,7 +124,7 @@ export class SupabaseService {
 
     if (certificationsError) {
       throw new Error(
-        `Error fetching certifications : ${certificationsError.message}`,
+        `Error fetching certifications: ${certificationsError.message}`,
       );
     }
 
@@ -119,12 +133,12 @@ export class SupabaseService {
       title: profile.title ?? '',
       description: profile.description ?? '',
       education: {
-        school: profile.school,
-        graduationYear: profile.graduationYear ?? '',
-        degree: profile.degree ?? '',
-        field: profile.field ?? '',
-        thesis: profile.thesis ?? '',
-      } as EducationDTO,
+        school: education.school ?? '',
+        graduationYear: Number(education.graduationYear) || 0,
+        degree: education.degree ?? '',
+        field: education.field ?? '',
+        thesis: education.thesis ?? '',
+      },
       skills: skills.map((skill) => ({
         name: skill.skill ?? '',
         level: skill.level,
@@ -143,6 +157,7 @@ export class SupabaseService {
         valid_until: certification.valid_until ?? '',
       })) as CertificationDTO[],
     };
+
     return employee;
   }
 }
