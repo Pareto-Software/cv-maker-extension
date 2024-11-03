@@ -69,7 +69,7 @@ export class SupabaseService {
   async getEmployeesFullInformation(
     firstName: string,
     lastName: string,
-  ): Promise<EmployeeFullDetailDTO> { 
+  ): Promise<EmployeeFullDetailDTO> {
     const { data: profile, error: profileError } = await this.supabase
       .from('profiles')
       .select(
@@ -96,7 +96,6 @@ export class SupabaseService {
       ? JSON.parse(profile.education)
       : {};
     const education = educationData as EducationDTO;
-   
 
     const { data: skills, error: skillsError } = await this.supabase
       .from('skills')
