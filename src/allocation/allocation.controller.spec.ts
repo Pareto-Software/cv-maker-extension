@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { AllocationResponseDTO } from './allocation.service';
+import { AllocationResponseDTO } from './dtos';
 
 describe('controller', () => {
   let controller: AllocationController;
@@ -45,18 +45,28 @@ describe('controller', () => {
       name: 'Test person',
       capacity: 0.8,
       data: {
-        '2015': {
-          May: {
-            reservationPercentage: 0.8,
-            status: 'unavailable',
+        years: [
+          {
+            year: 2015,
+            months: [
+              {
+                month: 'May',
+                reservationPercentage: 0.8,
+                status: 'unavailable',
+              },
+            ],
           },
-        },
-        '2024': {
-          Jun: {
-            reservationPercentage: 0,
-            status: 'available',
+          {
+            year: 2024,
+            months: [
+              {
+                month: 'Jun',
+                reservationPercentage: 0,
+                status: 'available',
+              },
+            ],
           },
-        },
+        ],
       },
     };
 
@@ -93,18 +103,28 @@ describe('controller', () => {
       name: 'Test person',
       capacity: 0.8,
       data: {
-        '2015': {
-          May: {
-            reservationPercentage: 0.8,
-            status: 'unavailable',
+        years: [
+          {
+            year: 2015,
+            months: [
+              {
+                month: 'May',
+                reservationPercentage: 0.8,
+                status: 'unavailable',
+              },
+            ],
           },
-        },
-        '2024': {
-          Jun: {
-            reservationPercentage: 0,
-            status: 'available',
+          {
+            year: 2024,
+            months: [
+              {
+                month: 'Jun',
+                reservationPercentage: 0,
+                status: 'available',
+              },
+            ],
           },
-        },
+        ],
       },
     };
 
