@@ -30,8 +30,7 @@ export class SupabaseService {
   async getEmployeesSkillsAndProject(): Promise<EmployeeDTO[]> {
     const { data: profiles, error: profileError } = await this.supabase
       .from('profiles')
-      .select('user_id, first_name');
-
+      .select('user_id, first_name, last_name');
     if (profileError) {
       throw new Error(`Error fetching profiles : ${profileError.message}`);
     }
@@ -54,7 +53,7 @@ export class SupabaseService {
 
     const employees: EmployeeDTO[] = profiles.map((profile) => {
       return {
-        name: profile.first_name ?? '',
+        name: `${profile.first_name} ${profile.last_name}`,
         skills: skills
           .filter((skill) => skill.user_id === profile.user_id)
           .map((skill) => skill.skill ?? ''),
