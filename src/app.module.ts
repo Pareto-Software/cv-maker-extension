@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { SupabaseModule } from './supabase/supabase.module';
 import { AllocationModule } from './allocation/allocation.module';
 import { SheetModule } from './sheet/sheet.module';
+import { CvImportModule } from './cv-import/cv-import.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { SheetModule } from './sheet/sheet.module';
     SupabaseModule,
     AllocationModule,
     SheetModule,
+    CvImportModule,
   ],
   controllers: [AppController],
 })
