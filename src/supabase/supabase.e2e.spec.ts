@@ -62,7 +62,7 @@ describe('SupabaseController (e2e)', () => {
 
   it(`/GET employees/:first_name/:last_name`, () => {
     return request(app.getHttpServer())
-      .get('/employees/Samu/Toljamo')
+      .get('/employees?firstName=Samu&lastName=Toljamo')
       .expect(200)
       .expect(mockEmployeeData)
       .then((response) => {
