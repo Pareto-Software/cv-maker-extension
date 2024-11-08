@@ -16,7 +16,6 @@ import {
   AllocationResponseDTO,
 } from './dtos';
 import { AllocationService } from './allocation.service';
-import { number } from 'zod';
 
 @Controller('allocation')
 @ApiTags('Allocation')
@@ -28,7 +27,7 @@ export class AllocationController {
   @HttpCode(200)
   @ApiResponse({
     status: 200,
-    description: 'Successfully retrieved allocation data for all employees'
+    description: 'Successfully retrieved allocation data for all employees',
   })
   async fetchSheetData(@Headers() headers: Record<string, string>) {
     console.log('Auth Header:', headers.authorization);
@@ -41,11 +40,11 @@ export class AllocationController {
   }
 
   @Get(':name')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Fetch employee allocation data by name',
     description: `Fetches allocation data for a specified employee, 
-                  including their capacity for each month and year`
-   })
+                  including their capacity for each month and year`,
+  })
   @ApiParam({
     name: 'name',
     type: String,
@@ -53,7 +52,7 @@ export class AllocationController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Successfully retrieved allocation data for an employee'
+    description: 'Successfully retrieved allocation data for an employee',
   })
   async getAllocationByName(
     @Param('name') name: string,
@@ -78,13 +77,14 @@ export class AllocationController {
   }
 
   @Get()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Retrieve employee names from Allocation data',
-    description: 'Fetches names of all employees from allocation data'
-   })
-   @ApiResponse({
+    description: 'Fetches names of all employees from allocation data',
+  })
+  @ApiResponse({
     status: 200,
-    description: 'Successfully retrieved all employee names from allocation data'
+    description:
+      'Successfully retrieved all employee names from allocation data',
   })
   async getAllEmployees(
     @Headers() headers: Record<string, string>,
@@ -100,11 +100,11 @@ export class AllocationController {
   }
 
   @Get('available/:year/:month')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Retrieve all employees allocation data by month and year',
     description: `Fetches a list of employees for a specific year 
-                  and month, along with their availability details`
-   })
+                  and month, along with their availability details`,
+  })
   @ApiParam({
     name: 'year',
     type: Number,
@@ -161,12 +161,12 @@ export class AllocationController {
   }
 
   @Get(':name/future')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Retrieve future availability for an employee',
     description: `Fetches future availability details for a specified employee,
-                  including reservation percentage and status for upcoming months.`
-   })
-   @ApiParam({
+                  including reservation percentage and status for upcoming months.`,
+  })
+  @ApiParam({
     name: 'name',
     type: String,
     description: 'First and last name of an employee',
