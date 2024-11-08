@@ -51,6 +51,15 @@ export class SupabaseService {
       throw new Error(`Error fetching projects : ${projectsError.message}`);
     }
 
+    const { data: certifications, error: certificationsError } =
+      await this.supabase.from('certifications').select('user_id, name');
+    if (certificationsError){
+      throw new Error(
+        `Error fetching certificates : ${certificationsError.message}`,
+      );
+    }
+
+
     const employees: EmployeeDTO[] = profiles.map((profile) => {
       return {
         name: `${profile.first_name} ${profile.last_name}`,
@@ -60,6 +69,9 @@ export class SupabaseService {
         projects: projects
           .filter((project) => project.user_id === profile.user_id)
           .map((project) => project.name ?? ''),
+        certifications: certifications
+          .filter((certificate) => certificate.user_id === profile.user_id)
+          .map((certificate) => certificate.name)
       };
     });
     return employees;
