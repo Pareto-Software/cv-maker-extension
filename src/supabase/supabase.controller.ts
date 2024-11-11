@@ -43,16 +43,10 @@ export class SupabaseController {
   @ApiOperation({ summary: 'Retrieve employee CV information by full name' })
   @ApiQuery({
     name: 'firstName',
-  @ApiOperation({
-    summary: 'Retrieve employee CV information by full name',
-    description: `Fetches detailed CV information for an employee, including name,
-                  title, education, skills, projects, and certifications`,
-  })
-  @ApiParam({
-    name: 'first_name',
     type: String,
     description: 'Employee first name',
   })
+
   @ApiQuery({
     name: 'lastName',
     type: String,
