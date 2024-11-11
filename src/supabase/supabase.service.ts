@@ -95,7 +95,8 @@ export class SupabaseService {
           name: project.name ?? '',
           keywords: projectKeywordsWithNames
             .filter(
-              (projectKeyword) => projectKeyword.project_id === project.id)
+              (projectKeyword) => projectKeyword.project_id === project.id,
+            )
             .map((projectKeyword) => projectKeyword.keyword ?? ''),
         }));
 

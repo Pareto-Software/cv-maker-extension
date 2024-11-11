@@ -42,7 +42,6 @@ export class SupabaseController {
     type: String,
     description: 'Employee first name',
   })
-
   @ApiQuery({
     name: 'lastName',
     type: String,
