@@ -3,12 +3,12 @@ import {
   Get,
   Headers,
   HttpCode,
-  Param,
   NotFoundException,
   UnauthorizedException,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ApiResponse, ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import {
   AvailableEmployeesDTO,
   FutureAllocationResponseDTO,
@@ -45,7 +45,7 @@ export class AllocationController {
     description: `Fetches allocation data for a specified employee, 
                   including their capacity for each month and year`,
   })
-  @ApiParam({
+  @ApiQuery({
     name: 'name',
     type: String,
     description: 'Employee first and last name',
@@ -55,7 +55,7 @@ export class AllocationController {
     description: 'Successfully retrieved allocation data for an employee',
   })
   async getAllocationByName(
-    @Param('name') name: string,
+    @Query('name') name: string,
     @Headers() headers: Record<string, string>,
   ): Promise<AllocationResponseDTO> {
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
@@ -105,12 +105,12 @@ export class AllocationController {
     description: `Fetches a list of employees for a specific year 
                   and month, along with their availability details`,
   })
-  @ApiParam({
+  @ApiQuery({
     name: 'year',
     type: Number,
     description: 'Year to filter allocation data by',
   })
-  @ApiParam({
+  @ApiQuery({
     name: 'month',
     type: String,
     description: 'Month to filter allocation data by',
@@ -127,8 +127,8 @@ export class AllocationController {
     type: AllocationByMonthResponseDTO,
   })
   async getAllocationsByMonthYear(
-    @Param('year', ParseIntPipe) year: number,
-    @Param('month') month: string,
+    @Query('year', ParseIntPipe) year: number,
+    @Query('month') month: string,
     @Headers() headers: Record<string, string>,
   ): Promise<AllocationByMonthResponseDTO> {
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
@@ -145,8 +145,8 @@ export class AllocationController {
   }
 
   async availableAtSpecificMonth(
-    @Param('year', ParseIntPipe) year: number,
-    @Param('month') month: string,
+    @Query('year', ParseIntPipe) year: number,
+    @Query('month') month: string,
     @Headers() headers: Record<string, string>,
   ): Promise<AvailableEmployeesDTO> {
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
@@ -166,7 +166,7 @@ export class AllocationController {
     description: `Fetches future availability details for a specified employee,
                   including reservation percentage and status for upcoming months.`,
   })
-  @ApiParam({
+  @ApiQuery({
     name: 'name',
     type: String,
     description: 'First and last name of an employee',
@@ -178,7 +178,7 @@ export class AllocationController {
     type: FutureAllocationResponseDTO,
   })
   async futureAvailability(
-    @Param('name') name: string,
+    @Query('name') name: string,
     @Headers() headers: Record<string, string>,
   ): Promise<FutureAllocationResponseDTO> {
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
