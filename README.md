@@ -15,6 +15,8 @@ TOKEN_URL=
 SCOPE=
 SPREADSHEET_ID=
 REDIRECT_URL=<your ngrok url here>
+
+(add also CVMAKER_CLIENT_HOST= if you want to test cvmaker locally without ngrok)
 ```
 
 **2. setup ngrok on the website**

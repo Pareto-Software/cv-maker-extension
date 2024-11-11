@@ -13,7 +13,12 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, { ...document, openapi: '3.1.0' });
-
+  // for cvmaker dev testing
+  app.enableCors({
+    origin: process.env.CVMAKER_CLIENT_HOST,
+    methods: 'POST',
+    allowedHeaders: 'Content-Type, Authorization, Accept',
+  });
   await app.listen(3000);
 }
 bootstrap();
