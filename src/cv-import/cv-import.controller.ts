@@ -5,6 +5,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { JwtGuard } from 'src/jwt/jwt.guard';
 
 // Manages HTTP requests and routing.
 @Controller('cv-import')
