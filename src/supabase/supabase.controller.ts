@@ -13,13 +13,17 @@ import {
   EmployeesResponseDTO,
 } from './dto/employees-response.dto';
 
-@ApiTags('Supabase ')
+@ApiTags('Supabase')
 @Controller()
 export class SupabaseController {
   constructor(private readonly supabaseService: SupabaseService) {}
 
   @Get('employees/skills-projects')
-  @ApiOperation({ summary: 'Fetch employee profiles, skills, and projects' })
+  @ApiOperation({
+    summary: 'Fetch employee skills and projects',
+    description:
+      'Retrieves a list of employees along with their skills and projects',
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully fetched employee data',
@@ -39,6 +43,13 @@ export class SupabaseController {
   @ApiOperation({ summary: 'Retrieve employee CV information by full name' })
   @ApiQuery({
     name: 'firstName',
+  @ApiOperation({
+    summary: 'Retrieve employee CV information by full name',
+    description: `Fetches detailed CV information for an employee, including name,
+                  title, education, skills, projects, and certifications`,
+  })
+  @ApiParam({
+    name: 'first_name',
     type: String,
     description: 'Employee first name',
   })
