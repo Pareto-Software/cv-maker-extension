@@ -16,6 +16,7 @@ export class CvImportController {
   @Post('process/cvfiles')
   // Should perhaps import a CV DTO inside the ()
   async importCv() {
+    console.log('Processing CV files');
     try {
       // await this.cvImportService.importCv(createCvDto);
       return HttpStatus.NO_CONTENT;
