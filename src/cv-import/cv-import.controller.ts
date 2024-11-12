@@ -1,29 +1,44 @@
 import {
+  Body,
   Controller,
   HttpException,
   HttpStatus,
   Post,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtGuard } from 'src/jwt/jwt.guard';
 
 // Manages HTTP requests and routing.
 @Controller('cv-import')
 @UseGuards(JwtGuard)
 export class CvImportController {
-  // Should handle the flow so that it can return 400 or 500 depending on what
-  // goes wrong
+  @UseInterceptors(FilesInterceptor('files'))
   @Post('process/cvfiles')
-  // Should perhaps import a CV DTO inside the ()
-  async importCv() {
+  async importCv(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body() body: { user: string },
+    //@Req() request: Request,
+  ) {
     console.log('Processing CV files');
+    if (body.user) {
+      console.log(body.user);
+      console.log(files);
+    }
+
+    // Do something with the user id and files
+    // Validate them?
+    // Send them for langchain parsing?
+
     try {
       // await this.cvImportService.importCv(createCvDto);
-      return HttpStatus.NO_CONTENT;
+      return HttpStatus.NO_CONTENT; // 204
     } catch (error) {
       throw new HttpException(
         `Failed to import CV ${error}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR, //500
       );
     }
   }
