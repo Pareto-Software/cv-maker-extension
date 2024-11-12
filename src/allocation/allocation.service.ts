@@ -4,38 +4,17 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { SheetService } from '../sheet/sheet.service';
-import { CellValueDTO, SheetDataDTO, StatusValue, Month } from '../sheet/dtos';
+import { CellValueDTO, SheetDataDTO, Month } from '../sheet/dtos';
 import {
   AllocationRow,
   AvailableEmployeesDTO,
+  AllocationDataDTO,
+  YearData,
+  MonthData,
   FutureAllocationResponseDTO,
+  AllocationResponseDTO,
+  AllocationByMonthResponseDTO,
 } from './dtos';
-
-export interface AllocationDataDTO {
-  [year: string]: {
-    [month in Month]?: {
-      reservationPercentage: number | null;
-      status: StatusValue;
-    };
-  };
-}
-
-export interface AllocationByMonthResponseDTO {
-  year: number;
-  month: string;
-  allocations: {
-    [employeeName: string]: {
-      value: number | null;
-      status: string;
-    };
-  };
-}
-
-export interface AllocationResponseDTO {
-  name: string;
-  capacity: number;
-  data: AllocationDataDTO;
-}
 
 @Injectable()
 export class AllocationService {
@@ -158,22 +137,42 @@ export class AllocationService {
   }
 
   private transformCellsToData(cells: CellValueDTO[]): AllocationDataDTO {
-    const data: AllocationDataDTO = {};
+    const yearsMap: Map<number, YearData> = new Map();
 
     cells.forEach((cell) => {
       const { year, month, reservationPercentage, status } = cell;
 
-      if (!data[year]) {
-        data[year] = {};
+      // Check if the year already exists in the map
+      if (!yearsMap.has(year)) {
+        yearsMap.set(year, {
+          year: year,
+          months: [],
+        });
       }
 
-      data[year][month] = {
-        reservationPercentage,
-        status,
+      // Get the corresponding YearData
+      const yearData = yearsMap.get(year)!;
+
+      // Create a new MonthData object
+      const monthData: MonthData = {
+        month: month,
+        reservationPercentage: reservationPercentage,
+        status: status,
       };
+
+      // Add the month data to the year
+      yearData.months.push(monthData);
     });
 
-    return data;
+    // Convert the yearsMap to an array
+    const yearsArray: YearData[] = Array.from(yearsMap.values());
+
+    // Build and return the AllocationDataDTO
+    const allocationData: AllocationDataDTO = {
+      years: yearsArray,
+    };
+
+    return allocationData;
   }
 
   /**
@@ -218,13 +217,8 @@ export class AllocationService {
       const sheetData: SheetDataDTO =
         await this.sheetService.getSheetData(access_token);
 
-      // Prepare allocations object
-      const allocations: {
-        [employeeName: string]: {
-          value: number | null;
-          status: string;
-        };
-      } = {};
+      // Prepare allocations array
+      const allocations: AllocationRow[] = [];
 
       // Iterate over each employee's data
       sheetData.rows.forEach((employee) => {
@@ -236,12 +230,21 @@ export class AllocationService {
         );
 
         if (matchingCell) {
-          allocations[employee.name] = {
+          const employeeAllocation: AllocationRow = {
+            name: employee.name,
             value: matchingCell.reservationPercentage,
             status: matchingCell.status,
           };
+          allocations.push(employeeAllocation);
         }
       });
+
+      // Check if any allocations were found
+      if (allocations.length === 0) {
+        throw new NotFoundException(
+          `No allocation data found for ${month} ${year}`,
+        );
+      }
 
       // Build and return the response object
       const response: AllocationByMonthResponseDTO = {
@@ -252,7 +255,10 @@ export class AllocationService {
 
       return response;
     } catch (error) {
-      console.log(error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      console.error(error);
       throw new InternalServerErrorException('Failed to fetch allocation data');
     }
   }

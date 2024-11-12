@@ -1,22 +1,31 @@
-import { Controller, Get, HttpCode, Headers } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, HttpCode } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('App')
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
-  @Get()
-  @ApiOperation({ summary: 'Get Hello message' })
+  @Get('/health')
+  @ApiOperation({ summary: 'Health check' })
   @ApiResponse({
     status: 200,
-    description: 'Successfully returned hello message',
+    description: 'App is running',
+    schema: {
+      type: 'object',
+      properties: {
+        status: {
+          type: 'string',
+        },
+        uptime: {
+          type: 'number',
+        },
+      },
+    },
   })
   @HttpCode(200)
-  getHello(@Headers() headers?: Record<string, string | undefined>) {
-    const authHeader = headers?.authorization || 'No Auth Header';
-    console.log('Auth Header:', authHeader);
-    return { message: this.appService.getHello() };
+  health() {
+    return {
+      status: 'UP',
+      uptime: process.uptime(),
+    };
   }
 }

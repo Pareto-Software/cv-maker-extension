@@ -12,6 +12,54 @@ export class ExampleResponseDTO {
   name: string;
 }
 
+export class MonthData {
+  @ApiProperty({
+    description: 'Month of the data',
+    type: 'string',
+    example: 'Jun',
+  })
+  month: string;
+
+  @ApiProperty({
+    description:
+      'Reservation percentage for the month (e.g., 0.8 means 80% booked).',
+    type: 'number',
+    nullable: true,
+    example: 0.8,
+  })
+  reservationPercentage: number | null;
+
+  @ApiProperty({
+    description: 'Determines if employee is available for billing.',
+    enum: ['available', 'unsure', 'flexible_start', 'unavailable'],
+    example: 'available',
+  })
+  status: StatusValue;
+}
+
+export class YearData {
+  @ApiProperty({
+    description: 'Year of the data',
+    type: 'number',
+    example: 2024,
+  })
+  year: number;
+
+  @ApiProperty({
+    description: 'An array of month data for the year',
+    type: [MonthData],
+  })
+  months: MonthData[];
+}
+
+export class AllocationDataDTO {
+  @ApiProperty({
+    description: 'An array of year data containing allocation information',
+    type: [YearData],
+  })
+  years: YearData[];
+}
+
 export class AllocationRow {
   @ApiProperty({
     description: 'Name of the employee',
@@ -33,10 +81,58 @@ export class AllocationRow {
   status: StatusValue;
 }
 
+export class AllocationByMonthResponseDTO {
+  @ApiProperty({
+    description: 'Year of the data',
+    type: 'number',
+    example: 2024,
+  })
+  year: number;
+
+  @ApiProperty({
+    description: 'Month of the data',
+    type: 'string',
+    example: 'Jun',
+  })
+  month: string;
+
+  @ApiProperty({
+    description: 'An array of employee allocations for the given month',
+    type: [AllocationRow],
+  })
+  allocations: AllocationRow[];
+}
+
+export class AllocationResponseDTO {
+  @ApiProperty({
+    description: 'Name of the employee',
+    type: 'string',
+    example: 'John Doe',
+  })
+  name: string;
+
+  @ApiProperty({
+    description: 'Capacity of the employee',
+    type: 'number',
+    example: 1.0,
+  })
+  capacity: number;
+
+  @ApiProperty({
+    description: 'Allocation data by year and month',
+    type: () => AllocationDataDTO,
+  })
+  data: AllocationDataDTO;
+}
+
 export class AvailableEmployeesDTO {
   @ApiProperty({
     description: 'Year of the data',
+<<<<<<< HEAD
     type: 'integer', // year is an integer
+=======
+    type: 'number',
+>>>>>>> origin
   })
   year: number;
 
@@ -70,7 +166,11 @@ export class FutureAllocationRow {
 
   @ApiProperty({
     description: 'Year of the data',
+<<<<<<< HEAD
     type: 'integer',
+=======
+    type: 'number',
+>>>>>>> origin
   })
   year: number;
 

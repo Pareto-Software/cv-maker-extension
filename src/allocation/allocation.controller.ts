@@ -8,19 +8,27 @@ import {
   UnauthorizedException,
   ParseIntPipe,
 } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
-import { AvailableEmployeesDTO, FutureAllocationResponseDTO } from './dtos';
+import { ApiResponse, ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
 import {
-  AllocationService,
-  AllocationResponseDTO,
+  AvailableEmployeesDTO,
+  FutureAllocationResponseDTO,
   AllocationByMonthResponseDTO,
-} from './allocation.service';
+  AllocationResponseDTO,
+} from './dtos';
+import { AllocationService } from './allocation.service';
 
 @Controller('allocation')
+@ApiTags('Allocation')
 export class AllocationController {
   constructor(private readonly allocationService: AllocationService) {}
+
   @Get('sheetdata')
+  @ApiOperation({ summary: 'Fetch allocation data for all employees' })
   @HttpCode(200)
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved allocation data for all employees',
+  })
   async fetchSheetData(@Headers() headers: Record<string, string>) {
     console.log('Auth Header:', headers.authorization);
     console.log('Trying to fetch sheetdata');
@@ -32,6 +40,20 @@ export class AllocationController {
   }
 
   @Get(':name')
+  @ApiOperation({
+    summary: 'Fetch employee allocation data by name',
+    description: `Fetches allocation data for a specified employee, 
+                  including their capacity for each month and year`,
+  })
+  @ApiParam({
+    name: 'name',
+    type: String,
+    description: 'Employee first and last name',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved allocation data for an employee',
+  })
   async getAllocationByName(
     @Param('name') name: string,
     @Headers() headers: Record<string, string>,
@@ -55,6 +77,15 @@ export class AllocationController {
   }
 
   @Get()
+  @ApiOperation({
+    summary: 'Retrieve employee names from Allocation data',
+    description: 'Fetches names of all employees from allocation data',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Successfully retrieved all employee names from allocation data',
+  })
   async getAllEmployees(
     @Headers() headers: Record<string, string>,
   ): Promise<{ employees: string[] }> {
@@ -69,6 +100,21 @@ export class AllocationController {
   }
 
   @Get('available/:year/:month')
+  @ApiOperation({
+    summary: 'Retrieve all employees allocation data by month and year',
+    description: `Fetches a list of employees for a specific year 
+                  and month, along with their availability details`,
+  })
+  @ApiParam({
+    name: 'year',
+    type: Number,
+    description: 'Year to filter allocation data by',
+  })
+  @ApiParam({
+    name: 'month',
+    type: String,
+    description: 'Month to filter allocation data by',
+  })
   @HttpCode(200)
   @ApiResponse({
     status: 200,
@@ -76,6 +122,10 @@ export class AllocationController {
     type: AvailableEmployeesDTO,
   })
   @Get(':year/:month')
+  @HttpCode(200)
+  @ApiResponse({
+    type: AllocationByMonthResponseDTO,
+  })
   async getAllocationsByMonthYear(
     @Param('year', ParseIntPipe) year: number,
     @Param('month') month: string,
@@ -111,8 +161,20 @@ export class AllocationController {
   }
 
   @Get(':name/future')
+  @ApiOperation({
+    summary: 'Retrieve future availability for an employee',
+    description: `Fetches future availability details for a specified employee,
+                  including reservation percentage and status for upcoming months.`,
+  })
+  @ApiParam({
+    name: 'name',
+    type: String,
+    description: 'First and last name of an employee',
+  })
   @HttpCode(200)
   @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved future availability data',
     type: FutureAllocationResponseDTO,
   })
   async futureAvailability(

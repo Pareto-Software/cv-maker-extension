@@ -1,4 +1,5 @@
-import { AllocationService, AllocationResponseDTO } from './allocation.service';
+import { AllocationService } from './allocation.service';
+import { AllocationResponseDTO } from './dtos';
 import { SheetService } from '../sheet/sheet.service';
 import { SheetDataDTO } from '../sheet/dtos';
 import { ConfigService } from '@nestjs/config';
@@ -148,21 +149,30 @@ describe('AllocationService', () => {
       name: 'Test person',
       capacity: 0.8,
       data: {
-        '2015': {
-          May: {
-            reservationPercentage: 0.8,
-            status: 'unavailable',
+        years: [
+          {
+            year: 2015,
+            months: [
+              {
+                month: 'May',
+                reservationPercentage: 0.8,
+                status: 'unavailable',
+              },
+            ],
           },
-        },
-        '2024': {
-          Jun: {
-            reservationPercentage: 0,
-            status: 'available',
+          {
+            year: 2024,
+            months: [
+              {
+                month: 'Jun',
+                reservationPercentage: 0,
+                status: 'available',
+              },
+            ],
           },
-        },
+        ],
       },
     };
-
     const result = await service.getAllocationByName(name, dummyAccessToken);
 
     expect(result).toEqual(expectedResult);
@@ -257,18 +267,28 @@ describe('AllocationService', () => {
       name: 'Test person',
       capacity: 0.8,
       data: {
-        '2015': {
-          May: {
-            reservationPercentage: 0.8,
-            status: 'unavailable',
+        years: [
+          {
+            year: 2015,
+            months: [
+              {
+                month: 'May',
+                reservationPercentage: 0.8,
+                status: 'unavailable',
+              },
+            ],
           },
-        },
-        '2024': {
-          Jun: {
-            reservationPercentage: 0,
-            status: 'available',
+          {
+            year: 2024,
+            months: [
+              {
+                month: 'Jun',
+                reservationPercentage: 0,
+                status: 'available',
+              },
+            ],
           },
-        },
+        ],
       },
     };
 
@@ -284,16 +304,18 @@ describe('AllocationService', () => {
       const expectedResponse = {
         year,
         month,
-        allocations: {
-          'Test person': {
+        allocations: [
+          {
+            name: 'Test person',
             value: 0,
             status: 'available',
           },
-          'Test person2': {
+          {
+            name: 'Test person2',
             value: 1,
             status: 'unavailable',
           },
-        },
+        ],
       };
 
       const result = await service.getAllocationsByMonthYear(
@@ -313,16 +335,18 @@ describe('AllocationService', () => {
       const expectedResponse = {
         year,
         month,
-        allocations: {
-          'Test person': {
+        allocations: [
+          {
+            name: 'Test person',
             value: 0,
             status: 'available',
           },
-          'Test person2': {
+          {
+            name: 'Test person2',
             value: 1,
             status: 'unavailable',
           },
-        },
+        ],
       };
 
       const result = await service.getAllocationsByMonthYear(
