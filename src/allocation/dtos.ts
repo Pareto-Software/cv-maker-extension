@@ -128,11 +128,7 @@ export class AllocationResponseDTO {
 export class AvailableEmployeesDTO {
   @ApiProperty({
     description: 'Year of the data',
-<<<<<<< HEAD
-    type: 'integer', // year is an integer
-=======
     type: 'number',
->>>>>>> origin
   })
   year: number;
 
@@ -166,11 +162,7 @@ export class FutureAllocationRow {
 
   @ApiProperty({
     description: 'Year of the data',
-<<<<<<< HEAD
-    type: 'integer',
-=======
     type: 'number',
->>>>>>> origin
   })
   year: number;
 
