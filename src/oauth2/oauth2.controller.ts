@@ -1,6 +1,6 @@
 import { Controller, Get, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { OAuth2Service } from './oauth2.service';
+import { OAuth2Service } from './oauth2.service.js';
 
 @Controller('oauth')
 export class AuthController {

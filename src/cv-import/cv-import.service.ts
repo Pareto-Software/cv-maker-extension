@@ -1,6 +1,6 @@
 // cv-import.service.ts
 import { Injectable } from '@nestjs/common';
-import { SupabaseClientProvider } from '../supabase/supabase-client.provider';
+import { SupabaseClientProvider } from '../supabase/supabase-client.provider.js';
 
 // Implements business logic and data handling.
 @Injectable()

@@ -5,13 +5,13 @@ import {
   HttpCode,
   NotFoundException,
 } from '@nestjs/common';
-import { SupabaseService } from './supabase.service';
+import { SupabaseService } from './supabase.service.js';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 
 import {
   EmployeeFullDetailDTO,
   EmployeesResponseDTO,
-} from './dto/employees-response.dto';
+} from './dto/employees-response.dto.js';
 
 @ApiTags('Supabase')
 @Controller()

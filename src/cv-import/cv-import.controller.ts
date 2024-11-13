@@ -9,8 +9,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { JwtGuard } from 'src/jwt/jwt.guard';
-import { PdfParserService } from './pdfParser.service';
+import { JwtGuard } from '../jwt/jwt.guard.js';
+import { PdfParserService } from './pdfParser.service.js';
 
 // Manages HTTP requests and routing.
 @Controller('cv-import')

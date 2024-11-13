@@ -3,7 +3,7 @@ import {
   NotFoundException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { SheetService } from '../sheet/sheet.service';
+import { SheetService } from '../sheet/sheet.service.js';
 import { CellValueDTO, SheetDataDTO, Month } from '../sheet/dtos';
 import {
   AllocationRow,

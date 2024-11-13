@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { SupabaseService } from './supabase.service';
-import { SupabaseController } from './supabase.controller';
-import { SupabaseClientProvider } from './supabase-client.provider';
+import { SupabaseService } from './supabase.service.js';
+import { SupabaseController } from './supabase.controller.js';
+import { SupabaseClientProvider } from './supabase-client.provider.js';
 import { ConfigModule } from '@nestjs/config';
-import { PdfParserService } from 'src/cv-import/pdfParser.service';
+import { PdfParserService } from '../cv-import/pdfParser.service.js';
 
 @Module({
   imports: [ConfigModule],

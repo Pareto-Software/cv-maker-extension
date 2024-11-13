@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CvImportService } from './cv-import.service';
+import { CvImportService } from './cv-import.service.js';
 
 // Unit tests for service
 describe('CvImportService', () => {

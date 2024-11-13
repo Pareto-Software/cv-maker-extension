@@ -1,7 +1,7 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Database } from './database.types';
+import { Database } from './database.types.js';
 
 @Injectable({ scope: Scope.REQUEST })
 export class SupabaseClientProvider {
@@ -17,7 +17,7 @@ export class SupabaseClientProvider {
 
     this.supabase = createClient<Database>(supabaseUrl, supabaseKey);
   }
-  
+
   getClient(): SupabaseClient<Database> {
     return this.supabase;
   }

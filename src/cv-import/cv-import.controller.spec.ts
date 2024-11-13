@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CvImportController } from './cv-import.controller';
+import { CvImportController } from './cv-import.controller.js';
 
 // Unit tests for controller
 describe('CvImportController', () => {

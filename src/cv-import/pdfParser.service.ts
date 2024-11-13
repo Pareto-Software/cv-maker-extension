@@ -1,9 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { ChatOpenAI } from '@langchain/openai';
 import * as dotenv from 'dotenv';
-import pdfParse from 'pdf-parse';
+import * as pdfJs from 'pdfjs-dist';
+import { TextItem } from 'pdfjs-dist/types/src/display/api.js';
 
 dotenv.config();
+
+/* interface TextItem {
+  str: string;
+  transform: Array<any>;
+  width: number;
+  height: number;
+  dir: string;
+  fontName: string;
+  hasEOL: boolean;
+} */
 
 @Injectable()
 export class PdfParserService {
@@ -19,14 +30,35 @@ export class PdfParserService {
   }
 
   async extractTextFromPdf(pdfFile: Express.Multer.File): Promise<string> {
-    const dataBuffer = pdfFile.buffer;
-    const pdfData = await pdfParse(dataBuffer);
-    return pdfData.text;
+    let fullText = '';
+
+    try {
+      const loadingTask = pdfJs.getDocument(new Uint8Array(pdfFile.buffer));
+      const pdf = await loadingTask.promise;
+
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items
+          .filter((item): item is TextItem => 'str' in item)
+          .map((item) => item.str)
+          .join(' ');
+
+        fullText += pageText + '\n';
+      }
+      console.log(fullText);
+
+      return fullText;
+    } catch (e: any) {
+      console.log('Error while parsing pdf from buffer:', e);
+      return '';
+    }
   }
 
   async processPdfContent(pdfFile: Express.Multer.File): Promise<any> {
     const pdfContent = this.extractTextFromPdf(pdfFile);
     console.log(pdfContent);
+    return true;
 
     /*     try {
       const structuredLlm = this.model.withStructuredOutput(

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AllocationService } from './allocation.service';
-import { AllocationController } from './allocation.controller';
-import { SheetService } from '../sheet/sheet.service';
-import { SheetModule } from 'src/sheet/sheet.module';
+import { AllocationService } from './allocation.service.js';
+import { AllocationController } from './allocation.controller.js';
+import { SheetService } from '../sheet/sheet.service.js';
+import { SheetModule } from '../sheet/sheet.module.js';
 
 @Module({
   imports: [SheetModule],

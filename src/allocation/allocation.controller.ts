@@ -14,8 +14,8 @@ import {
   FutureAllocationResponseDTO,
   AllocationByMonthResponseDTO,
   AllocationResponseDTO,
-} from './dtos';
-import { AllocationService } from './allocation.service';
+} from './dtos.js';
+import { AllocationService } from './allocation.service.js';
 
 @Controller('allocation')
 @ApiTags('Allocation')

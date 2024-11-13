@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
-import { Oauth2ClientProvider } from './oauth2-client.provider';
+import { Oauth2ClientProvider } from './oauth2-client.provider.js';
 
 @Injectable()
 export class OAuth2Service {
