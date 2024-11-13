@@ -6,7 +6,6 @@ import { Request, Response } from 'express';
 import { dump as yamlDump } from 'js-yaml';
 import { INestApplication } from '@nestjs/common';
 
-
 // Function to create the OpenAPI document with dynamic servers
 function createOpenApiDocument(app: INestApplication, req?: Request) {
   const config = new DocumentBuilder()
@@ -16,7 +15,7 @@ function createOpenApiDocument(app: INestApplication, req?: Request) {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  
+
   // Set OpenAPI version to 3.1.0
   document.openapi = '3.1.0';
 
