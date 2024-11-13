@@ -34,17 +34,6 @@ export class PdfProcessingService {
             required: ["name", "received", "valid_until"],
         },
         },
-        keywords: {
-        type: "array",
-        description: "A list of relevant keywords, often associated with skills or expertise areas.",
-        items: {
-            type: "object",
-            properties: {
-            name: { type: "string", description: "The keyword or skill name." },
-            },
-            required: ["name"],
-        },
-        },
         profiles: {
         type: "array",
         description: "A list of individual profiles containing personal and professional information.",
@@ -93,8 +82,9 @@ export class PdfProcessingService {
             project_category: { type: "integer", description: "The ID of the project category this project belongs to." },
             project_url: { type: "string", description: "URL to the project's webpage or online resource." },
             image_url: { type: "string", description: "URL to an image representing the project." },
+            keywords: { type: "string", description: "Keywords for the project" },
             },
-            required: ["name", "description", "company", "end_date", "role", "start_date"],
+            required: ["name", "description", "company", "end_date", "role", "start_date", "keywords"],
         },
         },
         skills: {
