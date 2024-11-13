@@ -17,4 +17,8 @@ export class SupabaseClientProvider {
 
     this.supabase = createClient<Database>(supabaseUrl, supabaseKey);
   }
+  
+  getClient(): SupabaseClient<Database> {
+    return this.supabase;
+  }
 }
