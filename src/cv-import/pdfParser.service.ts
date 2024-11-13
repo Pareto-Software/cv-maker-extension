@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ChatOpenAI } from '@langchain/openai';
 import * as dotenv from 'dotenv';
-import fs from 'fs';
 import pdfParse from 'pdf-parse';
 
 dotenv.config();
 
 @Injectable()
-export class PdfProcessingService {
+export class PdfParserService {
   private model: ChatOpenAI;
 
   constructor() {
@@ -18,6 +17,37 @@ export class PdfProcessingService {
       maxTokens: 4096,
     });
   }
+
+  async extractTextFromPdf(pdfFile: Express.Multer.File): Promise<string> {
+    const dataBuffer = pdfFile.buffer;
+    const pdfData = await pdfParse(dataBuffer);
+    return pdfData.text;
+  }
+
+  async processPdfContent(pdfFile: Express.Multer.File): Promise<any> {
+    const pdfContent = this.extractTextFromPdf(pdfFile);
+    console.log(pdfContent);
+
+    /*     try {
+      const structuredLlm = this.model.withStructuredOutput(
+        this.databaseSchema,
+        {
+          method: 'jsonSchema',
+        },
+      );
+
+      const response = await structuredLlm.invoke(
+        `Fill information to JSON structure from the following CV file (fill projects and project categories always): ${pdfContent}`,
+      );
+
+      console.log('Structured output:', response);
+      return response;
+    } catch (error) {
+      console.error('Error fetching CV:', error);
+      throw new Error('Failed to process PDF content');
+    } */
+  }
+
   private databaseSchema = {
     type: 'object',
     properties: {
@@ -213,34 +243,6 @@ export class PdfProcessingService {
       'skills',
     ],
   };
-
-  async extractTextFromPdf(filePath: string): Promise<string> {
-    const dataBuffer = fs.readFileSync(filePath);
-    const pdfData = await pdfParse(dataBuffer);
-    return pdfData.text;
-  }
-
-  async processPdfContent(filePath: string): Promise<any> {
-    try {
-      const pdfContent = await this.extractTextFromPdf(filePath);
-      const structuredLlm = this.model.withStructuredOutput(
-        this.databaseSchema,
-        {
-          method: 'jsonSchema',
-        },
-      );
-
-      const response = await structuredLlm.invoke(
-        `Fill information to JSON structure from the following CV file (fill projects and project categories always): ${pdfContent}`,
-      );
-
-      console.log('Structured output:', response);
-      return response;
-    } catch (error) {
-      console.error('Error fetching CV:', error);
-      throw new Error('Failed to process PDF content');
-    }
-  }
 }
 
 // Execute the function with your PDF file path

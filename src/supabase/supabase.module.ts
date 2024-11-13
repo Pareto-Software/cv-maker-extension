@@ -3,12 +3,12 @@ import { SupabaseService } from './supabase.service';
 import { SupabaseController } from './supabase.controller';
 import { SupabaseClientProvider } from './supabase-client.provider';
 import { ConfigModule } from '@nestjs/config';
-import { PdfProcessingService } from 'src/cv-import/pdf-parse.service';
+import { PdfParserService } from 'src/cv-import/pdfParser.service';
 
 @Module({
   imports: [ConfigModule],
   controllers: [SupabaseController],
-  providers: [SupabaseService, SupabaseClientProvider, PdfProcessingService],
+  providers: [SupabaseService, SupabaseClientProvider, PdfParserService],
   exports: [SupabaseService, SupabaseClientProvider],
 })
 export class SupabaseModule {}

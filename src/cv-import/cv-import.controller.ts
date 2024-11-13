@@ -10,11 +10,14 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtGuard } from 'src/jwt/jwt.guard';
+import { PdfParserService } from './pdfParser.service';
 
 // Manages HTTP requests and routing.
 @Controller('cv-import')
 @UseGuards(JwtGuard)
 export class CvImportController {
+  constructor(private readonly pdfParserService: PdfParserService) {}
+
   @UseInterceptors(FilesInterceptor('files'))
   @Post('process/cvfiles')
   async importCv(
@@ -23,17 +26,11 @@ export class CvImportController {
     //@Req() request: Request,
   ) {
     console.log('Processing CV files');
-    if (body.user) {
-      console.log(body.user);
-      console.log(files);
-    }
-
-    // Do something with the user id and files
-    // Validate them?
-    // Send them for langchain parsing?
-
     try {
-      // await this.cvImportService.importCv(createCvDto);
+      if (body.user) {
+        console.log(body.user);
+        this.pdfParserService.processPdfContent(files[0]);
+      }
       return HttpStatus.NO_CONTENT; // 204
     } catch (error) {
       throw new HttpException(
