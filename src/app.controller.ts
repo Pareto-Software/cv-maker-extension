@@ -1,12 +1,11 @@
 import { Controller, Get, HttpCode } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Public } from './oauth2/groups.decorator';
+import { ApiTags, ApiOperation, ApiResponse, ApiExcludeEndpoint } from '@nestjs/swagger';
 
 @ApiTags('App')
 @Controller()
 export class AppController {
   @Get('/health')
-  @Public()
+  @ApiExcludeEndpoint()
   @ApiOperation({ summary: 'Health check' })
   @ApiResponse({
     status: 200,
