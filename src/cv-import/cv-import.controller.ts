@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   HttpException,
@@ -10,33 +11,28 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtGuard } from '../jwt/jwt.guard.js';
-import { PdfParserService } from './pdfParser.service.js';
+import { CvImportService } from './cv-import.service.js';
 
-// Manages HTTP requests and routing.
 @Controller('cv-import')
 @UseGuards(JwtGuard)
 export class CvImportController {
-  constructor(private readonly pdfParserService: PdfParserService) {}
+  constructor(private readonly cvImportService: CvImportService) {}
 
   @UseInterceptors(FilesInterceptor('files'))
   @Post('process/cvfiles')
   async importCv(
     @UploadedFiles() files: Express.Multer.File[],
-    @Body() body: { user: string },
-    //@Req() request: Request,
+    @Body() body: { user: string },  
   ) {
-    console.log('Processing CV files');
+    console.log('Processing CV files sent by gateway');
     try {
-      if (body.user) {
-        console.log(body.user);
-        this.pdfParserService.processPdfContent(files[0]);
+      if (!body.user) {    
+        throw new BadRequestException('No user specified');
       }
-      return HttpStatus.NO_CONTENT; // 204
-    } catch (error) {
-      throw new HttpException(
-        `Failed to import CV ${error}`,
-        HttpStatus.INTERNAL_SERVER_ERROR, //500
-      );
-    }
+
+      return await this.cvImportService.processFiles(files);
+    } catch(BadRequestException) {
+      return HttpStatus.BAD_REQUEST;
+    }   
   }
 }

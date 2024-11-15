@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseClientProvider } from './supabase-client.provider';
 import { Database } from './database.types';
-import { PdfParserService } from 'src/cv-import/pdfParser.service';
+import { DocumentParserService } from 'src/cv-import/service/documentParser.service';
 
 @Injectable()
 export class SupabaseCvImportService {
@@ -10,7 +10,7 @@ export class SupabaseCvImportService {
 
   constructor(
     private readonly supabaseClientProvider: SupabaseClientProvider,
-    private readonly pdfProcessingService: PdfParserService,
+    private readonly documentParserService: DocumentParserService,
   ) {
     this.supabase = this.supabaseClientProvider.getClient();
   }
