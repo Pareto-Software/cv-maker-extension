@@ -1,10 +1,16 @@
 import { Controller, Get, HttpCode } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiExcludeEndpoint,
+} from '@nestjs/swagger';
 
 @ApiTags('App')
 @Controller()
 export class AppController {
   @Get('/health')
+  @ApiExcludeEndpoint()
   @ApiOperation({ summary: 'Health check' })
   @ApiResponse({
     status: 200,
