@@ -29,45 +29,77 @@ export class SheetService {
 
   async getSheetColorData() {
     try {
-      const response = await this.sheets.spreadsheets.get({
-        spreadsheetId: this.spreadSheetId,
-        ranges: ['Allocation!A1:Z20'], // Limit to first 20 rows
-        includeGridData: true,
+      // Step 1: Fetch the sheet metadata to determine the total rows and columns
+      const metadataResponse = await this.sheets.spreadsheets.get({
+        spreadsheetId: this.spreadSheetId, // The ID of the spreadsheet
+        includeGridData: false, // We only need metadata here, not the actual data
       });
-      console.log('response:', response.data);
 
-      const sheet = response.data.sheets?.[0];
-      if (!sheet || !sheet.data || !sheet.data[0].rowData) {
-        throw new Error('No data found in sheet');
+      // Find the specific sheet by its title (e.g., "Allocation")
+      const sheet = metadataResponse.data.sheets?.find(
+        (s) => s.properties?.title === 'Allocation',
+      );
+
+      // Validate that the sheet exists and has grid properties
+      if (!sheet || !sheet.properties || !sheet.properties.gridProperties) {
+        throw new Error('Failed to fetch sheet properties'); // Error if sheet data is invalid
       }
 
-      const rows = sheet.data[0].rowData;
-      const colorData: { [key: string]: sheets_v4.Schema$Color } = {};
+      // Extract the total rows and columns from grid properties
+      const totalRows = sheet.properties.gridProperties.rowCount || 0;
+      const totalColumns = sheet.properties.gridProperties.columnCount || 0;
 
+      // Step 2: Construct a dynamic range string based on rows and columns
+      const lastColumnLetter = String.fromCharCode(64 + totalColumns); // Convert column index to letter
+      const dynamicRange = `Allocation!A1:${lastColumnLetter}${totalRows}`; // e.g., "A1:Z100"
+
+      // Step 3: Fetch the sheet data for the determined range
+      const response = await this.sheets.spreadsheets.get({
+        spreadsheetId: this.spreadSheetId, // The ID of the spreadsheet
+        ranges: [dynamicRange], // Dynamically generated range
+        includeGridData: true, // Include cell data for further processing
+      });
+
+      // console.log('response:', JSON.stringify(response, null, 2));
+
+      // Extract the sheet data from the response
+      const sheetData = response.data.sheets?.[0];
+      if (!sheetData || !sheetData.data || !sheetData.data[0].rowData) {
+        throw new Error('No data found in sheet'); // Error if no data is found
+      }
+
+      const rows = sheetData.data[0].rowData; // Array of row data
+      const colorData: { [key: string]: sheets_v4.Schema$Color } = {}; // Object to store cell color data
+
+      // Step 4: Process each row and cell to extract background colors
       rows.forEach((row: sheets_v4.Schema$RowData, rowIndex: number) => {
         if (row.values) {
           row.values.forEach(
             (cell: sheets_v4.Schema$CellData, columnIndex: number) => {
+              // Extract the cell's background color if available
               const backgroundColor = cell.userEnteredFormat?.backgroundColor;
 
+              // Only store cells with non-default background color (not white)
               if (
                 backgroundColor &&
                 (backgroundColor.red !== 1 ||
                   backgroundColor.green !== 1 ||
                   backgroundColor.blue !== 1)
               ) {
+                // Convert columnIndex to column letter (e.g., 0 -> A, 1 -> B)
                 const cellAddress = `${String.fromCharCode(65 + columnIndex)}${rowIndex + 1}`;
-                colorData[cellAddress] = backgroundColor;
+                colorData[cellAddress] = backgroundColor; // Add to colorData object
               }
             },
           );
         }
       });
 
+      // Return the collected color data
       return colorData;
     } catch (error) {
       console.error('Error fetching sheet color data:', error);
-      throw new Error('Failed to fetch sheet color data');
+      throw new Error('Failed to fetch sheet color data'); // Rethrow error with a custom message
     }
   }
 
