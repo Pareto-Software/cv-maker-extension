@@ -5,17 +5,6 @@ import * as pdfJs from 'pdfjs-dist';
 import { TextItem } from 'pdfjs-dist/types/src/display/api.js';
 
 dotenv.config();
-
-/* interface TextItem {
-  str: string;
-  transform: Array<any>;
-  width: number;
-  height: number;
-  dir: string;
-  fontName: string;
-  hasEOL: boolean;
-} */
-
 @Injectable()
 export class PdfParserService {
   private model: ChatOpenAI;
@@ -29,24 +18,44 @@ export class PdfParserService {
     });
   }
 
+  /**
+   * Extracts text from a PDF file buffer with pdfjs-dist .
+   *
+   * @param pdfFile - The uploaded PDF file (from Multer) to extract text from.
+   * @returns A promise resolving to a text string.
+   * @throws Error if the PDF parsing fails.
+   */
   async extractTextFromPdf(pdfFile: Express.Multer.File): Promise<string> {
     let fullText = '';
 
     try {
       const loadingTask = pdfJs.getDocument(new Uint8Array(pdfFile.buffer));
-      const pdf = await loadingTask.promise;
+      const pdf: pdfJs.PDFDocumentProxy = await loadingTask.promise;
 
       for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
         const page = await pdf.getPage(pageNum);
         const textContent = await page.getTextContent();
-        const pageText = textContent.items
-          .filter((item): item is TextItem => 'str' in item)
-          .map((item) => item.str)
-          .join(' ');
 
-        fullText += pageText + '\n';
+        let previousY: number | null = null;
+        let pageText = '';
+
+        // Tracks the position of items to avoid extra spaces in parsed text
+        for (const item of textContent.items) {
+          if ('str' in item) {
+            const textItem = item as TextItem;
+            const currentY = textItem.transform[5];
+
+            if (previousY !== null && Math.abs(currentY - previousY) > 5) {
+              pageText += '\n';
+            }
+
+            pageText += textItem.str;
+            previousY = currentY;
+          }
+        }
+
+        fullText += pageText.trim() + '\n';
       }
-      console.log(fullText);
 
       return fullText;
     } catch (e: any) {
@@ -56,11 +65,12 @@ export class PdfParserService {
   }
 
   async processPdfContent(pdfFile: Express.Multer.File): Promise<any> {
-    const pdfContent = this.extractTextFromPdf(pdfFile);
-    console.log(pdfContent);
-    return true;
-
-    /*     try {
+    const pdfContent = await this.extractTextFromPdf(pdfFile);
+    if (pdfContent == null || pdfContent.length < 100) {
+      console.log('Pdf file contents unplausibly short after parsing them');
+      return;
+    }
+    try {
       const structuredLlm = this.model.withStructuredOutput(
         this.databaseSchema,
         {
@@ -69,7 +79,7 @@ export class PdfParserService {
       );
 
       const response = await structuredLlm.invoke(
-        `Fill information to JSON structure from the following CV file (fill projects and project categories always): ${pdfContent}`,
+        `Fill information to JSON structure from the following CV file (fill projects and project categories always). If ${pdfContent}`,
       );
 
       console.log('Structured output:', response);
@@ -77,11 +87,19 @@ export class PdfParserService {
     } catch (error) {
       console.error('Error fetching CV:', error);
       throw new Error('Failed to process PDF content');
-    } */
+    }
   }
 
   private databaseSchema = {
     type: 'object',
+    required: [
+      'certifications',
+      'keywords',
+      'profiles',
+      'projectCategories',
+      'projects',
+      'skills',
+    ],
     properties: {
       certifications: {
         type: 'array',
@@ -249,22 +267,15 @@ export class PdfParserService {
               skill: { type: 'string', description: 'The name of the skill.' },
               level: {
                 type: 'integer',
+                // TODO LLM invents skill levels here anyways, figure out a solution for it.
                 description:
-                  'The proficiency level of the skill, typically represented numerically.',
+                  'The proficiency level of the skill, typically represented numerically. Leave null if not found.',
               },
             },
             required: ['skill'],
           },
         },
       },
-      required: [
-        'certifications',
-        'keywords',
-        'profiles',
-        'projectCategories',
-        'projects',
-        'skills',
-      ],
     },
   };
 }
