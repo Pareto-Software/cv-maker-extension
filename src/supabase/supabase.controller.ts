@@ -4,6 +4,7 @@ import {
   Query,
   HttpCode,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { SupabaseService } from './supabase.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
@@ -60,6 +61,11 @@ export class SupabaseController {
     @Query('firstName') firstName: string,
     @Query('lastName') lastName: string,
   ): Promise<EmployeeFullDetailDTO> {
+    if (!firstName || !lastName) {
+      throw new BadRequestException(
+        'Both firstName and lastName must be provided',
+      );
+    }
     try {
       const employee = await this.supabaseService.getEmployeesFullInformation(
         firstName,
