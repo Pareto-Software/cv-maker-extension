@@ -37,7 +37,7 @@ describe('SheetService', () => {
 
     expect(() => {
       new SheetService(configService);
-    }).toThrow('Google client id, secret and redirect url must be provided');
+    }).toThrow('Spreadsheet id must be provided');
   });
   it('should properly initialize with valid spreadsheet_id', () => {
     expect(() => {
