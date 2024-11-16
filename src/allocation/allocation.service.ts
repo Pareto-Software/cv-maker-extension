@@ -40,7 +40,8 @@ export class AllocationService {
     // Find the employee by name (case-insensitive)
     const employee = sheetData.rows.find(
       (row) =>
-        row.name.toLowerCase() === `${firstName.toLowerCase()} ${lastName.toLowerCase()}`
+        row.name.toLowerCase() ===
+        `${firstName.toLowerCase()} ${lastName.toLowerCase()}`,
     );
 
     if (!employee) {
