@@ -46,16 +46,22 @@ export class AllocationController {
                   including their capacity for each month and year`,
   })
   @ApiQuery({
-    name: 'name',
+    name: 'firstName',
     type: String,
-    description: 'Employee first and last name',
+    description: 'Employee first name',
+  })
+  @ApiQuery({
+    name: 'lastName',
+    type: String,
+    description: 'Employee last name',
   })
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved allocation data for an employee',
   })
   async getAllocationByName(
-    @Query('name') name: string,
+    @Query('firstName') firstName: string,
+    @Query('lastName') lastName: string,
     @Headers() headers: Record<string, string>,
   ): Promise<AllocationResponseDTO> {
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
@@ -64,7 +70,8 @@ export class AllocationController {
     }
     try {
       const data = await this.allocationService.getAllocationByName(
-        name,
+        firstName,
+        lastName,
         access_token,
       );
       return data;
@@ -167,9 +174,14 @@ export class AllocationController {
                   including reservation percentage and status for upcoming months.`,
   })
   @ApiQuery({
-    name: 'name',
+    name: 'firstName',
     type: String,
-    description: 'First and last name of an employee',
+    description: 'Employee first name',
+  })
+  @ApiQuery({
+    name: 'lastName',
+    type: String,
+    description: 'Employee last name',
   })
   @HttpCode(200)
   @ApiResponse({
@@ -178,13 +190,18 @@ export class AllocationController {
     type: FutureAllocationResponseDTO,
   })
   async futureAvailability(
-    @Query('name') name: string,
+    @Query('firstName') firstName: string,
+    @Query('lastName') lastName: string,
     @Headers() headers: Record<string, string>,
   ): Promise<FutureAllocationResponseDTO> {
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
     if (!access_token) {
       throw new UnauthorizedException('Access token is missing or invalid');
     }
-    return this.allocationService.getFutureAvailability(name, access_token);
+    return this.allocationService.getFutureAvailability(
+      firstName,
+      lastName,
+      access_token,
+    );
   }
 }
