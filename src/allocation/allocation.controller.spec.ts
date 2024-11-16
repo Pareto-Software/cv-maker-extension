@@ -40,7 +40,8 @@ describe('controller', () => {
   });
 
   it('should return allocation data for an existing employee', async () => {
-    const name = 'Test person';
+    const firstName = 'Test';
+    const lastName = 'person';
     const expectedResult: AllocationResponseDTO = {
       name: 'Test person',
       capacity: 0.8,
@@ -73,32 +74,42 @@ describe('controller', () => {
     (service.getAllocationByName as jest.Mock).mockResolvedValue(
       expectedResult,
     );
-    const result = await controller.getAllocationByName(name, headers);
+    const result = await controller.getAllocationByName(
+      firstName,
+      lastName,
+      headers,
+    );
     expect(result).toEqual(expectedResult);
     expect(service.getAllocationByName).toHaveBeenCalledWith(
-      name,
+      firstName,
+      lastName,
       'dummy-access-token',
     );
   });
 
   it('should throw NotFoundException if employee does not exist', async () => {
-    const name = 'Nonexistent Person';
+    const firstName = 'Nonexistent';
+    const lastName = 'Person';
 
     (service.getAllocationByName as jest.Mock).mockImplementation(() => {
-      throw new NotFoundException(`Employee ${name} not found.`);
+      throw new NotFoundException(
+        `Employee ${firstName} ${lastName} not found.`,
+      );
     });
 
-    await expect(controller.getAllocationByName(name, headers)).rejects.toThrow(
-      NotFoundException,
-    );
+    await expect(
+      controller.getAllocationByName(firstName, lastName, headers),
+    ).rejects.toThrow(NotFoundException);
     expect(service.getAllocationByName).toHaveBeenCalledWith(
-      name,
+      firstName,
+      lastName,
       'dummy-access-token',
     );
   });
 
   it('should handle case-insensitive employee names', async () => {
-    const name = 'test PERSON';
+    const firstName = 'test';
+    const lastName = 'PERSON';
     const expectedResult: AllocationResponseDTO = {
       name: 'Test person',
       capacity: 0.8,
@@ -132,10 +143,15 @@ describe('controller', () => {
       expectedResult,
     );
 
-    const result = await controller.getAllocationByName(name, headers);
+    const result = await controller.getAllocationByName(
+      firstName,
+      lastName,
+      headers,
+    );
     expect(result).toEqual(expectedResult);
     expect(service.getAllocationByName).toHaveBeenCalledWith(
-      name,
+      firstName,
+      lastName,
       'dummy-access-token',
     );
   });
