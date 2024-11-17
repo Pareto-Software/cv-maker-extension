@@ -12,9 +12,7 @@ export class SheetService {
     const spreadsheet_id = this.configService.get<string>('SPREADSHEET_ID');
 
     if (!spreadsheet_id) {
-      throw new Error(
-        'Google client id, secret and redirect url must be provided',
-      );
+      throw new Error('Spreadsheet id must be provided');
     }
     this.spreadSheetId = spreadsheet_id;
   }
