@@ -15,6 +15,8 @@ TOKEN_URL=
 SCOPE=
 SPREADSHEET_ID=
 REDIRECT_URL=<your ngrok url here>
+GENERAL_ROLE_GROUP=
+MANAGER_ROLE_GROUP=
 ```
 
 **2. setup ngrok on the website**

@@ -109,15 +109,35 @@ export class AuthGuard implements CanActivate {
       });
 
       // Search user's groups
-      const res = await cloudidentity.groups.memberships.searchDirectGroups({
-        parent: 'groups/-',
-        query: `member_key_id=='${userEmail}'`,
-      });
-      const groups = res.data.memberships
-        ? res.data.memberships.map((membership: any) => membership.groupKey.id)
+      const directRes =
+        await cloudidentity.groups.memberships.searchDirectGroups({
+          parent: 'groups/-',
+          query: `member_key_id=='${userEmail}'`,
+        });
+
+      // Search user's transitive groups
+      const transitiveRes =
+        await cloudidentity.groups.memberships.searchTransitiveGroups({
+          parent: 'groups/-',
+          query: `member_key_id == '${userEmail}' && 'system/groups/external' in labels`,
+        });
+
+      const directGroups = directRes.data.memberships
+        ? directRes.data.memberships.map(
+            (membership: any) => membership.groupKey.id,
+          )
         : [];
 
-      return groups;
+      const transitiveGroups = transitiveRes.data.memberships
+        ? transitiveRes.data.memberships.map(
+            (membership: any) => membership.groupKey.id,
+          )
+        : [];
+
+      // Combine and remove duplicates using Set
+      const allGroups = [...new Set([...directGroups, ...transitiveGroups])];
+
+      return allGroups;
     } catch (error) {
       console.error('Error retrieving user groups:', error);
       throw new ForbiddenException('Unable to retrieve user groups');
