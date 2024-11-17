@@ -54,7 +54,7 @@ export class DocumentParserService {
       return fullText;
     } catch (e: any) {
       console.log('Error while parsing pdf from buffer:', e);
-      return '';
+      return fullText;
     }
   }  
 

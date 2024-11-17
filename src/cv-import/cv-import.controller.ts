@@ -13,6 +13,12 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtGuard } from '../jwt/jwt.guard.js';
 import { CvImportService } from './cv-import.service.js';
 
+// TODO implement logic for handling different outcomes of file process and 
+// appropriate responses:
+//Returns 200 (or 201) for success.
+//Returns 400 for client-side errors like invalid input.
+//Returns 500 or other server-side codes for external errors like OpenAI API issues.
+
 @Controller('cv-import')
 @UseGuards(JwtGuard)
 export class CvImportController {
@@ -30,7 +36,10 @@ export class CvImportController {
         throw new BadRequestException('No user specified');
       }
 
-      return await this.cvImportService.processFiles(files);
+      return await this.cvImportService.processFiles(
+        files,
+        body.user
+      );
     } catch(BadRequestException) {
       return HttpStatus.BAD_REQUEST;
     }   

@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { SupabaseClientProvider } from './supabase-client.provider';
-import { Database } from './database.types';
-import { DocumentParserService } from 'src/cv-import/service/documentParser.service';
+import { SupabaseClientProvider } from './supabase-client.provider.js';
+import { Database } from './database.types.js';
 
 @Injectable()
 export class SupabaseCvImportService {
@@ -10,130 +9,169 @@ export class SupabaseCvImportService {
 
   constructor(
     private readonly supabaseClientProvider: SupabaseClientProvider,
-    private readonly documentParserService: DocumentParserService,
   ) {
     this.supabase = this.supabaseClientProvider.getClient();
   }
 
+
   // Insert profile
   async updateProfile(
     profile: Database['public']['Tables']['profiles']['Insert'],
-  ) {
+    user_id: string,
+  ): Promise<string | null> {
+    console.log("PROFILE:");
+    console.log(profile);
     const { data, error } = await this.supabase
       .from('profiles')
       .update({
-        description: profile.description,
-        education: profile.education,
-        email: profile.email,
         first_name: profile.first_name,
         last_name: profile.last_name,
+        title: profile.title,
+        description: profile.description,
+        education: profile.education,
         metadata: profile.metadata,
         profile_pic: profile.profile_pic,
         social_media_links: profile.social_media_links,
-        title: profile.title,
+
       })
-      .eq('user_id', profile.user_id)
+      .eq('user_id', user_id)
       .select('id');
 
     if (error) {
-      throw new Error(`Failed to update profile: ${error.message}`);
+      console.log(`Failed to update profile: ${error.message}`);
+      return null;
     }
-    return data?.[0]?.id;
+    return data?.[0]?.id.toString();
   }
 
   // Insert CV
-  async insertCv(user_id: string) {
+  async insertCv(user_id: string): Promise<string | null> {
     const { data, error } = await this.supabase
       .from('cvs')
       .insert({
         title: 'AI_generated_CV',
         user_id: user_id,
       })
-      .select('id'); // Optional: Use .select() to return the inserted row(s)
+      .select('id'); 
 
     if (error) {
-      throw new Error(`Failed to insert CV: ${error.message}`);
+      console.log(`Failed to insert CV: ${error.message}`);
+      return null;
     }
     // Return CV id
-    return data?.[0]?.id;
+    return data?.[0]?.id.toString();
   }
 
   // Insert certifications
   async insertCertifications(
-    certifications: Database['public']['Tables']['certifications']['Insert'][],
-  ) {
-    const { data, error } = await this.supabase
+    certifications: Record<string, any>,
+    user_id: string,
+    cv_id: string,
+  ): Promise<boolean | null> {
+    console.log("CERTS:");
+    console.log(certifications);
+    const data = certifications.map((key: { name: any; description: any; company: any; start_date: any; end_date: any; role: any; project_category: any; project_url: any; image_url: any; }) => ({
+      name: key.name,
+      description: key.description,
+      company: key.company,
+      start_date: key.start_date,
+      end_date: key.end_date,
+      role: key.role,
+      project_category: key.project_category,
+      project_url: key.project_url,
+      image_url: key.image_url,
+      user_id: user_id,
+      cv_id: cv_id,
+    }));
+    const { error } = await this.supabase
       .from('certifications')
-      .insert(certifications);
+      .insert(data);
     if (error)
       throw new Error(`Failed to insert certifications: ${error.message}`);
-    return data;
+    return false;
   }
 
-  // Insert keywords
-  async insertKeywords(
+
+  async insertProjectCategories(
+    projectCategories: Record<string, any>[],
+    user_id: string,
+    cv_id: string,
+  ): Promise<boolean | null> {
+    console.log("PROJCATS:");
+    console.log(projectCategories);
+    const data = projectCategories.map((category) => ({
+      title: category.title,
+      end_date: category.end_date,
+      start_date: category.start_date,
+      description: category.description,
+      user_id: user_id,
+      cv_id: cv_id,
+    }));
+  
+    const { error } = await this.supabase.from('project_categories').insert(data);
+    if (error) throw new Error(`Failed to insert project categories: ${error.message}`);
+    return true;
+  }
+  
+
+  async insertProjects(
+    projects: Record<string, any>[],
+    user_id: string,
+    cv_id: string,
+  ): Promise<boolean | null> {
+    console.log("PROJECTS:");
+    console.log(projects);
+    // not saving keywords or project categories because
+    // that requires handling of foreign keys and saving to different tables
+    const data = projects.map((project) => ({
+      name: project.name,
+      description: project.description,
+      company: project.company,
+      start_date: project.start_date,
+      end_date: project.end_date,
+      role: project.role,
+      project_url: project.project_url,
+      image_url: project.image_url,
+      user_id: user_id,
+      cv_id: cv_id,
+    }));
+  
+    const { error } = await this.supabase.from('projects').insert(data);
+    if (error) throw new Error(`Failed to insert projects: ${error.message}`);
+    return true;
+  }
+  
+
+  async insertSkills(
+    skills: Record<string, any>[],
+    user_id: string,
+    cv_id: string,
+  ): Promise<boolean | null> {
+    console.log("SKILLS:");
+    console.log(skills);
+    const data = skills.map((skill) => ({
+      skill: skill.skill,
+      level: skill.level,
+      user_id: user_id,
+      cv_id: cv_id,
+    }));
+  
+    const { error } = await this.supabase.from('skills').insert(data);
+    if (error) throw new Error(`Failed to insert skills: ${error.message}`);
+    return true;
+  }
+  
+
+  /*   async insertKeywords(
     keywords: Database['public']['Tables']['keywords']['Insert'][],
+    user_id: string,
+    cv_id: string,
   ) {
     const { data, error } = await this.supabase
       .from('keywords')
       .insert(keywords);
     if (error) throw new Error(`Failed to insert keywords: ${error.message}`);
     return data;
-  }
-
-  // Insert project categories
-  async insertProjectCategories(
-    categories: Database['public']['Tables']['project_categories']['Insert'][],
-  ) {
-    const { data, error } = await this.supabase
-      .from('project_categories')
-      .insert(categories);
-    if (error)
-      throw new Error(`Failed to insert project categories: ${error.message}`);
-    return data;
-  }
-
-  // Insert projects
-  async insertProjects(
-    projects: Database['public']['Tables']['projects']['Insert'][],
-  ) {
-    const { data, error } = await this.supabase
-      .from('projects')
-      .insert(projects);
-    if (error) throw new Error(`Failed to insert projects: ${error.message}`);
-    return data;
-  }
-
-  // Insert skills
-  async insertSkills(
-    skills: Database['public']['Tables']['skills']['Insert'][],
-  ) {
-    const { data, error } = await this.supabase.from('skills').insert(skills);
-    if (error) throw new Error(`Failed to insert skills: ${error.message}`);
-    return data;
-  }
-
-  // Main function to process and insert the CV data
-  /*   async importCvData(filePath: string) {
-    try {
-      const data = await this.pdfProcessingService.processPdfContent(filePath); // Retrieve JSON-structured CV data
-
-      // Insert data by type
-      const user_id = "";
-      const profile = data.profiles[0]; // Assuming one profile
-      const profile_id = await this.updateProfile(profile);
-      const cv_id = await this.insertCv(user_id);
-
-      if (data.certifications) await this.insertCertifications(data.certifications);
-      if (data.keywords) await this.insertKeywords(data.keywords);
-      if (data.projectCategories)
-        await this.insertProjectCategories(data.projectCategories);
-      if (data.projects) await this.insertProjects(data.projects);
-      if (data.skills) await this.insertSkills(data.skills);
-
-      console.log('CV data imported successfully!');
-    } catch (error) {
-      console.error('Error importing CV data:', error);
-    }
   } */
+ 
 }

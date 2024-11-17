@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { databaseSchema } from '../schema/database-schema';
 import { ChatOpenAI } from '@langchain/openai';
+import { databaseSchema } from '../schema/database-schema.js';
 
 @Injectable()
 export class OpenAiAPIService {
@@ -15,10 +15,10 @@ export class OpenAiAPIService {
     });
   }
 
-  async processPdfContent(dataString: String): Promise<any> {
+  async textToStructuredJSON(dataString: String): Promise<Record<string, any>> {
     if (dataString == null || dataString.length < 100) {
       console.log('Data string are contents unplausibly short');
-      return;
+      return Promise<null>;
     }
     try {
       const structuredLlm = this.model.withStructuredOutput(databaseSchema, {
@@ -29,7 +29,6 @@ export class OpenAiAPIService {
         `Fill information to JSON structure from the following CV files (fill projects and project categories always). If ${dataString}`,
       );
 
-      console.log('Structured output:', response);
       return response;
     } catch (error) {
       console.error('Error fetching CV:', error);

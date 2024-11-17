@@ -2,9 +2,8 @@ export const databaseSchema = {
   type: 'object',
   required: [
     'certifications',
-    'keywords',
     'profiles',
-    'projectCategories',
+    'project_categories',
     'projects',
     'skills',
   ],
@@ -60,15 +59,38 @@ export const databaseSchema = {
                 'A short biography or description of the individual.',
             },
             education: {
-              type: 'string',
+              type: 'object',
               description: 'The educational background of the individual.',
+              properties: {
+                school: {
+                  type: 'string',
+                  description: 'The name of the school.',
+                },
+                graduationYear: {
+                  type: 'string | null',
+                  description: 'The year of graduation, if any.',
+                },
+                degree: {
+                  type: 'string',
+                  description: 'The degree obtained.',
+                },
+                field: {
+                  type: 'string',
+                  description: 'The field of study, if any..',
+                },
+                thesis: {
+                  type: 'string | null',
+                  description: 'The title of the thesis, if any.',
+                },
+              },
+              required: ['school', 'graduationYear', 'degree', 'field'],
             },
             profile_pic: {
-              type: 'string',
-              description: "URL to the individual's profile picture.",
+              type: 'string | null',
+              description: "URL to the individual's profile picture, if any.",
             },
             social_media_links: {
-              type: 'string',
+              type: 'string | null',
               description:
                 "Links to the individual's social media profiles, if any.",
             },
@@ -76,7 +98,7 @@ export const databaseSchema = {
           required: ['email', 'first_name', 'last_name'],
         },
       },
-      projectCategories: {
+      project_categories: {
         type: 'array',
         description:
           'A list of project catagories, usually meaning companies where project is done',
@@ -125,6 +147,10 @@ export const databaseSchema = {
               description:
                 'The name of the company associated with the project.',
             },
+            start_date: {
+              type: 'string',
+              description: 'The date when the project started.',
+            },
             end_date: {
               type: 'string',
               description: 'The date when the project ended.',
@@ -132,10 +158,6 @@ export const databaseSchema = {
             role: {
               type: 'string',
               description: 'The role of the individual in the project.',
-            },
-            start_date: {
-              type: 'string',
-              description: 'The date when the project started.',
             },
             project_category: {
               type: 'integer',
