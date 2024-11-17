@@ -12,6 +12,7 @@ import {
   EmployeeFullDetailDTO,
   EmployeesResponseDTO,
 } from './dto/employees-response.dto';
+import { Manager } from '../oauth2/groups.decorator';
 
 @ApiTags('Supabase')
 @Controller()
@@ -19,6 +20,7 @@ export class SupabaseController {
   constructor(private readonly supabaseService: SupabaseService) {}
 
   @Get('employees/skills-projects')
+  @Manager()
   @ApiOperation({
     summary: 'Fetch employee skills and projects',
     description:
