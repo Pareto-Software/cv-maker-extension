@@ -48,7 +48,7 @@ export class SheetService {
       const totalColumns = sheet.properties.gridProperties.columnCount || 0;
 
       // Step 2: Construct a dynamic range string based on rows and columns
-      const lastColumnLetter = String.fromCharCode(64 + totalColumns); // Convert column index to letter
+      const lastColumnLetter = this.getColumnLetter(totalColumns); // Convert column index to letter
       const dynamicRange = `Allocation!A1:${lastColumnLetter}${totalRows}`; // e.g., "A1:Z100"
 
       // Step 3: Fetch the sheet data for the determined range
@@ -67,7 +67,7 @@ export class SheetService {
       }
 
       const rows = sheetData.data[0].rowData; // Array of row data
-      const colorData: { [key: string]: sheets_v4.Schema$Color } = {}; // Object to store cell color data
+      const colorData: Record<string, sheets_v4.Schema$Color> = {}; // Object to store cell color data
 
       // Step 4: Process each row and cell to extract background colors
       rows.forEach((row: sheets_v4.Schema$RowData, rowIndex: number) => {
@@ -85,7 +85,7 @@ export class SheetService {
                   backgroundColor.blue !== 1)
               ) {
                 // Convert columnIndex to column letter (e.g., 0 -> A, 1 -> B)
-                const cellAddress = `${String.fromCharCode(65 + columnIndex)}${rowIndex + 1}`;
+                const cellAddress = `${this.getColumnLetter(columnIndex + 1)}${rowIndex + 1}`;
                 colorData[cellAddress] = backgroundColor; // Add to colorData object
               }
             },
@@ -101,9 +101,24 @@ export class SheetService {
     }
   }
 
+  // Helper Function for Column Conversion
+  // Google Sheets and Column Letters:
+  //    Single letters: A, B, C, ..., Z (for columns 1 to 26)
+  //    Double letters: AA, AB, ..., AZ, BA, BB, ..., ZZ (for columns 27 to 702)
+  //    Triple letters: AAA, AAB, ..., ZZZ (for columns 703 and beyond)
+  getColumnLetter(columnIndex: number): string {
+    let letter = '';
+    while (columnIndex > 0) {
+      const remainder = (columnIndex - 1) % 26;
+      letter = String.fromCharCode(65 + remainder) + letter;
+      columnIndex = Math.floor((columnIndex - 1) / 26);
+    }
+    return letter;
+  }
+
   // have to put the color map also as undefined
   async getCellStatus(
-    colormap: { [key: string]: sheets_v4.Schema$Color },
+    colormap: Record<string, sheets_v4.Schema$Color>,
     cellAddress: string,
     cellValue: string,
   ) {
@@ -224,8 +239,8 @@ export class SheetService {
 
         for (let j = 2; j < row.length; j++) {
           const cellValue: string = row[j];
-          // Calculate the cell address, e.g., "A3", "B5"
-          const columnLetter = String.fromCharCode(65 + j); // 65 is ASCII for 'A'
+          // Use the helper function to calculate the column letter
+          const columnLetter = this.getColumnLetter(j + 1);
           const rowNumber = i + 1;
           const cellAddress = `${columnLetter}${rowNumber}`;
           // getting the status of the cell
