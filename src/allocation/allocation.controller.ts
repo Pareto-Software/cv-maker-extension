@@ -16,8 +16,10 @@ import {
   AllocationResponseDTO,
 } from './dtos';
 import { AllocationService } from './allocation.service';
+import { Public } from '../oauth2/groups.decorator';
 
 @Controller('allocation')
+@Public()
 @ApiTags('Allocation')
 export class AllocationController {
   constructor(private readonly allocationService: AllocationService) {}
