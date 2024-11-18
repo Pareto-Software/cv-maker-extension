@@ -70,6 +70,15 @@ describe('SupabaseController (e2e)', () => {
       });
   });
 
+  it(`/GET employees/skills-projects`, () => {
+    return request(app.getHttpServer())
+      .get('/employees/skills-projects')
+      .expect(200)
+      .then((response) => {
+        console.log(response.body);
+      });
+  });
+
   afterAll(async () => {
     await app.close();
   });
