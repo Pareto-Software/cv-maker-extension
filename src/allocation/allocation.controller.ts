@@ -16,8 +16,10 @@ import {
   AllocationResponseDTO,
 } from './dtos';
 import { AllocationService } from './allocation.service';
+import { Public } from '../oauth2/groups.decorator';
 
 @Controller('allocation')
+@Public()
 @ApiTags('Allocation')
 export class AllocationController {
   constructor(private readonly allocationService: AllocationService) {}
@@ -39,9 +41,9 @@ export class AllocationController {
     return { data };
   }
 
-  @Get(':name')
+  @Get('detail')
   @ApiOperation({
-    summary: 'Fetch employee allocation data by name',
+    summary: 'Fetch employee allocation data by detail',
     description: `Fetches allocation data for a specified employee, 
                   including their capacity for each month and year`,
   })

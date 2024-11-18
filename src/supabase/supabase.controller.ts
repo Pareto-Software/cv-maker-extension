@@ -13,6 +13,7 @@ import {
   EmployeeFullDetailDTO,
   EmployeesResponseDTO,
 } from './dto/employees-response.dto';
+import { Manager } from '../oauth2/groups.decorator';
 
 @ApiTags('Supabase ')
 @Controller()
@@ -20,7 +21,12 @@ export class SupabaseController {
   constructor(private readonly supabaseService: SupabaseService) {}
 
   @Get('employees/skills-projects')
-  @ApiOperation({ summary: 'Fetch employee profiles, skills, and projects' })
+  @Manager()
+  @ApiOperation({
+    summary: 'Fetch employee skills and projects',
+    description:
+      'Retrieves a list of employees along with their skills and projects',
+  })
   @ApiResponse({
     status: 200,
     description: 'Successfully fetched employee data',
