@@ -139,7 +139,10 @@ describe('AllocationService', () => {
   });
 
   it('should return allocation data for an existing employee', async () => {
-    const name = 'Test person';
+    const firstName = 'Test';
+    const lastName = 'person';
+    const dummyAccessToken = 'dummy-access-token';
+
     const expectedResult: AllocationResponseDTO = {
       name: 'Test person',
       capacity: 0.8,
@@ -168,7 +171,11 @@ describe('AllocationService', () => {
         ],
       },
     };
-    const result = await service.getAllocationByName(name, dummyAccessToken);
+    const result = await service.getAllocationByName(
+      firstName,
+      lastName,
+      dummyAccessToken,
+    );
 
     expect(result).toEqual(expectedResult);
   });
@@ -223,10 +230,12 @@ describe('AllocationService', () => {
 
   describe('get future availability', () => {
     it('should return future availability for an employee', async () => {
-      const person = 'Test person';
+      const firstName = 'Test';
+      const lastName = 'person';
+      const dummyAccessToken = 'dummy-access-token';
 
       const expectedResult = {
-        name: person,
+        name: 'Test person',
         futureAvailability: [
           {
             value: 0,
@@ -248,7 +257,8 @@ describe('AllocationService', () => {
         .mockResolvedValue(sampleDataForFuture);
 
       const result = await service.getFutureAvailability(
-        person,
+        firstName,
+        lastName,
         dummyAccessToken,
       );
 
@@ -257,7 +267,10 @@ describe('AllocationService', () => {
   });
 
   it('should return allocation data for an existing employee', async () => {
-    const name = 'Test person';
+    const firstName = 'Test';
+    const lastName = 'person';
+    const dummyAccessToken = 'dummy-access-token';
+
     const expectedResult: AllocationResponseDTO = {
       name: 'Test person',
       capacity: 0.8,
@@ -287,7 +300,11 @@ describe('AllocationService', () => {
       },
     };
 
-    const result = await service.getAllocationByName(name, dummyAccessToken);
+    const result = await service.getAllocationByName(
+      firstName,
+      lastName,
+      dummyAccessToken,
+    );
     expect(result).toEqual(expectedResult);
   });
 

@@ -1,12 +1,13 @@
 import {
   Controller,
   Get,
-  Param,
+  Query,
   HttpCode,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { SupabaseService } from './supabase.service';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 
 import {
   EmployeeFullDetailDTO,
@@ -14,7 +15,7 @@ import {
 } from './dto/employees-response.dto';
 import { Manager } from '../oauth2/groups.decorator';
 
-@ApiTags('Supabase')
+@ApiTags('Supabase ')
 @Controller()
 export class SupabaseController {
   constructor(private readonly supabaseService: SupabaseService) {}
@@ -40,20 +41,16 @@ export class SupabaseController {
     return { employees };
   }
 
-  @Get('employees/:first_name/:last_name')
+  @Get('employees')
   @HttpCode(200)
-  @ApiOperation({
-    summary: 'Retrieve employee CV information by full name',
-    description: `Fetches detailed CV information for an employee, including name,
-                  title, education, skills, projects, and certifications`,
-  })
-  @ApiParam({
-    name: 'first_name',
+  @ApiOperation({ summary: 'Retrieve employee CV information by full name' })
+  @ApiQuery({
+    name: 'firstName',
     type: String,
     description: 'Employee first name',
   })
-  @ApiParam({
-    name: 'last_name',
+  @ApiQuery({
+    name: 'lastName',
     type: String,
     description: 'Employee last name',
   })
@@ -67,9 +64,14 @@ export class SupabaseController {
     description: 'Employee not found',
   })
   async getEmployeeByName(
-    @Param('first_name') firstName: string,
-    @Param('last_name') lastName: string,
+    @Query('firstName') firstName: string,
+    @Query('lastName') lastName: string,
   ): Promise<EmployeeFullDetailDTO> {
+    if (!firstName || !lastName) {
+      throw new BadRequestException(
+        'Both firstName and lastName must be provided',
+      );
+    }
     try {
       const employee = await this.supabaseService.getEmployeesFullInformation(
         firstName,
