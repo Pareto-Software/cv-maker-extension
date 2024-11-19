@@ -32,7 +32,14 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          GENERAL_ROLE_GROUP: ${{ secrets.GENERAL_ROLE_GROUP }}
+          MANAGER_ROLE_GROUP: ${{ secrets.MANAGER_ROLE_GROUP }}
+          NODE_ENV: test
         run: echo "Environment variables configured"
+
+      - name: Build the Application
+        run: npm run build
+
 
       - name: Run E2E Tests
         run: npm run test:e2e
