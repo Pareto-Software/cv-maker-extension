@@ -3,7 +3,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseModule } from './supabase.module';
 import { SupabaseService } from './supabase.service';
 import { INestApplication } from '@nestjs/common';
-import { EmployeeFullDetailDTO } from './dto/employees-response.dto';
+import {
+  EmployeeFullDetailDTO,
+  EmployeeDTO,
+} from './dto/employees-response.dto';
 
 describe('SupabaseController (e2e)', () => {
   let app: INestApplication;
@@ -44,6 +47,20 @@ describe('SupabaseController (e2e)', () => {
     ],
   };
 
+  const mockEmployeeSkillsProjectsData: EmployeeDTO[] = [
+    {
+      name: 'John Doe',
+      skills: ['TypeScript', 'NestJS'],
+      projects: [
+        {
+          name: 'Project X',
+          keywords: ['backend', 'typescript'],
+        },
+      ],
+      certifications: ['Certified Backend Developer'],
+    },
+  ]; 
+
   const mockSupabaseService = {
     getEmployeesFullInformation: jest.fn().mockResolvedValue(mockEmployeeData),
   };
@@ -60,23 +77,25 @@ describe('SupabaseController (e2e)', () => {
     await app.init();
   });
 
-  it(`/GET employees/:first_name/:last_name`, () => {
-    return request(app.getHttpServer())
+
+  it(`/GET employees/:first_name/:last_name`, async () => {
+    const response = await request(app.getHttpServer())
       .get('/employees?firstName=Samu&lastName=Toljamo')
-      .expect(200)
-      .expect(mockEmployeeData)
-      .then((response) => {
-        console.log(response.body);
-      });
+      .expect(200);
+
+    expect(response.body).toEqual(mockEmployeeData);
+    console.log('Response for /GET employees:', response.body);
   });
 
-  it(`/GET employees/skills-projects`, () => {
-    return request(app.getHttpServer())
+  it(`/GET employees/skills-projects`, async () => {
+    const response = await request(app.getHttpServer())
       .get('/employees/skills-projects')
-      .expect(200)
-      .then((response) => {
-        console.log(response.body);
-      });
+      .expect(200);
+
+    expect(response.body).toEqual({
+      employees: mockEmployeeSkillsProjectsData,
+    });
+    console.log('Response for /GET employees/skills-projects:', response.body);
   });
 
   afterAll(async () => {
