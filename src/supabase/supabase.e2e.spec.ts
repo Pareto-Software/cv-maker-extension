@@ -59,7 +59,7 @@ describe('SupabaseController (e2e)', () => {
       ],
       certifications: ['Certified Backend Developer'],
     },
-  ]; 
+  ];
 
   const mockSupabaseService = {
     getEmployeesFullInformation: jest.fn().mockResolvedValue(mockEmployeeData),
@@ -76,7 +76,6 @@ describe('SupabaseController (e2e)', () => {
     app = moduleRef.createNestApplication();
     await app.init();
   });
-
 
   it(`/GET employees/:first_name/:last_name`, async () => {
     const response = await request(app.getHttpServer())

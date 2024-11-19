@@ -1,3 +1,3 @@
-console.log(process.cwd())
+console.log(process.cwd());
 import { config } from 'dotenv';
 config();
