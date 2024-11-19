@@ -5,7 +5,6 @@ import { AppModule } from './../src/app.module';
 import { AuthGuard } from '../src/oauth2/auth.guard';
 import { SheetService } from '../src/sheet/sheet.service';
 
-
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
@@ -14,7 +13,7 @@ describe('AppController (e2e)', () => {
       canActivate: jest.fn(() => true),
       getUserGroups: jest.fn(() => ['test-group']),
     };
-  
+
     const mockSheetService = {
       getSheetData: jest.fn().mockResolvedValue({ rows: [] }),
     };
