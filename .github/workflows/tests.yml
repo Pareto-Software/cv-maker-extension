@@ -29,13 +29,12 @@ jobs:
         run: npm install
 
       - name: Setup environment variables
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-          GENERAL_ROLE_GROUP: ${{ secrets.GENERAL_ROLE_GROUP }}
-          MANAGER_ROLE_GROUP: ${{ secrets.MANAGER_ROLE_GROUP }}
-          NODE_ENV: test
-        run: echo "Environment variables configured"
+        run: |
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> $GITHUB_ENV
+          echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> $GITHUB_ENV
+          echo "GENERAL_ROLE_GROUP=${{ secrets.GENERAL_ROLE_GROUP }}" >> $GITHUB_ENV
+          echo "MANAGER_ROLE_GROUP=${{ secrets.MANAGER_ROLE_GROUP }}" >> $GITHUB_ENV
+          echo "NODE_ENV=test" >> $GITHUB_ENV
 
       - name: Build the Application
         run: npm run build

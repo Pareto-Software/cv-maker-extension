@@ -12,6 +12,7 @@ describe('AppController (e2e)', () => {
   beforeAll(async () => {
     const mockAuthGuard = {
       canActivate: jest.fn(() => true),
+      getUserGroups: jest.fn(() => ['test-group']),
     };
   
     const mockSheetService = {
