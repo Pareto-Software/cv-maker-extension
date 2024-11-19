@@ -63,6 +63,9 @@ describe('SupabaseController (e2e)', () => {
 
   const mockSupabaseService = {
     getEmployeesFullInformation: jest.fn().mockResolvedValue(mockEmployeeData),
+    getEmployeesSkillsAndProject: jest
+      .fn()
+      .mockResolvedValue(mockEmployeeSkillsProjectsData),
   };
 
   beforeAll(async () => {
