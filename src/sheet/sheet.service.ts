@@ -116,18 +116,17 @@ export class SheetService {
     return letter;
   }
 
-  // have to put the color map also as undefined
   async getCellStatus(
-    colormap: Record<string, sheets_v4.Schema$Color>,
-    cellAddress: string,
-    cellValue: string,
+    colormap: Record<string, sheets_v4.Schema$Color>, // A map of cell addresses to their colors
+    cellAddress: string, // The address of the cell being checked
+    cellValue: string, // The value of the cell being checked
   ) {
     // color map looks like this:
     // {
     //   A1: { red: 0.91764706, green: 0.2627451, blue: 0.20784314 },
     //   A2: { red: 0.9843137, green: 0.7372549, blue: 0.015686275 },
     //   A3: { red: 0.27450982, green: 0.7411765, blue: 0.7764706 },
-    const color = colormap[cellAddress];
+    const color = colormap[cellAddress]; // Retrieve the color for the given cell address
     if (!color) {
       console.log(
         'No color found for cell:',
@@ -137,48 +136,56 @@ export class SheetService {
       return 'unavailable';
     }
 
-    if (
-      color.red === 0.91764706 &&
-      color.green === 0.2627451 &&
-      color.blue === 0.20784314
-    ) {
-      // red
-      return 'available';
-    } else if (
-      color.red === 0.9843137 &&
-      color.green === 0.7372549 &&
-      color.blue === 0.015686275
-    ) {
-      // yellow
-      return 'unsure';
-    } else if (
-      color.red === 0.27450982 &&
-      color.green === 0.7411765 &&
-      color.blue === 0.7764706
-    ) {
-      // blue
-      return 'flexible_start';
-    } else if (
-      color.red === 0.8509804 &&
-      color.green === 0.8509804 &&
-      color.blue === 0.8509804 &&
-      cellValue === ''
-    ) {
-      // grey and empty
-      return 'unavailable';
-    } else if (
-      color.red === 0.20392157 &&
-      color.green === 0.65882355 &&
-      color.blue === 0.3254902 &&
-      cellValue === '1'
-    ) {
-      // green and has value 1
-      return 'unavailable';
-    } else if (cellValue && cellValue !== '1') {
-      // if something else, but still under capacity
-      return 'available';
-    } else {
-      return 'unavailable'; // default
+    // Helper function to check if a color channel (red, green, blue) is within a tolerance range
+    const isWithinTolerance = (
+      actual: number | undefined, // Allow undefined in input
+      target: number, // The target value to compare against
+      tolerance: number = 0.05, // The allowed deviation (default is 5%)
+    ) => Math.abs((actual ?? 0) - target) <= tolerance; // Use default value of 0 if actual is undefined
+
+    // Helper function to compare an actual color to a target color within tolerance
+    const matchesColor = (
+      actualColor: sheets_v4.Schema$Color, // The color of the cell
+      targetColor: { red: number; green: number; blue: number }, // The target color to compare to
+    ) =>
+      isWithinTolerance(actualColor.red ?? 0, targetColor.red) && // Ensure red is a number
+      isWithinTolerance(actualColor.green ?? 0, targetColor.green) && // Ensure green is a number
+      isWithinTolerance(actualColor.blue ?? 0, targetColor.blue); // Ensure blue is a number
+
+    // Define the target colors with their respective RGB values
+    const redColor = { red: 0.91764706, green: 0.2627451, blue: 0.20784314 }; // Red
+    const yellowColor = { red: 0.9843137, green: 0.7372549, blue: 0.015686275 }; // Yellow
+    const blueColor = { red: 0.27450982, green: 0.7411765, blue: 0.7764706 }; // Blue
+    const greyColor = { red: 0.8509804, green: 0.8509804, blue: 0.8509804 }; // Grey
+    const greenColor = { red: 0.20392157, green: 0.65882355, blue: 0.3254902 }; // Green
+
+    // Check if the cell color matches the defined red color
+    if (matchesColor(color, redColor)) {
+      return 'available'; // If red, the status is 'available'
+    }
+    // Check if the cell color matches the defined yellow color
+    else if (matchesColor(color, yellowColor)) {
+      return 'unsure'; // If yellow, the status is 'unsure'
+    }
+    // Check if the cell color matches the defined blue color
+    else if (matchesColor(color, blueColor)) {
+      return 'flexible_start'; // If blue, the status is 'flexible_start'
+    }
+    // Check if the cell color matches grey and the cell is empty
+    else if (matchesColor(color, greyColor) && cellValue === '') {
+      return 'unavailable'; // If grey and empty, the status is 'unavailable'
+    }
+    // Check if the cell color matches green and the cell value is '1'
+    else if (matchesColor(color, greenColor) && cellValue === '1') {
+      return 'unavailable'; // If green and has value 1, the status is 'unavailable'
+    }
+    // If the cell has a value other than '1', it is considered available
+    else if (cellValue && cellValue !== '1') {
+      return 'available'; // Available if not green and has a different value
+    }
+    // Default case if no conditions are met
+    else {
+      return 'unavailable'; // Default status is 'unavailable'
     }
   }
 
