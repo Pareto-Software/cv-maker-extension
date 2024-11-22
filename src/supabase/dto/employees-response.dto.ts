@@ -102,6 +102,9 @@ export class ProjectDTO {
     format: 'date',
   })
   end_date: string;
+
+  @ApiProperty({ description: 'User ID', type: 'number' })
+  user_id?: string;
 }
 
 export class CertificationDTO {
@@ -116,8 +119,14 @@ export class CertificationDTO {
 }
 
 export class EmployeeFullDetailDTO {
+  @ApiProperty({ description: 'Employee ID', type: 'number' })
+  id: number;
+
   @ApiProperty({ description: 'Full name of the employee', type: 'string' })
   name: string;
+
+  @ApiProperty({ description: 'User ID', type: 'string' })
+  user_id?: string;
 
   @ApiProperty({
     description: 'Job title',

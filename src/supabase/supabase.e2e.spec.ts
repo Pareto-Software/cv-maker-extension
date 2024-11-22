@@ -9,6 +9,7 @@ describe('SupabaseController (e2e)', () => {
   let app: INestApplication;
 
   const mockEmployeeData: EmployeeFullDetailDTO = {
+    id: 123,
     name: 'Samu Toljamo',
     title: 'Software Developer',
     description:
