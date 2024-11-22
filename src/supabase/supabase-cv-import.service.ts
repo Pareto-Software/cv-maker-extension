@@ -119,6 +119,7 @@ export class SupabaseCvImportService {
 
   async insertProjects(
     projects: Record<string, any>[],
+    categoryConnections: { row_id: number; id: any }[],
     user_id: string,
     cv_id: string,
   ): Promise<boolean | null> {
@@ -145,7 +146,7 @@ export class SupabaseCvImportService {
 
     for (let i = 0; i < projects.length; i++) {
       const projectKeywords = projects[i].keywords;
-      //const projectCategories = ;
+      const projectCategories = projects[i].category_ids;
       const projectId = insertedProjects[i]?.id;
 
       if (projectId && projectKeywords && projectKeywords.length > 0) {
@@ -162,6 +163,23 @@ export class SupabaseCvImportService {
       if (keywordError) {
         throw new Error(
           `Failed to insert keywords for project ID ${projectId}: ${keywordError.message}`,);
+        }
+      }
+
+      if (projectId && projectCategories && projectCategories.length > 0) {
+        const categoryConnectionData = projectCategories.map((categoryId: number) => ({
+          project_id: projectId,
+          category_id: categoryId,
+        }));
+  
+        const { error: categoryError } = await this.supabase
+          .from("managers")
+          .insert(categoryConnectionData);
+  
+        if (categoryError) {
+          throw new Error(
+            `Failed to insert category connections for project ID ${projectId}: ${categoryError.message}`,
+          );
         }
       }
     }

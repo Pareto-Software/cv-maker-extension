@@ -79,9 +79,10 @@ export class CvImportService {
       await this.supabaseCvImportService.updateProfile(json.profiles[0], user_id);
       await this.supabaseCvImportService.insertSkills(json.skills, user_id, cv_id);  
       await this.supabaseCvImportService.insertCertifications(json.certifications, user_id, cv_id);     
-      await this.supabaseCvImportService.insertProjectCategories(json.project_categories, user_id, cv_id);
-      await this.supabaseCvImportService.insertProjects(json.projects, user_id, cv_id);
-
+      const categories = await this.supabaseCvImportService.insertProjectCategories(json.project_categories, user_id, cv_id);
+      if (categories != null) {
+        await this.supabaseCvImportService.insertProjects(json.projects, categories, user_id, cv_id);
+      }
       return true;
     }
  
