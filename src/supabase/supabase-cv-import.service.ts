@@ -96,7 +96,7 @@ export class SupabaseCvImportService {
     projectCategories: Record<string, any>[],
     user_id: string,
     cv_id: string,
-  ): Promise<boolean | null> {
+  ): Promise<{ row_id: number; id: any }[] | null> {
     console.log("PROJCATS:");
     console.log(projectCategories);
     const data = projectCategories.map((category) => ({
@@ -108,9 +108,12 @@ export class SupabaseCvImportService {
       cv_id: cv_id,
     }));
   
-    const { error } = await this.supabase.from('project_categories').insert(data);
+    const { data: insertedRows, error } = await this.supabase.from('project_categories').insert(data).select();
     if (error) throw new Error(`Failed to insert project categories: ${error.message}`);
-    return true;
+    return insertedRows.map((row, index) => ({
+      row_id: row.id, // Database-assigned ID for the row
+      id: projectCategories[index]?.id || null, // Original category ID from the input
+    }));
   }
   
 
@@ -121,8 +124,6 @@ export class SupabaseCvImportService {
   ): Promise<boolean | null> {
     console.log("PROJECTS:");
     console.log(projects);
-    // not saving keywords or project categories because
-    // that requires handling of foreign keys and saving to different tables
     const data = projects.map((project) => ({
       name: project.name,
       description: project.description,
@@ -136,8 +137,34 @@ export class SupabaseCvImportService {
       cv_id: cv_id,
     }));
   
-    const { error } = await this.supabase.from('projects').insert(data);
+    const { data: insertedProjects, error } = await this.supabase
+    .from("projects")
+    .insert(data)
+    .select();
     if (error) throw new Error(`Failed to insert projects: ${error.message}`);
+
+    for (let i = 0; i < projects.length; i++) {
+      const projectKeywords = projects[i].keywords;
+      //const projectCategories = ;
+      const projectId = insertedProjects[i]?.id;
+
+      if (projectId && projectKeywords && projectKeywords.length > 0) {
+        const keywordData = projectKeywords.map((keyword: string) => ({
+          project_id: projectId,
+          keyword,
+        }));
+
+        // Insert keywords into the 'project_keywords' table
+      const { error: keywordError } = await this.supabase
+        .from("project_keywords")
+        .insert(keywordData);
+
+      if (keywordError) {
+        throw new Error(
+          `Failed to insert keywords for project ID ${projectId}: ${keywordError.message}`,);
+        }
+      }
+    }
     return true;
   }
   
