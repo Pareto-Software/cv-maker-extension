@@ -167,7 +167,7 @@ export class AllocationController {
     );
   }
 
-  @Get(':name/future')
+  @Get('future')
   @ApiOperation({
     summary: 'Retrieve future availability for an employee',
     description: `Fetches future availability details for a specified employee,
