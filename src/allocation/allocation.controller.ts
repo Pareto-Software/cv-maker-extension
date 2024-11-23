@@ -130,8 +130,6 @@ export class AllocationController {
     description: 'Successfully retrieved employee data',
     type: AvailableEmployeesDTO,
   })
-  @Get(':year/:month')
-  @HttpCode(200)
   @ApiResponse({
     type: AllocationByMonthResponseDTO,
   })
