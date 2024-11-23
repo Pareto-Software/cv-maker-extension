@@ -146,8 +146,9 @@ export class SupabaseCvImportService {
 
     for (let i = 0; i < projects.length; i++) {
       const projectKeywords = projects[i].keywords;
-      const projectCategories = projects[i].category_ids;
+      const projectCategories = projects[i].category_id;
       const projectId = insertedProjects[i]?.id;
+      
 
       if (projectId && projectKeywords && projectKeywords.length > 0) {
         const keywordData = projectKeywords.map((keyword: string) => ({
@@ -167,20 +168,29 @@ export class SupabaseCvImportService {
       }
 
       if (projectId && projectCategories && projectCategories.length > 0) {
-        const categoryConnectionData = projectCategories.map((categoryId: number) => ({
-          project_id: projectId,
-          category_id: categoryId,
-        }));
-  
-        const { error: categoryError } = await this.supabase
-          .from("managers")
-          .insert(categoryConnectionData);
-  
-        if (categoryError) {
-          throw new Error(
-            `Failed to insert category connections for project ID ${projectId}: ${categoryError.message}`,
-          );
+        for (let i = 0; i < categoryConnections.length; i++) {
+          const { row_id, id } = categoryConnections[i];
+          if (id == projectCategories) {
+            const categoryConnectionData = projectCategories.map((categoryId: number) => ({
+            project_id: projectId,
+            category_id: row_id,
+            }));
+
+          const { error: categoryError } = await this.supabase
+            .from("managers")
+            .insert(categoryConnectionData);
+    
+          if (categoryError) {
+            throw new Error(
+              `Failed to insert category connections for project ID ${projectId}: ${categoryError.message}`,
+              );
+            }
+
+          }
         }
+        
+  
+        
       }
     }
     return true;
