@@ -128,7 +128,7 @@ export class SupabaseCvImportService {
     console.log(projects);
     const data = projects.map((project) => {
       // Find the matching row_id for the current project's category_id
-      const match = categoryConnections.find(connection => connection.id === project.category_id);
+      const match = categoryConnections.find(connection => connection.id === project.project_category);
   
       return {
         name: project.name,
@@ -141,9 +141,11 @@ export class SupabaseCvImportService {
         image_url: project.image_url,
         user_id: user_id,
         cv_id: cv_id,
-        category_id: match ? match.row_id : null, // Use row_id or null if no match found
+        project_category: match ? match.row_id : null, // Use row_id or null if no match found
       };
     });
+
+    console.log("Mapped project data:", data);
   
     const { data: insertedProjects, error } = await this.supabase
     .from("projects")
@@ -151,7 +153,7 @@ export class SupabaseCvImportService {
     .select();
     if (error) throw new Error(`Failed to insert projects: ${error.message}`);
 
-    for (let i = 0; i < projects.length; i++) {
+    /*for (let i = 0; i < projects.length; i++) {
       const projectKeywords = projects[i].keywords;
       const projectId = insertedProjects[i]?.id;
     
@@ -180,7 +182,7 @@ export class SupabaseCvImportService {
             // If the keyword doesn't exist, insert it and retrieve its id
             const { data: newKeyword, error: keywordInsertError } = await this.supabase
               .from("keywords")
-              .insert({ keyword })
+              //.insert({ keyword })
               .select("id")
               .single();
     
@@ -213,7 +215,7 @@ export class SupabaseCvImportService {
           );
         }
       }
-    }
+    }*/
     return true;
   }
   
