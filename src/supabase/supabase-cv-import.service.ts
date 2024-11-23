@@ -116,6 +116,7 @@ export class SupabaseCvImportService {
     }));
   }
   
+  
 
   async insertProjects(
     projects: Record<string, any>[],
@@ -125,18 +126,24 @@ export class SupabaseCvImportService {
   ): Promise<boolean | null> {
     console.log("PROJECTS:");
     console.log(projects);
-    const data = projects.map((project) => ({
-      name: project.name,
-      description: project.description,
-      company: project.company,
-      start_date: project.start_date,
-      end_date: project.end_date,
-      role: project.role,
-      project_url: project.project_url,
-      image_url: project.image_url,
-      user_id: user_id,
-      cv_id: cv_id,
-    }));
+    const data = projects.map((project) => {
+      // Find the matching row_id for the current project's category_id
+      const match = categoryConnections.find(connection => connection.id === project.category_id);
+  
+      return {
+        name: project.name,
+        description: project.description,
+        company: project.company,
+        start_date: project.start_date,
+        end_date: project.end_date,
+        role: project.role,
+        project_url: project.project_url,
+        image_url: project.image_url,
+        user_id: user_id,
+        cv_id: cv_id,
+        category_id: match ? match.row_id : null, // Use row_id or null if no match found
+      };
+    });
   
     const { data: insertedProjects, error } = await this.supabase
     .from("projects")
@@ -146,51 +153,65 @@ export class SupabaseCvImportService {
 
     for (let i = 0; i < projects.length; i++) {
       const projectKeywords = projects[i].keywords;
-      const projectCategories = projects[i].category_id;
       const projectId = insertedProjects[i]?.id;
-      
-
-      if (projectId && projectKeywords && projectKeywords.length > 0) {
-        const keywordData = projectKeywords.map((keyword: string) => ({
-          project_id: projectId,
-          keyword,
-        }));
-
-        // Insert keywords into the 'project_keywords' table
-      const { error: keywordError } = await this.supabase
-        .from("project_keywords")
-        .insert(keywordData);
-
-      if (keywordError) {
-        throw new Error(
-          `Failed to insert keywords for project ID ${projectId}: ${keywordError.message}`,);
-        }
-      }
-
-      if (projectId && projectCategories && projectCategories.length > 0) {
-        for (let i = 0; i < categoryConnections.length; i++) {
-          const { row_id, id } = categoryConnections[i];
-          if (id == projectCategories) {
-            const categoryConnectionData = projectCategories.map((categoryId: number) => ({
-            project_id: projectId,
-            category_id: row_id,
-            }));
-
-          const { error: categoryError } = await this.supabase
-            .from("managers")
-            .insert(categoryConnectionData);
     
-          if (categoryError) {
-            throw new Error(
-              `Failed to insert category connections for project ID ${projectId}: ${categoryError.message}`,
+      if (projectId && projectKeywords && projectKeywords.length > 0) {
+        // Process all keywords for the current project
+        const keywordIds: number[] = [];
+    
+        for (const keyword of projectKeywords) {
+          // Check if the keyword already exists in the 'keywords' table
+          const { data: existingKeyword, error: keywordFetchError } = await this.supabase
+            .from("keywords")
+            .select("id")
+            .eq("keyword", keyword)
+            .single();
+    
+          if (keywordFetchError) {
+            throw new Error(`Failed to fetch keyword ${keyword}: ${keywordFetchError.message}`);
+          }
+    
+          let keywordId;
+    
+          if (existingKeyword) {
+            // If the keyword exists, use its id
+            keywordId = existingKeyword.id;
+          } else {
+            // If the keyword doesn't exist, insert it and retrieve its id
+            const { data: newKeyword, error: keywordInsertError } = await this.supabase
+              .from("keywords")
+              .insert({ keyword })
+              .select("id")
+              .single();
+    
+            if (keywordInsertError) {
+              throw new Error(
+                `Failed to insert new keyword ${keyword}: ${keywordInsertError.message}`
               );
             }
-
+    
+            keywordId = newKeyword.id;
           }
+    
+          // Add the keyword ID to the list
+          keywordIds.push(keywordId);
         }
-        
-  
-        
+    
+        // Now, insert all keyword IDs for the current project into 'project_keywords'
+        const keywordData = keywordIds.map((keywordId) => ({
+          project_id: projectId,
+          keyword_id: keywordId,
+        }));
+    
+        const { error: projectKeywordsInsertError } = await this.supabase
+          .from("project_keywords")
+          .insert(keywordData);
+    
+        if (projectKeywordsInsertError) {
+          throw new Error(
+            `Failed to insert project keywords for project ID ${projectId}: ${projectKeywordsInsertError.message}`
+          );
+        }
       }
     }
     return true;
