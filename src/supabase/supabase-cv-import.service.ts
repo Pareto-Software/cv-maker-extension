@@ -153,69 +153,101 @@ export class SupabaseCvImportService {
     .select();
     if (error) throw new Error(`Failed to insert projects: ${error.message}`);
 
-    /*for (let i = 0; i < projects.length; i++) {
-      const projectKeywords = projects[i].keywords;
+    for (let i = 0; i < projects.length; i++) {
+      // Ensure projectKeywords is an array of words
+      let projectKeywords = projects[i].keywords;
+      console.log(`Processing project #${i + 1} with raw keywords:`, projectKeywords);
+    
+      if (typeof projectKeywords === 'string') {
+        // Split keywords by commas and trim extra spaces
+        projectKeywords = projectKeywords.split(',').map((keyword) => keyword.trim());
+      }
+    
+      console.log(`Parsed keywords for project #${i + 1}:`, projectKeywords);
+    
       const projectId = insertedProjects[i]?.id;
+      console.log(`Project ID for project #${i + 1}:`, projectId);
     
       if (projectId && projectKeywords && projectKeywords.length > 0) {
-        // Process all keywords for the current project
         const keywordIds: number[] = [];
+        console.log(`Starting to process keywords for project #${i + 1}...`);
     
         for (const keyword of projectKeywords) {
-          // Check if the keyword already exists in the 'keywords' table
-          const { data: existingKeyword, error: keywordFetchError } = await this.supabase
-            .from("keywords")
-            .select("id")
-            .eq("keyword", keyword)
-            .single();
-    
-          if (keywordFetchError) {
-            throw new Error(`Failed to fetch keyword ${keyword}: ${keywordFetchError.message}`);
-          }
-    
-          let keywordId;
-    
-          if (existingKeyword) {
-            // If the keyword exists, use its id
-            keywordId = existingKeyword.id;
-          } else {
-            // If the keyword doesn't exist, insert it and retrieve its id
-            const { data: newKeyword, error: keywordInsertError } = await this.supabase
-              .from("keywords")
-              //.insert({ keyword })
-              .select("id")
-              .single();
-    
-            if (keywordInsertError) {
-              throw new Error(
-                `Failed to insert new keyword ${keyword}: ${keywordInsertError.message}`
-              );
+          try {
+            console.log(`Checking keyword: "${keyword}"`);
+        
+            // Check if the keyword already exists in the 'keywords' table
+            const { data: existingKeywords, error: keywordFetchError } = await this.supabase
+              .from('keywords')
+              .select('id')
+              .eq('name', keyword);
+        
+            if (keywordFetchError) {
+              console.error(`Error fetching keyword "${keyword}":`, keywordFetchError.message);
+              throw new Error(`Failed to fetch keyword "${keyword}"`);
             }
+        
+            let keywordId;
+        
+            if (existingKeywords && existingKeywords.length > 0) {
+              // Use the first match if duplicates exist
+              keywordId = existingKeywords[0].id;
+              console.log(`Keyword "${keyword}" exists with ID: ${keywordId}`);
+            } else {
+              // If the keyword doesn't exist, insert it and retrieve its id
+              console.log(`Keyword "${keyword}" does not exist. Inserting it into the database...`);
+              const { data: newKeyword, error: keywordInsertError } = await this.supabase
+                .from('keywords')
+                .insert({ name: keyword })
+                .select('id')
+                .single();
+        
+              if (keywordInsertError) {
+                console.error(`Error inserting keyword "${keyword}":`, keywordInsertError.message);
+                throw new Error(`Failed to insert new keyword "${keyword}"`);
+              }
+        
+              keywordId = newKeyword.id;
+              console.log(`Inserted keyword "${keyword}" with new ID: ${keywordId}`);
+            }
+        
+            // Add the keyword ID to the list
+            keywordIds.push(keywordId);
+          } catch (error) {
+            console.error(`Error processing keyword "${keyword}" for project #${i + 1}:`, error);
+          }
+        }        
     
-            keywordId = newKeyword.id;
+        try {
+          // Now, insert all keyword IDs for the current project into 'project_keywords'
+          const keywordData = keywordIds.map((keywordId) => ({
+            project_id: projectId,
+            keyword_id: keywordId,
+          }));
+    
+          console.log(`Inserting keywords for project #${i + 1}:`, keywordData);
+    
+          const { error: projectKeywordsInsertError } = await this.supabase
+            .from('project_keywords')
+            .insert(keywordData);
+    
+          if (projectKeywordsInsertError) {
+            console.error(
+              `Error inserting keywords into 'project_keywords' for project ID ${projectId}:`,
+              projectKeywordsInsertError.message
+            );
+            throw new Error(`Failed to insert project keywords for project ID ${projectId}`);
           }
     
-          // Add the keyword ID to the list
-          keywordIds.push(keywordId);
+          console.log(`Successfully inserted keywords for project #${i + 1}.`);
+        } catch (error) {
+          console.error(`Error inserting keywords into 'project_keywords' for project #${i + 1}:`, error);
         }
-    
-        // Now, insert all keyword IDs for the current project into 'project_keywords'
-        const keywordData = keywordIds.map((keywordId) => ({
-          project_id: projectId,
-          keyword_id: keywordId,
-        }));
-    
-        const { error: projectKeywordsInsertError } = await this.supabase
-          .from("project_keywords")
-          .insert(keywordData);
-    
-        if (projectKeywordsInsertError) {
-          throw new Error(
-            `Failed to insert project keywords for project ID ${projectId}: ${projectKeywordsInsertError.message}`
-          );
-        }
+      } else {
+        console.warn(`No valid keywords or project ID for project #${i + 1}. Skipping...`);
       }
-    }*/
+    }
+    
     return true;
   }
   
