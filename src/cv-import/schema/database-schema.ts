@@ -197,9 +197,8 @@ export const databaseSchema = {
             skill: { type: 'string', description: 'The name of the skill.' },
             level: {
               type: 'integer',
-              // TODO LLM invents skill levels here anyways, figure out a solution for it.
               description:
-                'The proficiency level of the skill, typically represented numerically. Leave null if not found.',
+                'The proficiency level of the skill, if not found mark 3',
             },
           },
           required: ['skill'],
