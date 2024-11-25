@@ -130,7 +130,6 @@ export class AllocationController {
     description: 'Successfully retrieved employee data',
     type: AvailableEmployeesDTO,
   })
- 
   async getAllocationsByMonthYear(
     @Query('year', ParseIntPipe) year: number,
     @Query('month') month: string,
