@@ -108,7 +108,7 @@ export class AllocationController {
     return { employees: employeeNames };
   }
 
-  @Get('available/:year/:month')
+  @Get('available')
   @ApiOperation({
     summary: 'Retrieve all employees allocation data by month and year',
     description: `Fetches a list of employees for a specific year 
@@ -130,9 +130,7 @@ export class AllocationController {
     description: 'Successfully retrieved employee data',
     type: AvailableEmployeesDTO,
   })
-  @ApiResponse({
-    type: AllocationByMonthResponseDTO,
-  })
+ 
   async getAllocationsByMonthYear(
     @Query('year', ParseIntPipe) year: number,
     @Query('month') month: string,
@@ -149,22 +147,6 @@ export class AllocationController {
       access_token,
     );
     return response;
-  }
-
-  async availableAtSpecificMonth(
-    @Query('year', ParseIntPipe) year: number,
-    @Query('month') month: string,
-    @Headers() headers: Record<string, string>,
-  ): Promise<AvailableEmployeesDTO> {
-    const access_token = headers.authorization?.replace('Bearer ', '').trim();
-    if (!access_token) {
-      throw new UnauthorizedException('Access token is missing or invalid');
-    }
-    return this.allocationService.getAvailableEmployees(
-      year,
-      month,
-      access_token,
-    );
   }
 
   @Get('future')
