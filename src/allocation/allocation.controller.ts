@@ -48,22 +48,22 @@ export class AllocationController {
                   including their capacity for each month and year`,
   })
   @ApiQuery({
-    name: 'firstName',
-    type: String,
-    description: 'Employee first name',
-  })
-  @ApiQuery({
     name: 'lastName',
     type: String,
     description: 'Employee last name',
+  })
+  @ApiQuery({
+    name: 'firstName',
+    type: String,
+    description: 'Employee first name',
   })
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved allocation data for an employee',
   })
   async getAllocationByName(
-    @Query('firstName') firstName: string,
     @Query('lastName') lastName: string,
+    @Query('firstName') firstName: string,
     @Headers() headers: Record<string, string>,
   ): Promise<AllocationResponseDTO> {
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
@@ -72,8 +72,8 @@ export class AllocationController {
     }
     try {
       const data = await this.allocationService.getAllocationByName(
-        firstName,
         lastName,
+        firstName,
         access_token,
       );
       return data;
@@ -176,14 +176,14 @@ export class AllocationController {
                   including reservation percentage and status for upcoming months.`,
   })
   @ApiQuery({
-    name: 'firstName',
-    type: String,
-    description: 'Employee first name',
-  })
-  @ApiQuery({
     name: 'lastName',
     type: String,
     description: 'Employee last name',
+  })
+  @ApiQuery({
+    name: 'firstName',
+    type: String,
+    description: 'Employee first name',
   })
   @HttpCode(200)
   @ApiResponse({
@@ -192,8 +192,8 @@ export class AllocationController {
     type: FutureAllocationResponseDTO,
   })
   async futureAvailability(
-    @Query('firstName') firstName: string,
     @Query('lastName') lastName: string,
+    @Query('firstName') firstName: string,
     @Headers() headers: Record<string, string>,
   ): Promise<FutureAllocationResponseDTO> {
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
@@ -201,8 +201,8 @@ export class AllocationController {
       throw new UnauthorizedException('Access token is missing or invalid');
     }
     return this.allocationService.getFutureAvailability(
-      firstName,
       lastName,
+      firstName,
       access_token,
     );
   }

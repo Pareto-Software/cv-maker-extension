@@ -29,8 +29,8 @@ export class AllocationService {
   }
 
   async getAllocationByName(
-    firstName: string,
     lastName: string,
+    firstName: string,
     access_token: string,
   ): Promise<AllocationResponseDTO> {
     // Fetch all sheet data
@@ -41,12 +41,12 @@ export class AllocationService {
     const employee = sheetData.rows.find(
       (row) =>
         row.name.toLowerCase() ===
-        `${firstName.toLowerCase()} ${lastName.toLowerCase()}`,
+        `${lastName.toLowerCase()} ${firstName.toLowerCase()}`,
     );
 
     if (!employee) {
       throw new NotFoundException(
-        `Employee ${firstName} ${lastName} not found.`,
+        `Employee ${lastName} ${firstName} not found.`,
       );
     }
 
@@ -109,8 +109,8 @@ export class AllocationService {
   }
 
   async getFutureAvailability(
-    firstName: string,
     lastName: string,
+    firstName: string,
     accessToken: string,
   ): Promise<FutureAllocationResponseDTO> {
     const sheetData = await this.sheetService.getSheetData(accessToken);
@@ -119,12 +119,12 @@ export class AllocationService {
     const employee = sheetData.rows.find(
       (row) =>
         row.name.toLowerCase() ===
-        `${firstName.toLowerCase()} ${lastName.toLowerCase()}`,
+        `${lastName.toLowerCase()} ${firstName.toLowerCase()}`,
     );
 
     if (!employee) {
       throw new NotFoundException(
-        `Employee ${firstName} ${lastName} not found.`,
+        `Employee ${lastName} ${firstName} not found.`,
       );
     }
 
