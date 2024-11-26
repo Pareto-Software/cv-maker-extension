@@ -1,5 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+export class ProjectWithKeywordsDTO {
+  @ApiProperty({ description: 'Project name', type: 'string' })
+  name: string;
+
+  @ApiProperty({
+    description: 'Keywords related to the project',
+    type: 'array',
+    items: { type: 'string' },
+  })
+  keywords: string[];
+}
+
 export class EmployeeDTO {
   @ApiProperty({ description: 'name of the employee', type: 'string' })
   name: string;
@@ -13,10 +25,16 @@ export class EmployeeDTO {
 
   @ApiProperty({
     description: 'A list of each project an employee has participated in',
+    type: [ProjectWithKeywordsDTO],
+  })
+  projects: ProjectWithKeywordsDTO[];
+
+  @ApiProperty({
+    description: 'A list of certifications an employee has',
     type: 'array',
     items: { type: 'string' },
   })
-  projects: string[];
+  certifications: string[];
 }
 
 export class EmployeesResponseDTO {

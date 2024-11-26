@@ -125,12 +125,7 @@ describe('AllocationService', () => {
   beforeEach(async () => {
     sheetService = new SheetService(
       new ConfigService({
-        CLIENT_ID: 'dummy-client-id',
-        CLIENT_SECRET: 'dummy-client-secret',
-        REDIRECT_URL: 'http://localhost/redirect',
         SPREADSHEET_ID: 'dummy-spreadsheet-id',
-        GOOGLE_API_KEY: 'dummy-api-key',
-        AUTH_METHOD: 'api_key',
       }),
     );
     service = new AllocationService(sheetService);
@@ -144,7 +139,10 @@ describe('AllocationService', () => {
   });
 
   it('should return allocation data for an existing employee', async () => {
-    const name = 'Test person';
+    const lastName = 'Test';
+    const firstName = 'person';
+    const dummyAccessToken = 'dummy-access-token';
+
     const expectedResult: AllocationResponseDTO = {
       name: 'Test person',
       capacity: 0.8,
@@ -173,7 +171,11 @@ describe('AllocationService', () => {
         ],
       },
     };
-    const result = await service.getAllocationByName(name, dummyAccessToken);
+    const result = await service.getAllocationByName(
+      lastName,
+      firstName,
+      dummyAccessToken,
+    );
 
     expect(result).toEqual(expectedResult);
   });
@@ -228,10 +230,12 @@ describe('AllocationService', () => {
 
   describe('get future availability', () => {
     it('should return future availability for an employee', async () => {
-      const person = 'Test person';
+      const lastName = 'Test';
+      const firstName = 'person';
+      const dummyAccessToken = 'dummy-access-token';
 
       const expectedResult = {
-        name: person,
+        name: 'Test person',
         futureAvailability: [
           {
             value: 0,
@@ -253,7 +257,8 @@ describe('AllocationService', () => {
         .mockResolvedValue(sampleDataForFuture);
 
       const result = await service.getFutureAvailability(
-        person,
+        lastName,
+        firstName,
         dummyAccessToken,
       );
 
@@ -262,7 +267,10 @@ describe('AllocationService', () => {
   });
 
   it('should return allocation data for an existing employee', async () => {
-    const name = 'Test person';
+    const lastName = 'Test';
+    const firstName = 'person';
+    const dummyAccessToken = 'dummy-access-token';
+
     const expectedResult: AllocationResponseDTO = {
       name: 'Test person',
       capacity: 0.8,
@@ -292,7 +300,11 @@ describe('AllocationService', () => {
       },
     };
 
-    const result = await service.getAllocationByName(name, dummyAccessToken);
+    const result = await service.getAllocationByName(
+      lastName,
+      firstName,
+      dummyAccessToken,
+    );
     expect(result).toEqual(expectedResult);
   });
 

@@ -45,21 +45,70 @@ export class SupabaseService {
 
     const { data: projects, error: projectsError } = await this.supabase
       .from('projects')
-      .select('user_id, name');
+      .select('id, user_id, name');
 
     if (projectsError) {
       throw new Error(`Error fetching projects : ${projectsError.message}`);
     }
 
+    const { data: certifications, error: certificationsError } =
+      await this.supabase.from('certifications').select('user_id, name');
+    if (certificationsError) {
+      throw new Error(
+        `Error fetching certificates : ${certificationsError.message}`,
+      );
+    }
+
+    const { data: projectKeywords, error: projectKeywordsError } =
+      await this.supabase
+        .from('project_keywords')
+        .select('project_id, keyword_id');
+    if (projectKeywordsError) {
+      throw new Error(
+        `Error fetching project keywords : ${projectKeywordsError.message}`,
+      );
+    }
+
+    const { data: keywords, error: keywordsError } = await this.supabase
+      .from('keywords')
+      .select('id, name');
+    if (keywordsError) {
+      throw new Error(`Error fetching keywords : ${keywordsError.message}`);
+    }
+
+    const projectKeywordsWithNames = projectKeywords.map((projectKeyword) => ({
+      ...projectKeyword,
+      keyword:
+        keywords.find((keyword) => keyword.id === projectKeyword.keyword_id)
+          ?.name ?? '',
+    }));
+    //projectKeyword.keyword_id== keyword.id
+
     const employees: EmployeeDTO[] = profiles.map((profile) => {
+      const employeeSkills = skills
+        .filter((skill) => skill.user_id === profile.user_id)
+        .map((skill) => skill.skill ?? '');
+
+      const employeeProjects = projects
+        .filter((project) => project.user_id === profile.user_id)
+        .map((project) => ({
+          name: project.name ?? '',
+          keywords: projectKeywordsWithNames
+            .filter(
+              (projectKeyword) => projectKeyword.project_id === project.id,
+            )
+            .map((projectKeyword) => projectKeyword.keyword ?? ''),
+        }));
+
+      const employeeCertifications = certifications
+        .filter((certificate) => certificate.user_id === profile.user_id)
+        .map((certificate) => certificate.name ?? '');
+
       return {
         name: `${profile.first_name} ${profile.last_name}`,
-        skills: skills
-          .filter((skill) => skill.user_id === profile.user_id)
-          .map((skill) => skill.skill ?? ''),
-        projects: projects
-          .filter((project) => project.user_id === profile.user_id)
-          .map((project) => project.name ?? ''),
+        skills: employeeSkills,
+        projects: employeeProjects,
+        certifications: employeeCertifications,
       };
     });
     return employees;

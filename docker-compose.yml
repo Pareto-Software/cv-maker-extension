@@ -7,9 +7,3 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - '8080:80'
-    networks:
-      - oauth_net
-
-networks:
-  oauth_net:
-    driver: bridge
