@@ -17,7 +17,7 @@ export class OpenAiAPIService {
 
   async textToStructuredJSON(dataString: String): Promise<Record<string, any>> {
     if (dataString == null || dataString.length < 100) {
-      console.log('Data string are contents unplausibly short');
+      console.error('Data string are contents unplausibly short');
       return Promise<null>;
     }
     try {

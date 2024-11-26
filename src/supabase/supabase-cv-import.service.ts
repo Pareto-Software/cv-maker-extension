@@ -19,8 +19,6 @@ export class SupabaseCvImportService {
     profile: Database['public']['Tables']['profiles']['Insert'],
     user_id: string,
   ): Promise<string | null> {
-    console.log("PROFILE:");
-    console.log(profile);
     const { data, error } = await this.supabase
       .from('profiles')
       .update({
@@ -38,7 +36,7 @@ export class SupabaseCvImportService {
       .select('id');
 
     if (error) {
-      console.log(`Failed to update profile: ${error.message}`);
+      console.error(`Failed to update profile: ${error.message}`);
       return null;
     }
     return data?.[0]?.id.toString();
@@ -55,7 +53,7 @@ export class SupabaseCvImportService {
       .select('id'); 
 
     if (error) {
-      console.log(`Failed to insert CV: ${error.message}`);
+      console.error(`Failed to insert CV: ${error.message}`);
       return null;
     }
     // Return CV id
@@ -68,8 +66,6 @@ export class SupabaseCvImportService {
     user_id: string,
     cv_id: string,
   ): Promise<boolean | null> {
-    console.log("CERTS:");
-    console.log(certifications);
     const data = certifications.map((key: { name: any; description: any; company: any; start_date: any; end_date: any; role: any; project_category: any; project_url: any; image_url: any; }) => ({
       name: key.name,
       description: key.description,
@@ -97,8 +93,6 @@ export class SupabaseCvImportService {
     user_id: string,
     cv_id: string,
   ): Promise<{ row_id: number; id: any }[] | null> {
-    console.log("PROJCATS:");
-    console.log(projectCategories);
     const data = projectCategories.map((category) => ({
       title: category.title,
       end_date: category.end_date,
@@ -124,8 +118,6 @@ export class SupabaseCvImportService {
     user_id: string,
     cv_id: string,
   ): Promise<boolean | null> {
-    console.log("PROJECTS:");
-    console.log(projects);
     const data = projects.map((project) => {
       // Find the matching row_id for the current project's category_id
       const match = categoryConnections.find(connection => connection.id === project.project_category);
@@ -236,8 +228,6 @@ export class SupabaseCvImportService {
     user_id: string,
     cv_id: string,
   ): Promise<boolean | null> {
-    console.log("SKILLS:");
-    console.log(skills);
     const data = skills.map((skill) => ({
       skill: skill.skill,
       level: skill.level,
@@ -248,19 +238,5 @@ export class SupabaseCvImportService {
     const { error } = await this.supabase.from('skills').insert(data);
     if (error) throw new Error(`Failed to insert skills: ${error.message}`);
     return true;
-  }
-  
-
-  /*   async insertKeywords(
-    keywords: Database['public']['Tables']['keywords']['Insert'][],
-    user_id: string,
-    cv_id: string,
-  ) {
-    const { data, error } = await this.supabase
-      .from('keywords')
-      .insert(keywords);
-    if (error) throw new Error(`Failed to insert keywords: ${error.message}`);
-    return data;
-  } */
- 
+  } 
 }

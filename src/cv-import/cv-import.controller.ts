@@ -32,7 +32,6 @@ export class CvImportController {
     @UploadedFiles() files: Express.Multer.File[],
     @Body() body: { user: string },  
   ) {
-    console.log('Processing CV files sent by gateway');
     try {
       if (!body.user) {    
         throw new BadRequestException('No user specified');

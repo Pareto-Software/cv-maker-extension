@@ -15,36 +15,42 @@ export class CvImportService {
     private readonly openAiAPIService: OpenAiAPIService,
   ) {}
 
-  async _testProcessFiles(): Promise<boolean> {  
-    console.log('running test save func');
-    try {  
-    const jsonFilePath = path.resolve('test/test_data/test.json');
-    const jsonString = fs.readFileSync(jsonFilePath, 'utf-8');
-    const json = JSON.parse(jsonString); 
-    // console.log(json);
-    const user_id = '9ef9c361-e9be-4c8c-b9c5-a20c813d4b18';
-
-
-    return this._saveJsonAsCv(json, user_id);
-    }
-    catch(e) {
-      console.log(e);
-      return false;
-    }
-  }
 
   async processFiles(
     files: Express.Multer.File[],
     saveToUser: string
 ): Promise<boolean> {
-    //return this._testProcessFiles();
     var dataString: string = '';
+
+    if (files.length > 10 || files.length == 0) {
+      console.error('1-10 files allowed, aborting');
+      return false;
+    }
+
     for (let file of files) {
-      // TODO implementvalidate files
+      if(file.buffer.length == 0) {
+        console.error('File buffer was empty on %s, ignoring', file.filename);
+        continue;
+      }
+
+      if(file.size > 5 * 1024 * 1024) {
+        console.error('Maximum file size is 5MB, ignoring %s', file.filename);
+        continue;
+      }
+
+      if(file.mimetype !== "application/pdf") {
+        console.error("Only pdf files allowed for now, ignoring %s", file.filename);
+        continue;
+      }
 
       // TODO implement choose correct document processor
       dataString += await this.documentParserService.parsePdfFile(file);      
     }  
+
+    if (dataString.length < 10) {
+      console.error('Length of a string created from parsed files was under 10 chars, aborting.')
+      return false;
+    }
 
     const structuredJson = await this.openAiAPIService.textToStructuredJSON(dataString);
     
@@ -55,7 +61,6 @@ export class CvImportService {
         saveToUser
       );
       if (result) {
-        console.log("Data saved successfully");
         return true;
       }          
     } 
@@ -71,9 +76,7 @@ export class CvImportService {
     user_id: string
   ): Promise<boolean> {
     // Save a new cv to user and get a new cv id as return value
-    console.log('saving new cv');
     const cv_id = await this.supabaseCvImportService.insertCv(user_id);
-    console.log('cv id: ' + cv_id);    
 
     if (cv_id != null) {
       await this.supabaseCvImportService.updateProfile(json.profiles[0], user_id);
@@ -86,7 +89,7 @@ export class CvImportService {
       return true;
     }
  
-    console.log("Cv_id was null when trying to create a new cv at saveJsonAsCv");
+    console.error("Cv_id was null when trying to create a new cv at saveJsonAsCv");
     return false;
   }
 }
