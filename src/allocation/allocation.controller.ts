@@ -14,9 +14,9 @@ import {
   FutureAllocationResponseDTO,
   AllocationByMonthResponseDTO,
   AllocationResponseDTO,
-} from './dtos';
-import { AllocationService } from './allocation.service';
-import { Public } from '../oauth2/groups.decorator';
+} from './dtos.js';
+import { AllocationService } from './allocation.service.js';
+import { Public } from '../oauth2/groups.decorator.js';
 
 @Controller('allocation')
 @Public()

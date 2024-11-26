@@ -1,5 +1,5 @@
 import { Controller, Get, HttpCode } from '@nestjs/common';
-import { Public } from './oauth2/groups.decorator';
+import { Public } from './oauth2/groups.decorator.js';
 import {
   ApiTags,
   ApiOperation,

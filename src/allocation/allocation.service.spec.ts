@@ -1,7 +1,7 @@
 import { AllocationService } from './allocation.service.js';
-import { AllocationResponseDTO } from './dtos';
+import { AllocationResponseDTO } from './dtos.js';
 import { SheetService } from '../sheet/sheet.service.js';
-import { SheetDataDTO } from '../sheet/dtos';
+import { SheetDataDTO } from '../sheet/dtos.js';
 import { ConfigService } from '@nestjs/config';
 import { InternalServerErrorException } from '@nestjs/common';
 

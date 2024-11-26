@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { SheetService } from '../sheet/sheet.service.js';
-import { CellValueDTO, SheetDataDTO, Month } from '../sheet/dtos';
+import { CellValueDTO, SheetDataDTO, Month } from '../sheet/dtos.js';
 import {
   AllocationRow,
   AvailableEmployeesDTO,
@@ -14,7 +14,7 @@ import {
   FutureAllocationResponseDTO,
   AllocationResponseDTO,
   AllocationByMonthResponseDTO,
-} from './dtos';
+} from './dtos.js';
 
 @Injectable()
 export class AllocationService {

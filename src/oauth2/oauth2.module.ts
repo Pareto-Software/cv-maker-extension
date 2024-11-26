@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './oauth2.controller';
-import { OAuth2Service } from './oauth2.service';
-import { AuthGuard } from './auth.guard';
+import { AuthController } from './oauth2.controller.js';
+import { OAuth2Service } from './oauth2.service.js';
+import { AuthGuard } from './auth.guard.js';
 import { APP_GUARD } from '@nestjs/core';
 
 @Module({

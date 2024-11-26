@@ -1,9 +1,9 @@
 import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
-import { SupabaseModule } from './supabase.module';
-import { SupabaseService } from './supabase.service';
+import { SupabaseModule } from './supabase.module.js';
+import { SupabaseService } from './supabase.service.js';
 import { INestApplication } from '@nestjs/common';
-import { EmployeeFullDetailDTO } from './dto/employees-response.dto';
+import { EmployeeFullDetailDTO } from './dto/employees-response.dto.js';
 
 describe('SupabaseController (e2e)', () => {
   let app: INestApplication;

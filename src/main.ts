@@ -14,6 +14,9 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+  // TODO implement this properly (more securely)
+  app.enableCors(); // to accept connections from cvimport client
+
   SwaggerModule.setup('api', app, document, {
     patchDocumentOnRequest(req: any, _, document) {
       // Set OpenAPI version to 3.1.0

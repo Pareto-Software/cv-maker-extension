@@ -9,7 +9,7 @@ import {
   CertificationDTO,
   EducationDTO,
   EmployeeFullDetailDTO,
-} from './dto/employees-response.dto';
+} from './dto/employees-response.dto.js';
 
 @Injectable()
 export class SupabaseService {

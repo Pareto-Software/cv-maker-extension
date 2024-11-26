@@ -6,14 +6,14 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { SupabaseService } from './supabase.service';
+import { SupabaseService } from './supabase.service.js';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 
 import {
   EmployeeFullDetailDTO,
   EmployeesResponseDTO,
-} from './dto/employees-response.dto';
-import { Manager } from '../oauth2/groups.decorator';
+} from './dto/employees-response.dto.js';
+import { Manager } from '../oauth2/groups.decorator.js';
 
 @ApiTags('Supabase ')
 @Controller()

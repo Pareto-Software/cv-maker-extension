@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { StatusValue } from 'src/sheet/dtos';
+import { StatusValue } from '../sheet/dtos.js';
 
 // Added this as an example of how description can be added
 // If you know that there are more limits for the properties(e.g. string with a max length of 5)
