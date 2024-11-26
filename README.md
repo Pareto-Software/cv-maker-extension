@@ -21,6 +21,10 @@ OPENAI_STRUCTURED_API_KEY=<apikey here>
 
 # sheet url
 SPREADSHEET_ID= # Go to the spreadsheet with your browser and it will be visible on the URL
+
+# TODO document this SOME RANDOM UNDEFINED USE, just enter some value
+GENERAL_ROLE_GROUP=asdf
+MANAGER_ROLE_GROUP=asdf
 ```
 
 **2. Install dependencies**
