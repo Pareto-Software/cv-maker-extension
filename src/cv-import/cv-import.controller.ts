@@ -12,6 +12,7 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtGuard } from '../jwt/jwt.guard.js';
 import { CvImportService } from './cv-import.service.js';
+import { Public } from '../oauth2/groups.decorator.js';
 
 // TODO implement logic for handling different outcomes of file process and 
 // appropriate responses:
@@ -25,6 +26,7 @@ export class CvImportController {
   constructor(private readonly cvImportService: CvImportService) {}
 
   @UseInterceptors(FilesInterceptor('files'))
+  @Public()
   @Post('process/cvfiles')
   async importCv(
     @UploadedFiles() files: Express.Multer.File[],
