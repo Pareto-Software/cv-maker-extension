@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
 import { ChatOpenAI } from '@langchain/openai';
 import { databaseSchema } from '../schema/database-schema.js';
 

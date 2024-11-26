@@ -8,11 +8,11 @@ dotenv.config();
 export class DocumentParserService {
   /**
    * Extracts text from a PDF file buffer with pdfjs-dist.
-   * 
+   *
    * Using pdf.js produces font-related warnings which can be ignored because
    * this function is interested only in text content, not fonts.
    * Warning: TT: undefined function: 21
-   * Warning: fetchStandardFontData: failed to fetch file "LiberationSans-Regular.ttf" with 
+   * Warning: fetchStandardFontData: failed to fetch file "LiberationSans-Regular.ttf" with
    * "UnknownErrorException: Ensure that the `standardFontDataUrl` API parameter is provided.".
    *
    * @param pdfFile - The uploaded PDF file (from Multer) to extract text from.
@@ -56,9 +56,9 @@ export class DocumentParserService {
       console.error('Error while parsing pdf from buffer:', e);
       return fullText;
     }
-  }  
+  }
 
   async parseDocxFile(pdfFile: Express.Multer.File): Promise<string> {
-    throw new Error('not implemented'); 
+    throw new Error('not implemented');
   }
 }

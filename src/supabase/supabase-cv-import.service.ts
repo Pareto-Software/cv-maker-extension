@@ -7,12 +7,9 @@ import { Database } from './database.types.js';
 export class SupabaseCvImportService {
   private supabase: SupabaseClient<Database>;
 
-  constructor(
-    private readonly supabaseClientProvider: SupabaseClientProvider,
-  ) {
+  constructor(private readonly supabaseClientProvider: SupabaseClientProvider) {
     this.supabase = this.supabaseClientProvider.getClient();
   }
-
 
   // Insert profile
   async updateProfile(
@@ -30,7 +27,6 @@ export class SupabaseCvImportService {
         metadata: profile.metadata,
         profile_pic: profile.profile_pic,
         social_media_links: profile.social_media_links,
-
       })
       .eq('user_id', user_id)
       .select('id');
@@ -50,7 +46,7 @@ export class SupabaseCvImportService {
         title: 'AI_generated_CV',
         user_id: user_id,
       })
-      .select('id'); 
+      .select('id');
 
     if (error) {
       console.error(`Failed to insert CV: ${error.message}`);
@@ -66,27 +62,36 @@ export class SupabaseCvImportService {
     user_id: string,
     cv_id: string,
   ): Promise<boolean | null> {
-    const data = certifications.map((key: { name: any; description: any; company: any; start_date: any; end_date: any; role: any; project_category: any; project_url: any; image_url: any; }) => ({
-      name: key.name,
-      description: key.description,
-      company: key.company,
-      start_date: key.start_date,
-      end_date: key.end_date,
-      role: key.role,
-      project_category: key.project_category,
-      project_url: key.project_url,
-      image_url: key.image_url,
-      user_id: user_id,
-      cv_id: cv_id,
-    }));
-    const { error } = await this.supabase
-      .from('certifications')
-      .insert(data);
+    const data = certifications.map(
+      (key: {
+        name: any;
+        description: any;
+        company: any;
+        start_date: any;
+        end_date: any;
+        role: any;
+        project_category: any;
+        project_url: any;
+        image_url: any;
+      }) => ({
+        name: key.name,
+        description: key.description,
+        company: key.company,
+        start_date: key.start_date,
+        end_date: key.end_date,
+        role: key.role,
+        project_category: key.project_category,
+        project_url: key.project_url,
+        image_url: key.image_url,
+        user_id: user_id,
+        cv_id: cv_id,
+      }),
+    );
+    const { error } = await this.supabase.from('certifications').insert(data);
     if (error)
       throw new Error(`Failed to insert certifications: ${error.message}`);
     return false;
   }
-
 
   async insertProjectCategories(
     projectCategories: Record<string, any>[],
@@ -101,16 +106,18 @@ export class SupabaseCvImportService {
       user_id: user_id,
       cv_id: cv_id,
     }));
-  
-    const { data: insertedRows, error } = await this.supabase.from('project_categories').insert(data).select();
-    if (error) throw new Error(`Failed to insert project categories: ${error.message}`);
+
+    const { data: insertedRows, error } = await this.supabase
+      .from('project_categories')
+      .insert(data)
+      .select();
+    if (error)
+      throw new Error(`Failed to insert project categories: ${error.message}`);
     return insertedRows.map((row, index) => ({
       row_id: row.id, // Database-assigned ID for the row
       id: projectCategories[index]?.id || null, // Original category ID from the input
     }));
   }
-  
-  
 
   async insertProjects(
     projects: Record<string, any>[],
@@ -120,8 +127,10 @@ export class SupabaseCvImportService {
   ): Promise<boolean | null> {
     const data = projects.map((project) => {
       // Find the matching row_id for the current project's category_id
-      const match = categoryConnections.find(connection => connection.id === project.project_category);
-  
+      const match = categoryConnections.find(
+        (connection) => connection.id === project.project_category,
+      );
+
       return {
         name: project.name,
         description: project.description,
@@ -136,52 +145,56 @@ export class SupabaseCvImportService {
         project_category: match ? match.row_id : null, // Use row_id or null if no match found
       };
     });
-  
+
     const { data: insertedProjects, error } = await this.supabase
-    .from("projects")
-    .insert(data)
-    .select();
+      .from('projects')
+      .insert(data)
+      .select();
     if (error) throw new Error(`Failed to insert projects: ${error.message}`);
 
     for (let i = 0; i < projects.length; i++) {
       // Ensure projectKeywords is an array of words
       let projectKeywords = projects[i].keywords;
-    
+
       if (typeof projectKeywords === 'string') {
         // Split keywords by commas and trim extra spaces
-        projectKeywords = projectKeywords.split(',').map((keyword) => keyword.trim());
+        projectKeywords = projectKeywords
+          .split(',')
+          .map((keyword) => keyword.trim());
       }
-    
+
       const projectId = insertedProjects[i]?.id;
-    
+
       if (projectId && projectKeywords && projectKeywords.length > 0) {
         const keywordIds: number[] = [];
-    
+
         for (const keyword of projectKeywords) {
           try {
             // Check if the keyword already exists in the 'keywords' table
-            const { data: existingKeywords, error: keywordFetchError } = await this.supabase
-              .from('keywords')
-              .select('id')
-              .eq('name', keyword);
-        
+            const { data: existingKeywords, error: keywordFetchError } =
+              await this.supabase
+                .from('keywords')
+                .select('id')
+                .eq('name', keyword);
+
             if (keywordFetchError) {
               throw new Error(`Failed to fetch keyword "${keyword}"`);
             }
-        
+
             let keywordId;
-        
+
             if (existingKeywords && existingKeywords.length > 0) {
               // Use the first match if duplicates exist
               keywordId = existingKeywords[0].id;
             } else {
               // If the keyword doesn't exist, insert it and retrieve its id
-              const { data: newKeyword, error: keywordInsertError } = await this.supabase
-                .from('keywords')
-                .insert({ name: keyword })
-                .select('id')
-                .single();
-        
+              const { data: newKeyword, error: keywordInsertError } =
+                await this.supabase
+                  .from('keywords')
+                  .insert({ name: keyword })
+                  .select('id')
+                  .single();
+
               if (keywordInsertError) {
                 throw new Error(`Failed to insert new keyword "${keyword}"`);
               }
@@ -190,38 +203,47 @@ export class SupabaseCvImportService {
             // Add the keyword ID to the list
             keywordIds.push(keywordId);
           } catch (error) {
-            console.error(`Error processing keyword "${keyword}" for project #${i + 1}:`, error);
+            console.error(
+              `Error processing keyword "${keyword}" for project #${i + 1}:`,
+              error,
+            );
           }
-        }        
-    
+        }
+
         try {
           // Now, insert all keyword IDs for the current project into 'project_keywords'
           const keywordData = keywordIds.map((keywordId) => ({
             project_id: projectId,
             keyword_id: keywordId,
           }));
-    
+
           const { error: projectKeywordsInsertError } = await this.supabase
             .from('project_keywords')
             .insert(keywordData);
-    
+
           if (projectKeywordsInsertError) {
             console.error(
               `Error inserting keywords into 'project_keywords' for project ID ${projectId}:`,
-              projectKeywordsInsertError.message
+              projectKeywordsInsertError.message,
             );
-            throw new Error(`Failed to insert project keywords for project ID ${projectId}`);
+            throw new Error(
+              `Failed to insert project keywords for project ID ${projectId}`,
+            );
           }
         } catch (error) {
-          console.error(`Error inserting keywords into 'project_keywords' for project #${i + 1}:`, error);
+          console.error(
+            `Error inserting keywords into 'project_keywords' for project #${i + 1}:`,
+            error,
+          );
         }
       } else {
-        console.warn(`No valid keywords or project ID for project #${i + 1}. Skipping...`);
+        console.warn(
+          `No valid keywords or project ID for project #${i + 1}. Skipping...`,
+        );
       }
     }
     return true;
   }
-  
 
   async insertSkills(
     skills: Record<string, any>[],
@@ -234,9 +256,9 @@ export class SupabaseCvImportService {
       user_id: user_id,
       cv_id: cv_id,
     }));
-  
+
     const { error } = await this.supabase.from('skills').insert(data);
     if (error) throw new Error(`Failed to insert skills: ${error.message}`);
     return true;
-  } 
+  }
 }

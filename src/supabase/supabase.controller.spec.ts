@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseController } from './supabase.controller.js';
-import { SupabaseService } from './supabase.service.js;
+import { SupabaseService } from './supabase.service.js';
 import { EmployeeFullDetailDTO } from './dto/employees-response.dto.js';
 
 describe('SupabaseController', () => {

@@ -16,13 +16,13 @@ SUPABASE_URL=  # Looks like https://<supabase-project-id>.supabase.co
 SUPABASE_KEY= # This is the service account token
 
 # CV import feature
-JWT_SECRET=<from supabase api settings page> 
+JWT_SECRET=<from supabase api settings page>
 OPENAI_STRUCTURED_API_KEY=<apikey here>
 
 # sheet url
 SPREADSHEET_ID= # Go to the spreadsheet with your browser and it will be visible on the URL
 
-# TODO document this SOME RANDOM UNDEFINED USE, just enter some value
+# TODO document the usage of these variables (can use any value when testing cv import feature)
 GENERAL_ROLE_GROUP=asdf
 MANAGER_ROLE_GROUP=asdf
 ```
