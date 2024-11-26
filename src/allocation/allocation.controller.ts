@@ -107,12 +107,11 @@ export class AllocationController {
       await this.allocationService.getAllEmployeeNames(access_token);
     return { employees: employeeNames };
   }
-
-  @Get('available/:year/:month')
+  @Get('allocations')
   @ApiOperation({
     summary: 'Retrieve all employees allocation data by month and year',
-    description: `Fetches a list of employees for a specific year 
-                  and month, along with their availability details`,
+    description: `Fetches a list of employees allocation data for a specific year 
+                  and month`,
   })
   @ApiQuery({
     name: 'year',
@@ -128,11 +127,6 @@ export class AllocationController {
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved employee data',
-    type: AvailableEmployeesDTO,
-  })
-  @Get(':year/:month')
-  @HttpCode(200)
-  @ApiResponse({
     type: AllocationByMonthResponseDTO,
   })
   async getAllocationsByMonthYear(
@@ -153,6 +147,28 @@ export class AllocationController {
     return response;
   }
 
+  @Get('available')
+  @ApiOperation({
+    summary: 'Retrieve available employees by month and year',
+    description: `Fetches a list of available employees for a specific year 
+                  and month`,
+  })
+  @ApiQuery({
+    name: 'year',
+    type: Number,
+    description: 'Year to filter availability data by',
+  })
+  @ApiQuery({
+    name: 'month',
+    type: String,
+    description: 'Month to filter availability data by',
+  })
+  @HttpCode(200)
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved available employee data',
+    type: AvailableEmployeesDTO,
+  })
   async availableAtSpecificMonth(
     @Query('year', ParseIntPipe) year: number,
     @Query('month') month: string,
@@ -169,7 +185,7 @@ export class AllocationController {
     );
   }
 
-  @Get(':name/future')
+  @Get('future')
   @ApiOperation({
     summary: 'Retrieve future availability for an employee',
     description: `Fetches future availability details for a specified employee,
