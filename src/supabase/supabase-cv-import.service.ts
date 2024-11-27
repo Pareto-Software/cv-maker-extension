@@ -65,24 +65,12 @@ export class SupabaseCvImportService {
     const data = certifications.map(
       (key: {
         name: any;
-        description: any;
-        company: any;
-        start_date: any;
-        end_date: any;
-        role: any;
-        project_category: any;
-        project_url: any;
-        image_url: any;
+        received: any;
+        valid_until: any;
       }) => ({
         name: key.name,
-        description: key.description,
-        company: key.company,
-        start_date: key.start_date,
-        end_date: key.end_date,
-        role: key.role,
-        project_category: key.project_category,
-        project_url: key.project_url,
-        image_url: key.image_url,
+        received: key.received,
+        valid_until: key.valid_until,
         user_id: user_id,
         cv_id: cv_id,
       }),
@@ -111,6 +99,7 @@ export class SupabaseCvImportService {
       .from('project_categories')
       .insert(data)
       .select();
+      console.log("inserted")
     if (error)
       throw new Error(`Failed to insert project categories: ${error.message}`);
     return insertedRows.map((row, index) => ({

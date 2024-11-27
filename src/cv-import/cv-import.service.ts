@@ -77,6 +77,7 @@ export class CvImportService {
   ): Promise<boolean> {
     // Save a new cv to user and get a new cv id as return value
     const cv_id = await this.supabaseCvImportService.insertCv(user_id);
+    console.log("CV id: ", cv_id);
 
     if (cv_id != null) {
       await this.supabaseCvImportService.updateProfile(

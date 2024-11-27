@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { ChatOpenAI } from '@langchain/openai';
 import { databaseSchema } from '../schema/database-schema.js';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class OpenAiAPIService {
   private model: ChatOpenAI;
 
-  constructor() {
+  constructor(private configService: ConfigService) {
+    const model = this.configService.get<string>('CHATGPT_MODEL');
+    const openAIKey = this.configService.get<string>('OPENAI_STRUCTURED_API_KEY');
+
     this.model = new ChatOpenAI({
-      modelName: 'gpt-4o-mini',
-      openAIApiKey: process.env.OPENAI_STRUCTURED_API_KEY,
+      modelName: model || 'gpt-4o-mini',
+      openAIApiKey: openAIKey,
       temperature: 0,
       maxTokens: 4096,
     });
@@ -26,9 +30,9 @@ export class OpenAiAPIService {
       });
 
       const response = await structuredLlm.invoke(
-        `Fill information to JSON structure from the following CV files (fill projects and project categories always). If ${dataString}`,
+        `Fill information to JSON structure from the following CV files (fill projects and project categories always). ${dataString} DATES ARE ALLWAYS YYYY-MM-DD (eg. 2020-06-21). Dates are in project categories and certifications`,
       );
-
+      console.log(response);
       return response;
     } catch (error) {
       console.error('Error fetching CV:', error);
