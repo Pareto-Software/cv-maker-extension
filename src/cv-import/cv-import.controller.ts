@@ -2,8 +2,10 @@ import {
   BadRequestException,
   Body,
   Controller,
+  HttpCode,
   HttpException,
   HttpStatus,
+  InternalServerErrorException,
   Post,
   UploadedFiles,
   UseGuards,
@@ -14,11 +16,8 @@ import { JwtGuard } from '../jwt/jwt.guard.js';
 import { CvImportService } from './cv-import.service.js';
 import { Public } from '../oauth2/groups.decorator.js';
 
-// TODO implement logic for handling different outcomes of file process and
-// appropriate responses:
-//Returns 200 (or 201) for success.
-//Returns 400 for client-side errors like invalid input.
-//Returns 500 or other server-side codes for external errors like OpenAI API issues.
+//Returns 201 for success.
+//Returns 500 when error happens.
 
 @Controller('cv-import')
 @UseGuards(JwtGuard)
@@ -28,18 +27,20 @@ export class CvImportController {
   @UseInterceptors(FilesInterceptor('files'))
   @Public()
   @Post('process/cvfiles')
+  @HttpCode(201)
   async importCv(
     @UploadedFiles() files: Express.Multer.File[],
     @Body() body: { user: string },
   ) {
-    try {
-      if (!body.user) {
-        throw new BadRequestException('No user specified');
-      }
-
-      return await this.cvImportService.processFiles(files, body.user);
-    } catch (BadRequestException) {
-      return HttpStatus.BAD_REQUEST;
+  
+    if (!body.user) {
+      throw new BadRequestException('No user specified');
     }
-  }
+
+    if(await this.cvImportService.processFiles(files, body.user)) {
+      return;
+    }
+
+    throw new InternalServerErrorException("Failed to generate CV");
+    }
 }
