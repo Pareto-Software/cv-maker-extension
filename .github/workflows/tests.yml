@@ -15,6 +15,15 @@ jobs:
       - name: Install npm packages
         run: npm install
 
+      - name: Setup environment variables
+        run: |
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> $GITHUB_ENV
+          echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> $GITHUB_ENV
+          echo "GENERAL_ROLE_GROUP=${{ secrets.GENERAL_ROLE_GROUP }}" >> $GITHUB_ENV
+          echo "MANAGER_ROLE_GROUP=${{ secrets.MANAGER_ROLE_GROUP }}" >> $GITHUB_ENV
+          echo "NODE_ENV=test" >> $GITHUB_ENV
+
+
       - name: Test code
         run: npm run test
 
