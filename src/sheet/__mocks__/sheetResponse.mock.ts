@@ -54,7 +54,7 @@ export const mockSheetResponse = {
       '0.7',
       '0.7',
     ],
-  ]
+  ],
 };
 
 export const modifiedMockSheetResponse = {
@@ -67,5 +67,5 @@ export const modifiedMockSheetResponse = {
 
 export const emptyMockSheetResponse = {
   ...mockSheetResponse,
-  values: []
+  values: [],
 };
