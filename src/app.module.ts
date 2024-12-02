@@ -9,7 +9,10 @@ import { AuthGuard } from './oauth2/auth.guard';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     SupabaseModule,
     AllocationModule,
     SheetModule,
