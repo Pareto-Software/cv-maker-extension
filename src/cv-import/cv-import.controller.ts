@@ -3,8 +3,6 @@ import {
   Body,
   Controller,
   HttpCode,
-  HttpException,
-  HttpStatus,
   InternalServerErrorException,
   Post,
   UploadedFiles,
@@ -32,15 +30,14 @@ export class CvImportController {
     @UploadedFiles() files: Express.Multer.File[],
     @Body() body: { user: string },
   ) {
-  
     if (!body.user) {
       throw new BadRequestException('No user specified');
     }
 
-    if(await this.cvImportService.processFiles(files, body.user)) {
+    if (await this.cvImportService.processFiles(files, body.user)) {
       return;
     }
 
-    throw new InternalServerErrorException("Failed to generate CV");
-    }
+    throw new InternalServerErrorException('Failed to generate CV');
+  }
 }

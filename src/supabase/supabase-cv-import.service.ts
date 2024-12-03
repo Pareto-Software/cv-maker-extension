@@ -63,11 +63,7 @@ export class SupabaseCvImportService {
     cv_id: string,
   ): Promise<boolean | null> {
     const data = certifications.map(
-      (key: {
-        name: any;
-        received: any;
-        valid_until: any;
-      }) => ({
+      (key: { name: any; received: any; valid_until: any }) => ({
         name: key.name,
         received: key.received,
         valid_until: key.valid_until,
@@ -99,7 +95,7 @@ export class SupabaseCvImportService {
       .from('project_categories')
       .insert(data)
       .select();
-      console.log("inserted")
+    console.log('inserted');
     if (error)
       throw new Error(`Failed to insert project categories: ${error.message}`);
     return insertedRows.map((row, index) => ({

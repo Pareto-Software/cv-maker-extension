@@ -3,8 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { DocumentParserService } from './service/documentParser.service.js';
 import { OpenAiAPIService } from './service/openai.service.js';
 import { SupabaseCvImportService } from '../supabase/supabase-cv-import.service.js';
-import path from 'path';
-import * as fs from 'fs';
 
 // Implements business logic and data handling.
 @Injectable()
@@ -19,14 +17,14 @@ export class CvImportService {
     files: Express.Multer.File[],
     saveToUser: string,
   ): Promise<boolean> {
-    var dataString: string = '';
+    let dataString: string = '';
 
     if (files.length > 10 || files.length == 0) {
       console.error('1-10 files allowed, aborting');
       return false;
     }
 
-    for (let file of files) {
+    for (const file of files) {
       if (file.buffer.length == 0) {
         console.error('File buffer was empty on %s, ignoring', file.filename);
         continue;
@@ -77,7 +75,7 @@ export class CvImportService {
   ): Promise<boolean> {
     // Save a new cv to user and get a new cv id as return value
     const cv_id = await this.supabaseCvImportService.insertCv(user_id);
-    console.log("CV id: ", cv_id);
+    console.log('CV id: ', cv_id);
 
     if (cv_id != null) {
       await this.supabaseCvImportService.updateProfile(

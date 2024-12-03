@@ -9,7 +9,9 @@ export class OpenAiAPIService {
 
   constructor(private configService: ConfigService) {
     const model = this.configService.get<string>('CHATGPT_MODEL');
-    const openAIKey = this.configService.get<string>('OPENAI_STRUCTURED_API_KEY');
+    const openAIKey = this.configService.get<string>(
+      'OPENAI_STRUCTURED_API_KEY',
+    );
 
     this.model = new ChatOpenAI({
       modelName: model || 'gpt-4o-mini',
@@ -19,7 +21,7 @@ export class OpenAiAPIService {
     });
   }
 
-  async textToStructuredJSON(dataString: String): Promise<Record<string, any>> {
+  async textToStructuredJSON(dataString: string): Promise<Record<string, any>> {
     if (dataString == null || dataString.length < 100) {
       console.error('Data string are contents unplausibly short');
       return Promise<null>;

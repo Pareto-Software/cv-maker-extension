@@ -58,7 +58,8 @@ export class DocumentParserService {
     }
   }
 
-  async parseDocxFile(pdfFile: Express.Multer.File): Promise<string> {
+  /*   async parseDocxFile(pdfFile: Express.Multer.File): Promise<string> {
     throw new Error('not implemented');
   }
+    */
 }
