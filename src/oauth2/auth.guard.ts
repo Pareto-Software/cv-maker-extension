@@ -89,7 +89,6 @@ export class AuthGuard implements CanActivate {
 
     return true;
   }
-
   private async getUserGroups(accessToken: string): Promise<string[]> {
     try {
       // Set up OAuth2 client

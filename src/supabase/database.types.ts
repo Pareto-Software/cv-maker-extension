@@ -350,7 +350,17 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      match_projects: {
+        Args: {
+          query_embedding: number[];
+          match_count: number;
+        };
+        Returns: {
+          project_id: number;
+          user_id: number;
+          similarity: number;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;
