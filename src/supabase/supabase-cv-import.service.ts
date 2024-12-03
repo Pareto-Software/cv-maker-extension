@@ -95,7 +95,7 @@ export class SupabaseCvImportService {
       .from('project_categories')
       .insert(data)
       .select();
-    console.log('inserted');
+
     if (error)
       throw new Error(`Failed to insert project categories: ${error.message}`);
     return insertedRows.map((row, index) => ({

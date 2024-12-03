@@ -4,6 +4,12 @@ import { DocumentParserService } from './service/documentParser.service.js';
 import { OpenAiAPIService } from './service/openai.service.js';
 import { SupabaseCvImportService } from '../supabase/supabase-cv-import.service.js';
 
+// Currently supported filetypes, should be the same as in cvmaker
+enum FileType {
+  PDF = 'application/pdf',
+  Docx = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+}
+
 // Implements business logic and data handling.
 @Injectable()
 export class CvImportService {
@@ -35,16 +41,24 @@ export class CvImportService {
         continue;
       }
 
-      if (file.mimetype !== 'application/pdf') {
+      if (!Object.values(FileType).includes(file.mimetype as FileType)) {
         console.error(
-          'Only pdf files allowed for now, ignoring %s',
+          'Only pdf & docx files allowed for now, ignoring %s',
           file.filename,
         );
         continue;
       }
 
-      // TODO implement choose correct document processor
-      dataString += await this.documentParserService.parsePdfFile(file);
+      switch (file.mimetype) {
+        case FileType.PDF:
+          dataString += await this.documentParserService.parsePdfFile(file);
+          break;
+        case FileType.Docx:
+          dataString += await this.documentParserService.parseDocxFile(file);
+          break;
+        default:
+          break;
+      }
     }
 
     if (dataString.length < 10) {
@@ -75,7 +89,6 @@ export class CvImportService {
   ): Promise<boolean> {
     // Save a new cv to user and get a new cv id as return value
     const cv_id = await this.supabaseCvImportService.insertCv(user_id);
-    console.log('CV id: ', cv_id);
 
     if (cv_id != null) {
       await this.supabaseCvImportService.updateProfile(

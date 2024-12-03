@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as dotenv from 'dotenv';
 import * as pdfJs from 'pdfjs-dist';
 import { TextItem } from 'pdfjs-dist/types/src/display/api.js';
+import * as mammoth from 'mammoth';
 
 dotenv.config();
 @Injectable()
@@ -58,8 +59,23 @@ export class DocumentParserService {
     }
   }
 
-  /*   async parseDocxFile(pdfFile: Express.Multer.File): Promise<string> {
-    throw new Error('not implemented');
+  /**
+   * Extracts text from a DOCX file.
+   * @param file - The uploaded DOCX file (from Multer) to extract text from.
+   * @returns The extracted text as a string.
+   */
+  async parseDocxFile(file: Express.Multer.File): Promise<string> {
+    try {
+      const result = await mammoth.extractRawText({ buffer: file.buffer });
+
+      if (result.value) {
+        return result.value;
+      }
+
+      return '';
+    } catch (error) {
+      console.error('Error extracting text from DOCX:', error);
+      throw error;
+    }
   }
-    */
 }

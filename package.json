@@ -36,6 +36,7 @@
     "google-auth-library": "^9.14.1",
     "googleapis": "^144.0.0",
     "langchain": "^0.3.5",
+    "mammoth": "^1.8.0",
     "nestjs-zod": "^3.0.0",
     "openapi3-ts": "^4.4.0",
     "passport": "^0.7.0",
@@ -75,5 +76,5 @@
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
-  } 
+  }
 }

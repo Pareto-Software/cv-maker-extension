@@ -34,7 +34,7 @@ export class OpenAiAPIService {
       const response = await structuredLlm.invoke(
         `Fill information to JSON structure from the following CV files (fill projects and project categories always). ${dataString} DATES ARE ALLWAYS YYYY-MM-DD (eg. 2020-06-21). Dates are in project categories and certifications`,
       );
-      console.log(response);
+
       return response;
     } catch (error) {
       console.error('Error fetching CV:', error);
