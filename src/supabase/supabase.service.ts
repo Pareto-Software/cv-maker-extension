@@ -330,9 +330,6 @@ export class SupabaseService {
     }
 
     const fullDetailsPromises = profiles.map(async (employee) => {
-      console.log(
-        `Fetching full information for employee: ${employee.first_name} ${employee.last_name}`,
-      );
       return this.getEmployeesFullInformation(
         employee.first_name ?? '',
         employee.last_name ?? '',

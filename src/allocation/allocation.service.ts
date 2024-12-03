@@ -268,7 +268,6 @@ export class AllocationService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      console.error(error);
       throw new InternalServerErrorException('Failed to fetch allocation data');
     }
   }

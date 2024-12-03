@@ -65,10 +65,7 @@ describe('SupabaseController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/employees?firstName=Samu&lastName=Toljamo')
       .expect(200)
-      .expect(mockEmployeeData)
-      .then((response) => {
-        console.log(response.body);
-      });
+      .expect(mockEmployeeData);
   });
 
   afterAll(async () => {

@@ -7,7 +7,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { AllocationResponseDTO } from './dtos';
-// import { createDefaultEsmPreset } from 'ts-jest';
 
 describe('controller', () => {
   let controller: AllocationController;

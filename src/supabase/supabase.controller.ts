@@ -119,15 +119,10 @@ export class SupabaseController {
     if (!query) {
       throw new BadRequestException('Query parameter is required');
     }
-    console.log('Query:', query);
-    console.log('Limit:', limit);
-
     const projects = await this.supabaseService.searchProjectsByVector(
       query,
       limit,
     );
-
-    console.log('Projects:', projects);
 
     // Map projects to user IDs and count matching projects
     const userProjectCount: Map<string, number> = new Map();
@@ -155,8 +150,6 @@ export class SupabaseController {
         };
       },
     );
-
-    console.log('Employees:', employees);
 
     return employees;
   }
