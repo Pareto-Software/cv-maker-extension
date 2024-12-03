@@ -6,7 +6,7 @@ import * as dotenv from 'dotenv';
 
 describe('SupabaseController (e2e)', () => {
   let app: INestApplication;
-
+  
   beforeAll(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [SupabaseModule],

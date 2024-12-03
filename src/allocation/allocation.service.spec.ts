@@ -139,8 +139,8 @@ describe('AllocationService', () => {
   });
 
   it('should return allocation data for an existing employee', async () => {
-    const firstName = 'Test';
-    const lastName = 'person';
+    const lastName = 'Test';
+    const firstName = 'person';
     const dummyAccessToken = 'dummy-access-token';
 
     const expectedResult: AllocationResponseDTO = {
@@ -172,8 +172,8 @@ describe('AllocationService', () => {
       },
     };
     const result = await service.getAllocationByName(
-      firstName,
       lastName,
+      firstName,
       dummyAccessToken,
     );
 
@@ -230,8 +230,8 @@ describe('AllocationService', () => {
 
   describe('get future availability', () => {
     it('should return future availability for an employee', async () => {
-      const firstName = 'Test';
-      const lastName = 'person';
+      const lastName = 'Test';
+      const firstName = 'person';
       const dummyAccessToken = 'dummy-access-token';
 
       const expectedResult = {
@@ -257,8 +257,8 @@ describe('AllocationService', () => {
         .mockResolvedValue(sampleDataForFuture);
 
       const result = await service.getFutureAvailability(
-        firstName,
         lastName,
+        firstName,
         dummyAccessToken,
       );
 
@@ -267,8 +267,8 @@ describe('AllocationService', () => {
   });
 
   it('should return allocation data for an existing employee', async () => {
-    const firstName = 'Test';
-    const lastName = 'person';
+    const lastName = 'Test';
+    const firstName = 'person';
     const dummyAccessToken = 'dummy-access-token';
 
     const expectedResult: AllocationResponseDTO = {
@@ -301,8 +301,8 @@ describe('AllocationService', () => {
     };
 
     const result = await service.getAllocationByName(
-      firstName,
       lastName,
+      firstName,
       dummyAccessToken,
     );
     expect(result).toEqual(expectedResult);
