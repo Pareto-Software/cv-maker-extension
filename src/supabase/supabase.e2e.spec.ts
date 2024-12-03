@@ -1,4 +1,4 @@
-import * as request from 'supertest';
+import request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseModule } from './supabase.module.js';
 import { SupabaseService } from './supabase.service.js';
