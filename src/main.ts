@@ -15,6 +15,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+
   SwaggerModule.setup('api', app, document, {
     patchDocumentOnRequest(req: any, _, document) {
       // Set OpenAPI version to 3.1.0

@@ -39,12 +39,14 @@ export class SupabaseController {
     description: 'Failed to fetch employee data',
   })
   async getEmployeesWithSkillsAndProjects(): Promise<EmployeesResponseDTO> {
+    console.log('calling getEmployeesSkillsAndProject');
     const employees = await this.supabaseService.getEmployeesSkillsAndProject();
     return { employees };
   }
 
   @Get('employees')
   @HttpCode(200)
+  @Manager()
   @ApiOperation({ summary: 'Retrieve employee CV information by full name' })
   @ApiQuery({
     name: 'firstName',
@@ -69,6 +71,7 @@ export class SupabaseController {
     @Query('firstName') firstName: string,
     @Query('lastName') lastName: string,
   ): Promise<EmployeeFullDetailDTO> {
+    console.log('calling getEmployeeByName');
     if (!firstName || !lastName) {
       throw new BadRequestException(
         'Both firstName and lastName must be provided',
@@ -87,6 +90,7 @@ export class SupabaseController {
 
   @Get('employees/search')
   @HttpCode(200)
+  @Manager()
   @ApiOperation({
     summary: 'Search for employees based on a query',
     description: `Performs a similarity search on projects and returns employees associated with the matching projects, along with the number of times their projects matched.`,
@@ -119,6 +123,7 @@ export class SupabaseController {
     if (!query) {
       throw new BadRequestException('Query parameter is required');
     }
+    console.log('calling searchProjectsByVector');
     console.log('Query:', query);
     console.log('Limit:', limit);
 
