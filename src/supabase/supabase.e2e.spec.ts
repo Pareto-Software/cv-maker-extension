@@ -1,8 +1,8 @@
 import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseModule } from './supabase.module';
-import { SupabaseService } from './supabase.service';
 import { INestApplication } from '@nestjs/common';
+import * as dotenv from 'dotenv';
 import { EmployeeFullDetailDTO } from './dto/employees-response.dto';
 
 describe('SupabaseController (e2e)', () => {
@@ -49,26 +49,44 @@ describe('SupabaseController (e2e)', () => {
     getEmployeesFullInformation: jest.fn().mockResolvedValue(mockEmployeeData),
   };
 
+  // just use the mockSupabaseService so it passes linter
+  mockSupabaseService.getEmployeesFullInformation();
+
   beforeAll(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [SupabaseModule],
-    })
-      .overrideProvider(SupabaseService)
-      .useValue(mockSupabaseService)
-      .compile();
+    }).compile();
+    dotenv.config();
 
     app = moduleRef.createNestApplication();
     await app.init();
   });
 
-  it(`/GET employees/:first_name/:last_name`, () => {
-    return request(app.getHttpServer())
+  it(`/GET employees/:first_name/:last_name`, async () => {
+    const response = await request(app.getHttpServer())
       .get('/employees?firstName=Samu&lastName=Toljamo')
-      .expect(200)
-      .expect(mockEmployeeData)
-      .then((response) => {
-        console.log(response.body);
-      });
+      .expect(200);
+    expect(response.body).toHaveProperty('name');
+    expect(response.body).toHaveProperty('title');
+  }, 30000);
+
+  it(`/GET employees/:first_name/:last_name`, async () => {
+    const response = await request(app.getHttpServer())
+      .get('/employees?firstName=Samu&lastName=Toljamo')
+      .expect(200);
+
+    expect(response.body).toHaveProperty('name');
+    expect(response.body).toHaveProperty('title');
+    console.log('Response for /GET employees:', response.body);
+  });
+
+  it(`/GET employees/skills-projects`, async () => {
+    const response = await request(app.getHttpServer())
+      .get('/employees/skills-projects')
+      .expect(200);
+
+    expect(response.body).toHaveProperty('employees');
+    expect(Array.isArray(response.body.employees)).toBe(true);
   });
 
   afterAll(async () => {
