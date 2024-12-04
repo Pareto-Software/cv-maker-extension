@@ -13,6 +13,7 @@ import { Oauth2ClientProvider } from './oauth2-client.provider';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
+    Oauth2ClientProvider,
   ],
   exports: [Oauth2ClientProvider],
 })
