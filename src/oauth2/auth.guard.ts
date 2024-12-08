@@ -22,6 +22,8 @@ export class AuthGuard implements CanActivate {
       this.configService.get<string>('GENERAL_ROLE_GROUP');
     const manager_role_group =
       this.configService.get<string>('MANAGER_ROLE_GROUP');
+    console.log('General Role Group:', general_role_group);
+    console.log('Manager Role Group:', manager_role_group);
     if (!general_role_group || !manager_role_group) {
       throw new Error(
         'General Role Group and Manager Role Group must be provided in the env as GENERAL_ROLE_GROUP= and MANAGER_ROLE_GROUP=',
@@ -135,6 +137,7 @@ export class AuthGuard implements CanActivate {
 
       // Combine and remove duplicates using Set
       const allGroups = [...new Set([...directGroups, ...transitiveGroups])];
+      console.log('Found Groups:', allGroups);
 
       return allGroups;
     } catch (error) {

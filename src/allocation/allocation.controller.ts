@@ -19,12 +19,12 @@ import { AllocationService } from './allocation.service.js';
 import { Public } from '../oauth2/groups.decorator.js';
 
 @Controller('allocation')
-@Public()
 @ApiTags('Allocation')
 export class AllocationController {
   constructor(private readonly allocationService: AllocationService) {}
 
   @Get('sheetdata')
+  @Public()
   @ApiOperation({ summary: 'Fetch allocation data for all employees' })
   @HttpCode(200)
   @ApiResponse({
@@ -32,16 +32,14 @@ export class AllocationController {
     description: 'Successfully retrieved allocation data for all employees',
   })
   async fetchSheetData(@Headers() headers: Record<string, string>) {
-    console.log('Auth Header:', headers.authorization);
-    console.log('Trying to fetch sheetdata');
+    console.log('calling fetchSheetData');
     const access_token = headers.authorization;
     const data = await this.allocationService.getSheetData(access_token);
-    console.log('moi');
-    console.log(data);
     return { data };
   }
 
   @Get('detail')
+  @Public()
   @ApiOperation({
     summary: 'Fetch employee allocation data by detail',
     description: `Fetches allocation data for a specified employee, 
@@ -66,6 +64,7 @@ export class AllocationController {
     @Query('firstName') firstName: string,
     @Headers() headers: Record<string, string>,
   ): Promise<AllocationResponseDTO> {
+    console.log('calling getAllocationByName');
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
     if (!access_token) {
       throw new UnauthorizedException('Access token is missing or invalid');
@@ -86,6 +85,7 @@ export class AllocationController {
   }
 
   @Get()
+  @Public()
   @ApiOperation({
     summary: 'Retrieve employee names from Allocation data',
     description: 'Fetches names of all employees from allocation data',
@@ -98,6 +98,7 @@ export class AllocationController {
   async getAllEmployees(
     @Headers() headers: Record<string, string>,
   ): Promise<{ employees: string[] }> {
+    console.log('calling getAllEmployees');
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
     if (!access_token) {
       throw new UnauthorizedException('Access token is missing or invalid');
@@ -108,6 +109,7 @@ export class AllocationController {
     return { employees: employeeNames };
   }
   @Get('allocations')
+  @Public()
   @ApiOperation({
     summary: 'Retrieve all employees allocation data by month and year',
     description: `Fetches a list of employees allocation data for a specific year 
@@ -134,6 +136,7 @@ export class AllocationController {
     @Query('month') month: string,
     @Headers() headers: Record<string, string>,
   ): Promise<AllocationByMonthResponseDTO> {
+    console.log('calling getAllocationsByMonthYear');
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
     if (!access_token) {
       throw new UnauthorizedException('Access token is missing or invalid');
@@ -148,6 +151,7 @@ export class AllocationController {
   }
 
   @Get('available')
+  @Public()
   @ApiOperation({
     summary: 'Retrieve available employees by month and year',
     description: `Fetches a list of available employees for a specific year 
@@ -174,6 +178,7 @@ export class AllocationController {
     @Query('month') month: string,
     @Headers() headers: Record<string, string>,
   ): Promise<AvailableEmployeesDTO> {
+    console.log('calling availableAtSpecificMonth');
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
     if (!access_token) {
       throw new UnauthorizedException('Access token is missing or invalid');
@@ -186,6 +191,7 @@ export class AllocationController {
   }
 
   @Get('future')
+  @Public()
   @ApiOperation({
     summary: 'Retrieve future availability for an employee',
     description: `Fetches future availability details for a specified employee,
@@ -212,6 +218,7 @@ export class AllocationController {
     @Query('firstName') firstName: string,
     @Headers() headers: Record<string, string>,
   ): Promise<FutureAllocationResponseDTO> {
+    console.log('calling futureAvailability');
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
     if (!access_token) {
       throw new UnauthorizedException('Access token is missing or invalid');

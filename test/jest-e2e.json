@@ -1,16 +1,24 @@
 {
     "preset": "ts-jest/presets/default-esm",
     "testEnvironment": "node",
+    "testRegex": "(test/.*\\.e2e-spec\\.ts|src/supabase/.*\\.e2e-spec\\.ts)$",
     "extensionsToTreatAsEsm": [".ts"],
     "globals": {
       "ts-jest": {
         "useESM": true
       }
     },
-    "moduleNameMapper": {
-      "^(\\.{1,2}/.*)\\.js$": "$1"
+    "moduleNameMapper": {    
+      "^src/(.*)$": "<rootDir>/../src/$1"
     },
     "moduleFileExtensions": ["js", "json", "ts"],
-    "testRegex": ".e2e-spec.ts$",
-    "transform": {}
-  }
+    "transform": {
+        "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "rootDir": ".",
+    "testTimeout": 30000,
+    "setupFiles": ["<rootDir>/setup-env.ts"]
+}
+
+
+
