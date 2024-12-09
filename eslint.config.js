@@ -11,6 +11,7 @@ const __dirname = path.dirname(__filename);
 export default [
   {
     files: ['**/*.ts', '**/*.tsx'], // Specify file types for TypeScript
+    ignores: ['__mocks__/**'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -19,8 +20,7 @@ export default [
         sourceType: 'module',
       },
     },
-    linterOptions: {   
-    },
+    linterOptions: {},
     plugins: {
       '@typescript-eslint': eslintPluginTypeScript,
       prettier: eslintPluginPrettier,
@@ -31,5 +31,5 @@ export default [
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
     },
-  },  
+  },
 ];

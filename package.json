@@ -23,7 +23,10 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "set NODE_OPTIONS=--max-old-space-size=6144 && jest --config ./test/jest-e2e.json"
+    "test:e2e": "NODE_OPTIONS=--max-old-space-size=6144 && jest --config ./test/jest-e2e.json"
+  },
+  "overrides": {
+    "glob": "^10.4.5"
   },
   "dependencies": {
     "@anatine/zod-nestjs": "^2.0.9",

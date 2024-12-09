@@ -1,21 +1,23 @@
 {
   "preset": "ts-jest/presets/default-esm",
   "testEnvironment": "node",
-  "testRegex": "(test/.*\\.e2e-spec\\.ts|src/supabase/.*\\.e2e-spec\\.ts)$",
+  "testMatch": [
+    "<rootDir>/test/**/*.e2e-spec.ts",
+    "<rootDir>/src/supabase/**/*.e2e-spec.ts"
+  ],
   "extensionsToTreatAsEsm": [".ts"],
-  "globals": {
-    "ts-jest": {
-      "useESM": true
-    }
-  },
   "moduleNameMapper": {
-    "^src/(.*)$": "<rootDir>/../src/$1"
+    "^src/(.*)$": "<rootDir>/src/$1",
+    "^(\\.{1,2}/.*)\\.js$": "$1",
+    "^pdfjs-dist$": "<rootDir>/__mocks__/pdfjs-dist.ts"
   },
   "moduleFileExtensions": ["js", "json", "ts"],
   "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
+    "^.+\\.(ts)s$": ["ts-jest", { "tsconfig": "tsconfig.json", "useESM": true }]
   },
-  "rootDir": ".",
+  "rootDir": "..",
   "testTimeout": 30000,
-  "setupFiles": ["<rootDir>/setup-env.ts"]
+  "setupFiles": ["<rootDir>/test/setup-env.ts"],
+  "testPathIgnorePatterns": ["/dist"],
+  "transformIgnorePatterns": ["/node_modules/(?!pdfjs-dist)/"]
 }

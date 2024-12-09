@@ -5,6 +5,7 @@ const config: Config = {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts'],
+  moduleDirectories: ['node_modules', 'src'],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
@@ -12,6 +13,7 @@ const config: Config = {
     '^.+\\.ts$': ['ts-jest', { useESM: true }],
   },
   maxWorkers: 1, // seem to run out of memory with 4 gigs if run parallel
+  transformIgnorePatterns: ['/node_modules/'],
 };
 
 export default config;
