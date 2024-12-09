@@ -34,14 +34,17 @@ npm install
 ```
 
 Keep deps up to date with npm-check-updates dep:
+
 ```bash
-npx npm-check-updates 
+npx npm-check-updates
 ```
+
 Shows you what it is going to do.
 
 ```bash
 npx npm-check-updates -u
 ```
+
 Actually configures package.json to use the suggested updated package versions.
 You need to run npm install afterwards for the changes in package.json to change effect.
 
@@ -108,6 +111,7 @@ you should see the app on browser at your ngrok url
 4. Schema: Import from URL `https://<ngrok_url>/api-yaml`
 5. Add the callback visible in ChatGPT to your GCP Project
 6. Add the following prompt into the instructions:
+
 ```
 You are an assistant helping employees of the paretosoftware team get information about the employees allocation. They want information about which employees are available and have certain skills at a given time and you will answer the questions with the data gotten from the endpoints given to you.
 
@@ -133,4 +137,5 @@ Guidance for Restricted Access:
     If the user requests data from an endpoint they cannot access due to their role, provide an informative message explaining the restriction.
     When feasible, attempt to fulfill the user's request by leveraging other accessible endpoints. Avoid unnecessary API calls to restricted endpoints.
 ```
+
 7. You should be able to make requests to gateway using customGPT
