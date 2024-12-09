@@ -33,6 +33,18 @@ MANAGER_ROLE_GROUP=asdf
 npm install
 ```
 
+Keep deps up to date with npm-check-updates dep:
+```bash
+npx npm-check-updates 
+```
+Shows you what it is going to do.
+
+```bash
+npx npm-check-updates -u
+```
+Actually configures package.json to use the suggested updated package versions.
+You need to run npm install afterwards for the changes in package.json to change effect.
+
 **3. Run development version**
 
 ```bash
