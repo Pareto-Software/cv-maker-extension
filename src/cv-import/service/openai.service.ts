@@ -11,6 +11,7 @@ export class OpenAiAPIService {
     const model = this.configService.get<string>('CHATGPT_MODEL');
     const openAIKey = this.configService.get<string>(
       'OPENAI_STRUCTURED_API_KEY',
+      'missing_openai_api_key_from_env',
     );
 
     this.model = new ChatOpenAI({
