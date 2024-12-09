@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
-import { SupabaseService } from './supabase.service';
-import { SupabaseController } from './supabase.controller';
-import { SupabaseClientProvider } from './supabase-client.provider';
+import { SupabaseService } from './supabase.service.js';
+import { SupabaseController } from './supabase.controller.js';
+import { SupabaseClientProvider } from './supabase-client.provider.js';
 import { ConfigModule } from '@nestjs/config';
+import { SupabaseCvImportService } from './supabase-cv-import.service.js';
 
 @Module({
   imports: [ConfigModule],
   controllers: [SupabaseController],
-  providers: [SupabaseService, SupabaseClientProvider],
-  exports: [SupabaseService, SupabaseClientProvider],
+  providers: [SupabaseService, SupabaseClientProvider, SupabaseCvImportService],
+  exports: [SupabaseService, SupabaseClientProvider, SupabaseCvImportService],
 })
 export class SupabaseModule {}

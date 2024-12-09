@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import 'dotenv/config';
@@ -15,6 +15,8 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+  // TODO implement this properly (more securely)
+  app.enableCors(); // to accept connections from cvimport client
 
   SwaggerModule.setup('api', app, document, {
     patchDocumentOnRequest(req: any, _, document) {

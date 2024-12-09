@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AllocationController } from './allocation.controller';
-import { AllocationService } from './allocation.service';
+import { AllocationController } from './allocation.controller.js';
+import { AllocationService } from './allocation.service.js';
 import {
   NotFoundException,
   UnauthorizedException,

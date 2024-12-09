@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { SheetService } from './sheet.service';
+import { SheetService } from './sheet.service.js';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({

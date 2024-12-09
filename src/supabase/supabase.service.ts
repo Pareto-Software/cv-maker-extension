@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseClient } from '@supabase/supabase-js';
-import { SupabaseClientProvider } from './supabase-client.provider';
-import { Database } from './database.types';
+import { SupabaseClientProvider } from './supabase-client.provider.js';
+import { Database } from './database.types.js';
 import {
   EmployeeDTO,
   SkillDTO,
@@ -9,7 +9,7 @@ import {
   CertificationDTO,
   EducationDTO,
   EmployeeFullDetailDTO,
-} from './dto/employees-response.dto';
+} from './dto/employees-response.dto.js';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -330,9 +330,6 @@ export class SupabaseService {
     }
 
     const fullDetailsPromises = profiles.map(async (employee) => {
-      console.log(
-        `Fetching full information for employee: ${employee.first_name} ${employee.last_name}`,
-      );
       return this.getEmployeesFullInformation(
         employee.first_name ?? '',
         employee.last_name ?? '',

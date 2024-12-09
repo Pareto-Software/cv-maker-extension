@@ -1,4 +1,4 @@
-import { EmployeeFullDetailDTO } from './employees-response.dto';
+import { EmployeeFullDetailDTO } from './employees-response.dto.js';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class EmployeeSearchResultDTO extends EmployeeFullDetailDTO {

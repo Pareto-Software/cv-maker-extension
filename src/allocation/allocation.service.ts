@@ -3,8 +3,8 @@ import {
   NotFoundException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { SheetService } from '../sheet/sheet.service';
-import { CellValueDTO, SheetDataDTO, Month } from '../sheet/dtos';
+import { SheetService } from '../sheet/sheet.service.js';
+import { CellValueDTO, SheetDataDTO, Month } from '../sheet/dtos.js';
 import {
   AllocationRow,
   AvailableEmployeesDTO,
@@ -14,7 +14,7 @@ import {
   FutureAllocationResponseDTO,
   AllocationResponseDTO,
   AllocationByMonthResponseDTO,
-} from './dtos';
+} from './dtos.js';
 
 @Injectable()
 export class AllocationService {
@@ -268,7 +268,6 @@ export class AllocationService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      console.error(error);
       throw new InternalServerErrorException('Failed to fetch allocation data');
     }
   }

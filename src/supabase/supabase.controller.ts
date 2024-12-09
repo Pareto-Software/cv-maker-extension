@@ -6,16 +6,16 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { SupabaseService } from './supabase.service';
+import { SupabaseService } from './supabase.service.js';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 
 import {
   EmployeeFullDetailDTO,
   EmployeesResponseDTO,
-} from './dto/employees-response.dto';
-import { EmployeeSearchResultDTO } from './dto/employee-search-result.dto';
+} from './dto/employees-response.dto.js';
+import { EmployeeSearchResultDTO } from './dto/employee-search-result.dto.js';
 
-import { Manager } from '../oauth2/groups.decorator';
+import { Manager } from '../oauth2/groups.decorator.js';
 
 @ApiTags('Supabase ')
 @Controller()
@@ -132,8 +132,6 @@ export class SupabaseController {
       limit,
     );
 
-    console.log('Projects:', projects);
-
     // Map projects to user IDs and count matching projects
     const userProjectCount: Map<string, number> = new Map();
     const userIds = new Set<string>();
@@ -160,8 +158,6 @@ export class SupabaseController {
         };
       },
     );
-
-    console.log('Employees:', employees);
 
     return employees;
   }

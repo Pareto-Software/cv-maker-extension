@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
-import { AuthGuard } from '../src/oauth2/auth.guard';
-import { SheetService } from '../src/sheet/sheet.service';
+import request from 'supertest';
+import { AppModule } from '../src/app.module.js';
+import { AuthGuard } from '../src/oauth2/auth.guard.js';
+import { SheetService } from '../src/sheet/sheet.service.js';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;

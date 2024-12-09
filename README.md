@@ -15,8 +15,16 @@ cp .env.example .env
 SUPABASE_URL=  # Looks like https://<supabase-project-id>.supabase.co
 SUPABASE_KEY= # This is the service account token
 
+# CV import feature
+JWT_SECRET=<from supabase api settings page>
+OPENAI_STRUCTURED_API_KEY=<apikey here>
+
 # sheet url
 SPREADSHEET_ID= # Go to the spreadsheet with your browser and it will be visible on the URL
+
+# TODO document the usage of these variables (can use any value when testing cv import feature)
+GENERAL_ROLE_GROUP=asdf
+MANAGER_ROLE_GROUP=asdf
 ```
 
 **2. Install dependencies**
@@ -24,6 +32,21 @@ SPREADSHEET_ID= # Go to the spreadsheet with your browser and it will be visible
 ```bash
 npm install
 ```
+
+Keep deps up to date with npm-check-updates dep:
+
+```bash
+npx npm-check-updates
+```
+
+Shows you what it is going to do.
+
+```bash
+npx npm-check-updates -u
+```
+
+Actually configures package.json to use the suggested updated package versions.
+You need to run npm install afterwards for the changes in package.json to change effect.
 
 **3. Run development version**
 
@@ -88,6 +111,7 @@ you should see the app on browser at your ngrok url
 4. Schema: Import from URL `https://<ngrok_url>/api-yaml`
 5. Add the callback visible in ChatGPT to your GCP Project
 6. Add the following prompt into the instructions:
+
 ```
 You are an assistant helping employees of the paretosoftware team get information about the employees allocation. They want information about which employees are available and have certain skills at a given time and you will answer the questions with the data gotten from the endpoints given to you.
 
@@ -113,4 +137,5 @@ Guidance for Restricted Access:
     If the user requests data from an endpoint they cannot access due to their role, provide an informative message explaining the restriction.
     When feasible, attempt to fulfill the user's request by leveraging other accessible endpoints. Avoid unnecessary API calls to restricted endpoints.
 ```
+
 7. You should be able to make requests to gateway using customGPT

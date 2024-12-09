@@ -13,6 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.11.0'
+
       - name: Install npm packages
         run: npm install
 
@@ -37,6 +42,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.11.0'
+
       - name: Install npm packages
         run: npm install
 
@@ -47,6 +57,7 @@ jobs:
           echo "GENERAL_ROLE_GROUP=${{ secrets.GENERAL_ROLE_GROUP }}" >> $GITHUB_ENV
           echo "MANAGER_ROLE_GROUP=${{ secrets.MANAGER_ROLE_GROUP }}" >> $GITHUB_ENV
           echo "NODE_ENV=test" >> $GITHUB_ENV
+          echo "NODE_OPTIONS=--max-old-space-size=6144" >> $GITHUB_ENV
           echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
           echo "EMBEDDING_MODEL=${{ secrets.EMBEDDING_MODEL }}" >> $GITHUB_ENV
           echo "EMBEDDING_DIMENSIONS=${{ secrets.EMBEDDING_DIMENSIONS }}" >> $GITHUB_ENV
@@ -56,3 +67,5 @@ jobs:
 
       - name: Run E2E Tests
         run: npm run test:e2e
+        env:
+          NODE_OPTIONS: --max_old_space_size=6144
