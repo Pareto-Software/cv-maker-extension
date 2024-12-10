@@ -4,6 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
   ForbiddenException,
+  Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { google } from 'googleapis';
@@ -13,6 +14,7 @@ import { ConfigService } from '@nestjs/config';
 export class AuthGuard implements CanActivate {
   private general_role_group: string;
   private manager_role_group: string;
+  private readonly logger = new Logger(AuthGuard.name);
 
   constructor(
     private reflector: Reflector,
@@ -22,8 +24,6 @@ export class AuthGuard implements CanActivate {
       this.configService.get<string>('GENERAL_ROLE_GROUP');
     const manager_role_group =
       this.configService.get<string>('MANAGER_ROLE_GROUP');
-    console.log('General Role Group:', general_role_group);
-    console.log('Manager Role Group:', manager_role_group);
     if (!general_role_group || !manager_role_group) {
       throw new Error(
         'General Role Group and Manager Role Group must be provided in the env as GENERAL_ROLE_GROUP= and MANAGER_ROLE_GROUP=',
@@ -42,7 +42,7 @@ export class AuthGuard implements CanActivate {
     ]);
 
     if (isPublic) {
-      console.log('Skipping authentication for public route');
+      this.logger.log('Skipping authentication for public route');
       return true;
     }
 
@@ -52,7 +52,6 @@ export class AuthGuard implements CanActivate {
     ]);
 
     if (isManager) {
-      console.log('adding manager role group to required groups');
       requiredGroups.push(this.manager_role_group);
     }
 
@@ -61,7 +60,6 @@ export class AuthGuard implements CanActivate {
     // get user access token
     const authHeader = request.headers['authorization'];
     if (!authHeader) {
-      console.log('No access token provided');
       throw new UnauthorizedException('No access token provided');
     }
     const accessToken = authHeader.split(' ')[1];
@@ -76,18 +74,14 @@ export class AuthGuard implements CanActivate {
       );
 
       if (!isAuthorized) {
-        console.log('Access denied: insufficient group membership');
         throw new ForbiddenException(
           'Access denied: insufficient group membership',
         );
       }
     } else if (!userGroups.includes(this.general_role_group)) {
       // checking for general role group membership
-      console.log('Access denied: missing general role');
       throw new ForbiddenException('Access denied: missing general role');
     }
-
-    console.log('Access granted');
 
     return true;
   }
@@ -101,8 +95,6 @@ export class AuthGuard implements CanActivate {
       const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
       const userInfo = await oauth2.userinfo.get();
       const userEmail = userInfo.data.email;
-      console.log('User Email:', userEmail);
-
       // Use the Cloud Identity API
       const cloudidentity = google.cloudidentity({
         version: 'v1',
@@ -137,7 +129,6 @@ export class AuthGuard implements CanActivate {
 
       // Combine and remove duplicates using Set
       const allGroups = [...new Set([...directGroups, ...transitiveGroups])];
-      console.log('Found Groups:', allGroups);
 
       return allGroups;
     } catch (error) {

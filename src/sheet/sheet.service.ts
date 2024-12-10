@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { SheetDataDTO, RowValueDTO, Month, StatusValue } from './dtos.js';
 import { google, sheets_v4 } from 'googleapis';
 import { ConfigService } from '@nestjs/config';
@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 export class SheetService {
   private sheets: sheets_v4.Sheets;
   private spreadSheetId: string;
+  private logger = new Logger(SheetService.name);
 
   constructor(private configService: ConfigService) {
     const spreadsheet_id = this.configService.get<string>('SPREADSHEET_ID');
@@ -21,7 +22,6 @@ export class SheetService {
     const token = access_token.replace('Bearer ', '').trim();
     const client = new google.auth.OAuth2();
     client.setCredentials({ access_token: token });
-    console.log('setting credentials: ', token);
     this.sheets = google.sheets({ version: 'v4', auth: client });
   }
 
@@ -57,8 +57,6 @@ export class SheetService {
         ranges: [dynamicRange], // Dynamically generated range
         includeGridData: true, // Include cell data for further processing
       });
-
-      // console.log('response:', JSON.stringify(response, null, 2));
 
       // Extract the sheet data from the response
       const sheetData = response.data.sheets?.[0];
@@ -128,10 +126,8 @@ export class SheetService {
     //   A3: { red: 0.27450982, green: 0.7411765, blue: 0.7764706 },
     const color = colormap[cellAddress];
     if (!color) {
-      console.log(
-        'No color found for cell:',
-        cellAddress,
-        'returning unavailable',
+      this.logger.debug(
+        `No color found for cell: ${cellAddress}. returning unavailable`,
       );
       return 'unavailable';
     }
@@ -202,14 +198,12 @@ export class SheetService {
   async getSheetData(access_token: string): Promise<SheetDataDTO> {
     try {
       this.updateSheetsCredentials(access_token);
-      console.log('sheetid:', this.spreadSheetId);
       const colormap = await this.getSheetColorData(); // get color data
       // get the actual data
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadSheetId,
         range: 'Allocation',
       });
-      console.log('response:', response.data);
 
       if (!response.data.values) {
         throw new Error('No data values found');
@@ -254,17 +248,6 @@ export class SheetService {
 
         sheetData.rows.push(rowValue);
       }
-
-      // print the sheet data
-      for (const row of sheetData.rows) {
-        console.log('Row:', row.name);
-        for (const cell of row.cells) {
-          console.log(
-            `Year: ${cell.year}, Month: ${cell.month}, Status: ${cell.status}`,
-          );
-        }
-      }
-      console.log('leaving sheet service');
       return sheetData;
     } catch (error) {
       console.error('Error fetching data:', error);

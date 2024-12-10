@@ -22,9 +22,18 @@ OPENAI_STRUCTURED_API_KEY=<apikey here>
 # sheet url
 SPREADSHEET_ID= # Go to the spreadsheet with your browser and it will be visible on the URL
 
-# TODO document the usage of these variables (can use any value when testing cv import feature)
+# Used for restricting access
 GENERAL_ROLE_GROUP=asdf
 MANAGER_ROLE_GROUP=asdf
+
+# Used model for structured output API
+CHATGPT_MODEL=gpt-4o-2024-08-06
+
+# Used model for embedding / its dimensions
+EMBEDDING_DIMENSIONS=1536
+EMBEDDING_MODEL=text-embedding-3-small
+OPENAI_API_KEY=<apikey here>
+
 ```
 
 **2. Install dependencies**

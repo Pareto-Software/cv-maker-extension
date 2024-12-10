@@ -19,7 +19,6 @@ export class ContextController {
   ) {
     const manager_role_group =
       this.configService.get<string>('MANAGER_ROLE_GROUP');
-    console.log('Manager Role Group:', manager_role_group);
     if (!manager_role_group) {
       throw new Error(
         'Manager Role Group must be provided in the env as MANAGER_ROLE_GROUP=',
@@ -52,7 +51,6 @@ export class ContextController {
   })
   async getRole(@Headers('authorization') authHeader: string) {
     try {
-      console.log('getting the employee role');
       if (!authHeader) {
         throw new UnauthorizedException('No authorization header provided');
       }
@@ -70,8 +68,6 @@ export class ContextController {
       const role = groups.includes(this.manager_role_group)
         ? 'manager'
         : 'general';
-
-      console.log('role: ', role);
 
       return {
         success: true,

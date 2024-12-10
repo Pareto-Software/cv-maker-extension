@@ -10,8 +10,6 @@ export class ContextService {
 
   constructor(private oauth2ClientProvider: Oauth2ClientProvider) {
     this.oauth2Client = this.oauth2ClientProvider.oauth2Client;
-    // print the clientid secret
-    console.log('Client ID:', this.oauth2Client._clientId);
   }
 
   async getUserGroups(accessToken: string): Promise<string[]> {

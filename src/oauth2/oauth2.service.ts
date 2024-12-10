@@ -27,7 +27,6 @@ export class OAuth2Service {
       const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
       const userInfo = await oauth2.userinfo.get();
       const userEmail = userInfo.data.email;
-      console.log('User Email:', userEmail);
 
       // Use the Cloud Identity API
       const cloudidentity = google.cloudidentity({

@@ -32,7 +32,6 @@ export class AllocationController {
     description: 'Successfully retrieved allocation data for all employees',
   })
   async fetchSheetData(@Headers() headers: Record<string, string>) {
-    console.log('calling fetchSheetData');
     const access_token = headers.authorization;
     const data = await this.allocationService.getSheetData(access_token);
     return { data };
@@ -64,7 +63,6 @@ export class AllocationController {
     @Query('firstName') firstName: string,
     @Headers() headers: Record<string, string>,
   ): Promise<AllocationResponseDTO> {
-    console.log('calling getAllocationByName');
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
     if (!access_token) {
       throw new UnauthorizedException('Access token is missing or invalid');
@@ -98,7 +96,6 @@ export class AllocationController {
   async getAllEmployees(
     @Headers() headers: Record<string, string>,
   ): Promise<{ employees: string[] }> {
-    console.log('calling getAllEmployees');
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
     if (!access_token) {
       throw new UnauthorizedException('Access token is missing or invalid');
@@ -136,7 +133,6 @@ export class AllocationController {
     @Query('month') month: string,
     @Headers() headers: Record<string, string>,
   ): Promise<AllocationByMonthResponseDTO> {
-    console.log('calling getAllocationsByMonthYear');
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
     if (!access_token) {
       throw new UnauthorizedException('Access token is missing or invalid');
@@ -178,7 +174,6 @@ export class AllocationController {
     @Query('month') month: string,
     @Headers() headers: Record<string, string>,
   ): Promise<AvailableEmployeesDTO> {
-    console.log('calling availableAtSpecificMonth');
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
     if (!access_token) {
       throw new UnauthorizedException('Access token is missing or invalid');
@@ -218,7 +213,6 @@ export class AllocationController {
     @Query('firstName') firstName: string,
     @Headers() headers: Record<string, string>,
   ): Promise<FutureAllocationResponseDTO> {
-    console.log('calling futureAvailability');
     const access_token = headers.authorization?.replace('Bearer ', '').trim();
     if (!access_token) {
       throw new UnauthorizedException('Access token is missing or invalid');

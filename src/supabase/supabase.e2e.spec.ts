@@ -77,7 +77,6 @@ describe('SupabaseController (e2e)', () => {
 
     expect(response.body).toHaveProperty('name');
     expect(response.body).toHaveProperty('title');
-    console.log('Response for /GET employees:', response.body);
   });
 
   it(`/GET employees/skills-projects`, async () => {

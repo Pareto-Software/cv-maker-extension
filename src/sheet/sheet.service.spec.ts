@@ -60,8 +60,6 @@ describe('getSheetData', () => {
       return { rows: [] };
     }
 
-    console.log('Response values before transformation:', response.values);
-
     const headerRow = response.values[1] || [];
     return {
       rows: response.values.slice(2).map((row: any) => ({
