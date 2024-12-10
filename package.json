@@ -10,6 +10,7 @@
     "node": ">=22.11.0"
   },
   "scripts": {
+    "everything": "npm run format && npm run lint && npm run build && npm run test && npm run test:e2e", 
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "prettier-check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
