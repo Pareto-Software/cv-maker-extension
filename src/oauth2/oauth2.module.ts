@@ -3,7 +3,7 @@ import { AuthController } from './oauth2.controller.js';
 import { OAuth2Service } from './oauth2.service.js';
 import { AuthGuard } from './auth.guard.js';
 import { APP_GUARD } from '@nestjs/core';
-import { Oauth2ClientProvider } from './oauth2-client.provider';
+import { Oauth2ClientProvider } from './oauth2-client.provider.js';
 
 @Module({
   controllers: [AuthController],

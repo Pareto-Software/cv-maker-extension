@@ -5,8 +5,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiHeader, ApiResponse } from '@nestjs/swagger';
-import { Public } from '../oauth2/groups.decorator';
-import { ContextService } from './context.service';
+import { Public } from '../oauth2/groups.decorator.js';
+import { ContextService } from './context.service.js';
 import { ConfigService } from '@nestjs/config';
 
 @ApiTags('context')

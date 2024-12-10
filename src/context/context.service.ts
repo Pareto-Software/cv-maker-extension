@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
-import { Oauth2ClientProvider } from '../oauth2/oauth2-client.provider';
+import { Oauth2ClientProvider } from '../oauth2/oauth2-client.provider.js';
 import { google } from 'googleapis';
 import { ForbiddenException } from '@nestjs/common';
 

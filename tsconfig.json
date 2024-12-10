@@ -23,6 +23,15 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*", "test/**/*", "jest.config.ts"],
-  "exclude": ["dist", "node_modules"]
+  "include": ["src/**/*"],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "test/**/*",  
+    "**/*.test.ts", 
+    "**/*.spec.ts", 
+    "**/*.e2e-spec.ts", 
+    "jest.config.ts", 
+    "jest.e2e.json"
+    ]
 }
