@@ -1,17 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
-import { Oauth2ClientProvider } from '../oauth2/oauth2-client.provider.js';
 import { google } from 'googleapis';
 import { ForbiddenException } from '@nestjs/common';
 
 @Injectable()
 export class ContextService {
-  private readonly oauth2Client: OAuth2Client;
-
-  constructor(private oauth2ClientProvider: Oauth2ClientProvider) {
-    this.oauth2Client = this.oauth2ClientProvider.oauth2Client;
-  }
-
   async getUserGroups(accessToken: string): Promise<string[]> {
     try {
       // Set up OAuth2 client
