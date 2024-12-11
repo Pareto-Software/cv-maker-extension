@@ -34,11 +34,6 @@ export class ContextController {
     description:
       'Fetches the user\'s role based on their group memberships, using the provided authorization token. Supports role-based access control by identifying users as either "manager" or "general".',
   })
-  @ApiHeader({
-    name: 'authorization',
-    description: 'Authorization token in the format: Bearer <access_token>',
-    required: true,
-  })
   @ApiResponse({
     status: 200,
     description: 'The user role was successfully retrieved.',
