@@ -25,7 +25,6 @@ export class SupabaseCvImportService {
         description: profile.description,
         education: profile.education,
         metadata: profile.metadata,
-        profile_pic: profile.profile_pic,
         social_media_links: profile.social_media_links,
       })
       .eq('user_id', user_id)
