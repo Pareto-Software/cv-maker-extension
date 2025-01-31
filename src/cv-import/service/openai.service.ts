@@ -33,7 +33,12 @@ export class OpenAiAPIService {
       });
 
       const response = await structuredLlm.invoke(
-        `Fill information to JSON structure from the following CV files (fill projects and project categories always). ${dataString} DATES ARE ALLWAYS YYYY-MM-DD (eg. 2020-06-21). Dates are in project categories and certifications`,
+        `Extract and copy information exactly as it is to JSON structure from the following CV files. Do not modify or hallucinate new data under any circumstances.
+        We want to transfer all of our employee CVs to same mold which follows our company CV standard.
+        Ensure all fields are filled as accurately as possible based on the provided data. ${dataString} DATES ARE ALWAYS YYYY-MM-DD (e.g., 2020-06-21). 
+        Dates are in project categories and certifications. 
+        The output language should always be english and CVs imported in other languages needs to be translated.`,
+        //`Fill information to JSON structure from the following CV files (fill projects and project categories always). ${dataString} DATES ARE ALLWAYS YYYY-MM-DD (eg. 2020-06-21). Dates are in project categories and certifications`,
       );
 
       return response;

@@ -20,11 +20,11 @@ export const databaseSchema = {
           },
           received: {
             type: 'string',
-            description: 'The date when the certification was received.',
+            description: 'The date when the certification was received. Leave blank if the date is not given.',
           },
           valid_until: {
             type: 'string',
-            description: 'The expiration date of the certification.',
+            description: 'The expiration date of the certification. Leave blank if the date is not given.',
           },
         },
         required: ['name', 'received', 'valid_until'],
@@ -115,11 +115,11 @@ export const databaseSchema = {
             },
             start_date: {
               type: 'string',
-              description: 'The start date of this project category.',
+              description: 'The start date of this project category. Leave blank if the date is not given.',
             },
             end_date: {
               type: 'string',
-              description: 'The end date of this project category.',
+              description: 'The end date of this project category. Leave blank if the date is not given.',
             },
             id: {
               type: 'integer',
@@ -149,11 +149,11 @@ export const databaseSchema = {
             },
             start_date: {
               type: 'string',
-              description: 'The date when the project started.',
+              description: 'The date when the project started. Leave blank if the date is not given.',
             },
             end_date: {
               type: 'string',
-              description: 'The date when the project ended.',
+              description: 'The date when the project ended. Leave blank if the date is not given.',
             },
             role: {
               type: 'string',
