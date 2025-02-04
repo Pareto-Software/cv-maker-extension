@@ -17,7 +17,7 @@ export class CvImportService {
     private readonly supabaseCvImportService: SupabaseCvImportService,
     private readonly documentParserService: DocumentParserService,
     private readonly openAiAPIService: OpenAiAPIService,
-  ) { }
+  ) {}
 
   async processFiles(
     files: Express.Multer.File[],
@@ -68,9 +68,8 @@ export class CvImportService {
       return false;
     }
 
-    const structuredJson = await this.openAiAPIService.textToStructuredJSON(
-      dataString,
-    );
+    const structuredJson =
+      await this.openAiAPIService.textToStructuredJSON(dataString);
 
     // happy path
     if (structuredJson) {
@@ -107,18 +106,23 @@ export class CvImportService {
       await this.supabaseCvImportService.updateProfile(profileData, user_id);
 
       // Insert other CV components
-      await this.supabaseCvImportService.insertSkills(json.skills, user_id, cv_id);
+      await this.supabaseCvImportService.insertSkills(
+        json.skills,
+        user_id,
+        cv_id,
+      );
       await this.supabaseCvImportService.insertCertifications(
         json.certifications,
         user_id,
         cv_id,
       );
 
-      const categories = await this.supabaseCvImportService.insertProjectCategories(
-        json.project_categories,
-        user_id,
-        cv_id,
-      );
+      const categories =
+        await this.supabaseCvImportService.insertProjectCategories(
+          json.project_categories,
+          user_id,
+          cv_id,
+        );
 
       if (categories !== null) {
         await this.supabaseCvImportService.insertProjects(
