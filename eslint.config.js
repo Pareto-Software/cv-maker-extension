@@ -11,7 +11,13 @@ const __dirname = path.dirname(__filename);
 export default [
   {
     files: ['**/*.ts', '**/*.tsx'],
-    ignores: ['__mocks__/**', 'test/**/*', '**/*.test.ts', '**/*.spec.ts', '**/*.e2e-spec.ts'],
+    ignores: [
+      '__mocks__/**',
+      'test/**/*',
+      '**/*.test.ts',
+      '**/*.spec.ts',
+      '**/*.e2e-spec.ts',
+    ],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {

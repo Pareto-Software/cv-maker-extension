@@ -90,7 +90,7 @@ export class CvImportService {
     try {
       // Save a new CV to user and get a new cv_id as return value
       const cv_id = await this.supabaseCvImportService.insertCv(user_id);
-      
+
       if (!cv_id) {
         console.error('Cv_id was null when trying to create a new CV');
         return false;
@@ -114,25 +114,41 @@ export class CvImportService {
       }
 
       try {
-        await this.supabaseCvImportService.insertSkills(json.skills, user_id, cv_id);
+        await this.supabaseCvImportService.insertSkills(
+          json.skills,
+          user_id,
+          cv_id,
+        );
       } catch (error) {
         console.error('Failed to insert skills:', error);
       }
 
       try {
-        await this.supabaseCvImportService.insertCertifications(json.certifications, user_id, cv_id);
+        await this.supabaseCvImportService.insertCertifications(
+          json.certifications,
+          user_id,
+          cv_id,
+        );
       } catch (error) {
         console.error('Failed to insert certifications:', error);
       }
 
       try {
-        const categories = await this.supabaseCvImportService.insertProjectCategories(
-          json.project_categories, user_id, cv_id
-        );
+        const categories =
+          await this.supabaseCvImportService.insertProjectCategories(
+            json.project_categories,
+            user_id,
+            cv_id,
+          );
 
         if (categories) {
           try {
-            await this.supabaseCvImportService.insertProjects(json.projects, categories, user_id, cv_id);
+            await this.supabaseCvImportService.insertProjects(
+              json.projects,
+              categories,
+              user_id,
+              cv_id,
+            );
           } catch (error) {
             console.error('Failed to insert projects:', error);
           }
