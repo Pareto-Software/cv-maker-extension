@@ -23,15 +23,15 @@ export class CvImportService {
     files: Express.Multer.File[],
     saveToUser: string,
   ): Promise<boolean> {
-    let dataString: string = '';
+    let dataString = '';
 
-    if (files.length > 10 || files.length == 0) {
+    if (files.length > 10 || files.length === 0) {
       console.error('1-10 files allowed, aborting');
       return false;
     }
 
     for (const file of files) {
-      if (file.buffer.length == 0) {
+      if (file.buffer.length === 0) {
         console.error('File buffer was empty on %s, ignoring', file.filename);
         continue;
       }
@@ -83,48 +83,84 @@ export class CvImportService {
     return false;
   }
 
-  async _saveJsonAsCv(
+  private async _saveJsonAsCv(
     json: Record<string, any>,
     user_id: string,
   ): Promise<boolean> {
-    // Save a new cv to user and get a new cv id as return value
-    const cv_id = await this.supabaseCvImportService.insertCv(user_id);
+    try {
+      // Save a new CV to user and get a new cv_id as return value
+      const cv_id = await this.supabaseCvImportService.insertCv(user_id);
 
-    if (cv_id != null) {
-      await this.supabaseCvImportService.updateProfile(
-        json.profiles[0],
-        user_id,
-      );
-      await this.supabaseCvImportService.insertSkills(
-        json.skills,
-        user_id,
-        cv_id,
-      );
-      await this.supabaseCvImportService.insertCertifications(
-        json.certifications,
-        user_id,
-        cv_id,
-      );
-      const categories =
-        await this.supabaseCvImportService.insertProjectCategories(
-          json.project_categories,
-          user_id,
-          cv_id,
-        );
-      if (categories != null) {
-        await this.supabaseCvImportService.insertProjects(
-          json.projects,
-          categories,
-          user_id,
-          cv_id,
-        );
+      if (!cv_id) {
+        console.error('Cv_id was null when trying to create a new CV');
+        return false;
       }
-      return true;
-    }
 
-    console.error(
-      'Cv_id was null when trying to create a new cv at saveJsonAsCv',
-    );
-    return false;
+      const profileData = json.profiles[0];
+
+      if (
+        profileData?.social_media_links &&
+        typeof profileData.social_media_links === 'string'
+      ) {
+        profileData.social_media_links = profileData.social_media_links
+          .split(',')
+          .map((link: string) => link.trim());
+      }
+
+      try {
+        await this.supabaseCvImportService.updateProfile(profileData, user_id);
+      } catch (error) {
+        console.error('Failed to update profile:', error);
+      }
+
+      try {
+        await this.supabaseCvImportService.insertSkills(
+          json.skills,
+          user_id,
+          cv_id,
+        );
+      } catch (error) {
+        console.error('Failed to insert skills:', error);
+      }
+
+      try {
+        await this.supabaseCvImportService.insertCertifications(
+          json.certifications,
+          user_id,
+          cv_id,
+        );
+      } catch (error) {
+        console.error('Failed to insert certifications:', error);
+      }
+
+      try {
+        const categories =
+          await this.supabaseCvImportService.insertProjectCategories(
+            json.project_categories,
+            user_id,
+            cv_id,
+          );
+
+        if (categories) {
+          try {
+            await this.supabaseCvImportService.insertProjects(
+              json.projects,
+              categories,
+              user_id,
+              cv_id,
+            );
+          } catch (error) {
+            console.error('Failed to insert projects:', error);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to insert project categories:', error);
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Unexpected error in _saveJsonAsCv:', error);
+      return false;
+    }
   }
 }
