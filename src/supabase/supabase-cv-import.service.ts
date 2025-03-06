@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseClientProvider } from './supabase-client.provider.js';
 import { Database } from './database.types.js';
+import { z } from 'zod';
 
 @Injectable()
 export class SupabaseCvImportService {
@@ -39,10 +40,12 @@ export class SupabaseCvImportService {
 
   // Insert CV
   async insertCv(user_id: string): Promise<string | null> {
+    const currentTimestamp = new Date().toISOString().slice(0, 16);
+
     const { data, error } = await this.supabase
       .from('cvs')
       .insert({
-        title: 'AI_generated_CV',
+        title: `AI Generated CV - ${currentTimestamp}`,
         user_id: user_id,
       })
       .select('id');
@@ -64,8 +67,8 @@ export class SupabaseCvImportService {
     const data = certifications.map(
       (key: { name: any; received: any; valid_until: any }) => ({
         name: key.name,
-        received: key.received,
-        valid_until: key.valid_until,
+        received: validateDate(key.received),
+        valid_until: validateDate(key.valid_until),
         user_id: user_id,
         cv_id: cv_id,
       }),
@@ -83,8 +86,8 @@ export class SupabaseCvImportService {
   ): Promise<{ row_id: number; id: any }[] | null> {
     const data = projectCategories.map((category) => ({
       title: category.title,
-      end_date: category.end_date,
-      start_date: category.start_date,
+      end_date: validateDate(category.end_date),
+      start_date: validateDate(category.start_date),
       description: category.description,
       user_id: user_id,
       cv_id: cv_id,
@@ -119,8 +122,8 @@ export class SupabaseCvImportService {
         name: project.name,
         description: project.description,
         company: project.company,
-        start_date: project.start_date,
-        end_date: project.end_date,
+        start_date: validateDate(project.start_date),
+        end_date: validateDate(project.end_date),
         role: project.role,
         project_url: project.project_url,
         image_url: project.image_url,
@@ -244,5 +247,18 @@ export class SupabaseCvImportService {
     const { error } = await this.supabase.from('skills').insert(data);
     if (error) throw new Error(`Failed to insert skills: ${error.message}`);
     return true;
+  }
+}
+
+export default function validateDate(data: unknown): string | null {
+  const dateStringOrNullSchema = z.string().date();
+  try {
+    dateStringOrNullSchema.parse(data);
+    return data as string;
+  } catch (error) {
+    console.error(
+      `Invalid format: "${data}". Expected null or date like: YYYY-MM-DD. Defaulted to null.`,
+    );
+    return null;
   }
 }

@@ -10,7 +10,7 @@ export const databaseSchema = {
   properties: {
     certifications: {
       type: 'array',
-      description: 'A list of certifications that a person holds.',
+      description: 'A list of certifications that this person holds.',
       items: {
         type: 'object',
         properties: {
@@ -40,7 +40,7 @@ export const databaseSchema = {
           properties: {
             email: {
               type: 'string',
-              description: "The individual's email address.",
+              description: 'The individuals email address.',
             },
             first_name: {
               type: 'string',
@@ -70,31 +70,30 @@ export const databaseSchema = {
                 },
                 graduationYear: {
                   type: 'string | null',
-                  description: 'The year of graduation, if any.',
+                  description: 'Year they graduated, if given.',
                 },
                 degree: {
                   type: 'string',
-                  description: 'The degree obtained.',
+                  description: 'The degree they obtained.',
                 },
                 field: {
                   type: 'string',
-                  description: 'The field of study, if any..',
+                  description: 'Their field of study, if any.',
                 },
                 thesis: {
                   type: 'string | null',
-                  description: 'The title of the thesis, if any.',
+                  description: 'The title of their thesis, if any.',
                 },
               },
               required: ['school', 'graduationYear', 'degree', 'field'],
             },
             profile_pic: {
               type: 'string | null',
-              description: "URL to the individual's profile picture, if any.",
+              description: 'URL to the individuals profile picture, if any.',
             },
             social_media_links: {
               type: 'string | null',
-              description:
-                "Links to the individual's social media profiles, if any.",
+              description: 'Links to the individuals social media, if any.',
             },
           },
           required: ['email', 'first_name', 'last_name'],
@@ -103,7 +102,7 @@ export const databaseSchema = {
       project_categories: {
         type: 'array',
         description:
-          'A list of project catagories, usually meaning companies where project is done',
+          'A list of project catagories, usually companies where projects are done',
         items: {
           type: 'object',
           properties: {
@@ -127,8 +126,7 @@ export const databaseSchema = {
             },
             id: {
               type: 'integer',
-              description:
-                'The ID of the project category this project belongs to.',
+              description: 'The ID of this project category.',
             },
           },
           required: ['title'],
@@ -137,7 +135,7 @@ export const databaseSchema = {
       projects: {
         type: 'array',
         description:
-          'Projects done in specific project category, is related to work experiemce',
+          'Projects that have been worked on, is usually related to work experience',
         items: {
           type: 'object',
           properties: {
@@ -163,7 +161,7 @@ export const databaseSchema = {
             },
             role: {
               type: 'string',
-              description: 'The role of the individual in the project.',
+              description: 'The role of this individual in the project.',
             },
             project_category: {
               type: 'integer',
