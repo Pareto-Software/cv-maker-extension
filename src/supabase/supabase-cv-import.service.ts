@@ -40,17 +40,12 @@ export class SupabaseCvImportService {
 
   // Insert CV
   async insertCv(user_id: string): Promise<string | null> {
-    const currentTimestamp = new Date()
-      .toLocaleTimeString('en-GB', {
-        hour: '2-digit',
-        minute: '2-digit',
-      })
-      .replace(':', '.');
+    const currentTimestamp = new Date().toISOString().slice(0, 16);
 
     const { data, error } = await this.supabase
       .from('cvs')
       .insert({
-        title: `AI CV Generated at: ${currentTimestamp}`,
+        title: `AI Generated CV - ${currentTimestamp}`,
         user_id: user_id,
       })
       .select('id');
