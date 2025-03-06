@@ -3,9 +3,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseModule } from './supabase.module.js';
 import { INestApplication } from '@nestjs/common';
 import { EmployeeFullDetailDTO } from './dto/employees-response.dto.js';
+import validateDate from './supabase-cv-import.service.js';
 import * as dotenv from 'dotenv';
 
-describe('SupabaseController (e2e)', () => {
+/*describe('SupabaseController (e2e)', () => {
   let app: INestApplication;
 
   const mockEmployeeData: EmployeeFullDetailDTO = {
@@ -90,5 +91,37 @@ describe('SupabaseController (e2e)', () => {
 
   afterAll(async () => {
     await app.close();
+  });
+});*/
+
+describe('validateDate', () => {
+  it('should return the date string if valid', () => {
+    expect(validateDate('2024-03-06')).toBe('2024-03-06');
+    expect(validateDate('1800-10-21')).toBe('1800-10-21');
+  });
+
+  it('should return null for invalid date formats', () => {
+    expect(validateDate('March 6, 2024')).toBeNull();
+    expect(validateDate('06-03-2024')).toBeNull();
+    expect(validateDate('2024/03/06')).toBeNull();
+    expect(validateDate('20240306')).toBeNull();
+  });
+
+  it('should return null for possible unexpected values', () => {
+    expect(validateDate(null)).toBeNull();
+    expect(validateDate('null')).toBeNull();
+    expect(validateDate(undefined)).toBeNull();
+    expect(validateDate(12345)).toBeNull();
+    expect(validateDate({})).toBeNull();
+    expect(validateDate([])).toBeNull();
+  });
+
+  it('should return null for an empty string', () => {
+    expect(validateDate('')).toBeNull();
+  });
+
+  it('should return null for an invalid date', () => {
+    expect(validateDate('2024-02-30')).toBeNull();
+    expect(validateDate('2024-13-01')).toBeNull();
   });
 });

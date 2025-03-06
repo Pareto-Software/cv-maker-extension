@@ -255,7 +255,7 @@ export class SupabaseCvImportService {
   }
 }
 
-function validateDate(data: unknown): string | null {
+export default function validateDate(data: unknown): string | null {
   const dateStringOrNullSchema = z.string().date();
   try {
     dateStringOrNullSchema.parse(data);
