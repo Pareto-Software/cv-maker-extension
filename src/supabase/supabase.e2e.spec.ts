@@ -5,6 +5,9 @@ import { INestApplication } from '@nestjs/common';
 import { EmployeeFullDetailDTO } from './dto/employees-response.dto.js';
 import validateDate from './supabase-cv-import.service.js';
 import * as dotenv from 'dotenv';
+import { SupabaseCvImportService } from './supabase-cv-import.service.js';
+import { SupabaseClientProvider } from './supabase-client.provider.js';
+import { ConfigService } from '@nestjs/config';
 
 /*describe('SupabaseController (e2e)', () => {
   let app: INestApplication;
@@ -123,5 +126,51 @@ describe('validateDate', () => {
   it('should return null for an invalid date', () => {
     expect(validateDate('2024-02-30')).toBeNull();
     expect(validateDate('2024-13-01')).toBeNull();
+  });
+});
+
+describe('SupabaseCvImportService', () => {
+  let service: SupabaseCvImportService;
+  let supabaseClientProvider: SupabaseClientProvider;
+
+  beforeEach(() => {
+    dotenv.config();
+    process.env.SUPABASE_URL = process.env.SUPABASE_URL;
+    process.env.SUPABASE_KEY = process.env.SUPABASE_KEY;
+    const configService = new ConfigService();
+    supabaseClientProvider = new SupabaseClientProvider(configService);
+    service = new SupabaseCvImportService(supabaseClientProvider);
+  });
+
+  describe('insertProjects', () => {
+    it('should insert projects and return true', async () => {
+      const mockProjects = [
+        {
+          name: 'Project Alpha',
+          description: 'Description Alpha',
+          company: 'Company Alpha',
+          start_date: '2023-01-01',
+          end_date: '2023-12-31',
+          role: 'Developer',
+          project_url: 'http://example.com/alpha',
+          image_url: 'http://example.com/alpha.jpg',
+          keywords: 'Next.JS, KissaMiau',
+          project_category: 120,
+        },
+      ];
+
+      const mockCategoryConnections = [{ row_id: 1, id: 1 }];
+      const user_id = '4ae9517f-d71d-4c86-a32d-57066f78900b';
+      const cv_id = '006f73a1-1e0e-4482-8d02-4bfa62425dfc';
+
+      const result = await service.insertProjects(
+        mockProjects,
+        mockCategoryConnections,
+        user_id,
+        cv_id,
+      );
+
+      expect(result).toBe(true);
+    });
   });
 });

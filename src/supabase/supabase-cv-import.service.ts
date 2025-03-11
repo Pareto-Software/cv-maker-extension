@@ -129,7 +129,7 @@ export class SupabaseCvImportService {
         image_url: project.image_url,
         user_id: user_id,
         cv_id: cv_id,
-        project_category: match ? match.row_id : null, // Use row_id or null if no match found
+        project_category: match ? match.row_id : null,
       };
     });
 
@@ -140,93 +140,102 @@ export class SupabaseCvImportService {
     if (error) throw new Error(`Failed to insert projects: ${error.message}`);
 
     for (let i = 0; i < projects.length; i++) {
-      // Ensure projectKeywords is an array of words
       let projectKeywords = projects[i].keywords;
 
       if (typeof projectKeywords === 'string') {
-        // Split keywords by commas and trim extra spaces
-        projectKeywords = projectKeywords
-          .split(',')
-          .map((keyword) => keyword.trim());
+        projectKeywords = projectKeywords.split(',');
       }
+      const keywordList = Array.isArray(projectKeywords) ? projectKeywords : [];
+
+      //We keep two lists one for comparison and one to insert the original values
+      const originalKeywords = keywordList.map((keyword) => keyword.trim());
+      const trimmedKeywords = keywordList.map((keyword) =>
+        keyword
+          .toLowerCase()
+          .replace(/[^a-z0-9+#]/g, '')
+          .trim(),
+      );
+
+      const keywordValues = new Map(
+        trimmedKeywords.map((keyword, index) => [
+          keyword,
+          originalKeywords[index],
+        ]),
+      );
 
       const projectId = insertedProjects[i]?.id;
 
       if (projectId && projectKeywords && projectKeywords.length > 0) {
         const keywordIds: number[] = [];
 
-        for (const keyword of projectKeywords) {
-          try {
-            // Check if the keyword already exists in the 'keywords' table
-            const { data: existingKeywords, error: keywordFetchError } =
-              await this.supabase
-                .from('keywords')
-                .select('id')
-                .eq('name', keyword);
+        try {
+          const { data: existingKeywords } = await this.supabase
+            .from('keywords')
+            .select('id, name');
 
-            if (keywordFetchError) {
-              throw new Error(`Failed to fetch keyword "${keyword}"`);
-            }
+          const keywordMap = new Map(
+            existingKeywords?.map((row) => [
+              row.name
+                .toLowerCase()
+                .replace(/[^a-z0-9+#]/g, '')
+                .trim(),
+              row.id,
+            ]),
+          );
 
-            let keywordId;
-
-            if (existingKeywords && existingKeywords.length > 0) {
-              // Use the first match if duplicates exist
-              keywordId = existingKeywords[0].id;
-            } else {
-              // If the keyword doesn't exist, insert it and retrieve its id
-              const { data: newKeyword, error: keywordInsertError } =
-                await this.supabase
-                  .from('keywords')
-                  .insert({ name: keyword })
-                  .select('id')
-                  .single();
-
-              if (keywordInsertError) {
-                throw new Error(`Failed to insert new keyword "${keyword}"`);
+          for (const keyword of keywordValues.keys()) {
+            try {
+              console.log(`Processing new keyword "${keyword}"`);
+              let keywordId = keywordMap.get(keyword);
+              {
+                keywordId
+                  ? console.log(`Keyword "${keyword}" already exists`)
+                  : console.log(`Keyword "${keyword}" does not exist`);
               }
-              keywordId = newKeyword.id;
+              if (!keywordId) {
+                const { data: newKeyword, error: keywordInsertError } =
+                  await this.supabase
+                    .from('keywords')
+                    .insert({ name: keywordValues.get(keyword) })
+                    .select('id')
+                    .single();
+
+                if (keywordInsertError) {
+                  throw new Error(`Failed to insert new keyword "${keyword}"`);
+                }
+
+                keywordId = newKeyword.id;
+
+                keywordMap.set(keyword, keywordId);
+              }
+
+              keywordIds.push(keywordId);
+            } catch (error) {
+              console.error(
+                `Error processing keyword "${keyword}" for project #${i + 1}:`,
+                error,
+              );
             }
-            // Add the keyword ID to the list
-            keywordIds.push(keywordId);
-          } catch (error) {
-            console.error(
-              `Error processing keyword "${keyword}" for project #${i + 1}:`,
-              error,
-            );
           }
+        } catch (error) {
+          console.error(
+            `Error fetching existing keywords for project #${i + 1}:`,
+            error,
+          );
         }
 
         try {
-          // Now, insert all keyword IDs for the current project into 'project_keywords'
           const keywordData = keywordIds.map((keywordId) => ({
             project_id: projectId,
             keyword_id: keywordId,
           }));
-
-          const { error: projectKeywordsInsertError } = await this.supabase
-            .from('project_keywords')
-            .insert(keywordData);
-
-          if (projectKeywordsInsertError) {
-            console.error(
-              `Error inserting keywords into 'project_keywords' for project ID ${projectId}:`,
-              projectKeywordsInsertError.message,
-            );
-            throw new Error(
-              `Failed to insert project keywords for project ID ${projectId}`,
-            );
-          }
+          await this.supabase.from('project_keywords').insert(keywordData);
         } catch (error) {
           console.error(
-            `Error inserting keywords into 'project_keywords' for project #${i + 1}:`,
+            `Error inserting keywords for project #${i + 1}:`,
             error,
           );
         }
-      } else {
-        console.warn(
-          `No valid keywords or project ID for project #${i + 1}. Skipping...`,
-        );
       }
     }
     return true;
