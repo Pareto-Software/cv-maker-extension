@@ -145,15 +145,27 @@ describe('processKeywords', () => {
   });
 
   it('should handle case insensitivity and special characters', () => {
-    const projectKeywords = ['React', 'NodeJS', 'GraphQL'];
+    const projectKeywords = [
+      'React  ',
+      'NodeJS  ',
+      'C#C++  ',
+      'C  ',
+      'öÖäÄåÅ',
+      'GraphQL',
+    ];
     const existingKeywords = [
       { id: 1, name: 'react' },
       { id: 2, name: 'node.js' },
+      { id: 3, name: 'c#c++' },
+      { id: 4, name: 'c' },
+      { id: 5, name: 'ööääåå' },
     ];
 
     const result = processKeywords(projectKeywords, existingKeywords);
 
-    expect(result.existingKeywordIds).toEqual([1, 2]);
+    console.log(result);
+
+    expect(result.existingKeywordIds).toEqual([1, 2, 3, 4, 5]);
     expect(result.newKeywords).toEqual(['GraphQL']);
   });
 

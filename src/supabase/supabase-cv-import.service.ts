@@ -224,10 +224,7 @@ export function processKeywords(
   // Keep two lists: one for comparison, one for inserting original values
   const originalKeywords = keywordList.map((keyword) => keyword.trim());
   const trimmedKeywords = keywordList.map((keyword) =>
-    keyword
-      .toLowerCase()
-      .replace(/[^a-z0-9+#]/g, '')
-      .trim(),
+    keyword.toLowerCase().replace(/[^a-z0-9+#]/g, ''),
   );
 
   const keywordValues = new Map(
@@ -236,10 +233,7 @@ export function processKeywords(
 
   const existingKeywordMap = new Map(
     existingKeywords.map((row) => [
-      row.name
-        .toLowerCase()
-        .replace(/[^a-z0-9+#]/g, '')
-        .trim(),
+      row.name.toLowerCase().replace(/[^a-z0-9+#]/g, ''),
       row.id,
     ]),
   );
