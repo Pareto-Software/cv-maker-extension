@@ -139,105 +139,58 @@ export class SupabaseCvImportService {
       .select();
     if (error) throw new Error(`Failed to insert projects: ${error.message}`);
 
+    const { data: existingKeywords, error: keywordFetchError } =
+      await this.supabase.from('keywords').select('id, name');
+
+    if (keywordFetchError) {
+      throw new Error(
+        `Failed to fetch existing keywords: ${keywordFetchError.message}`,
+      );
+    }
+
     for (let i = 0; i < projects.length; i++) {
-      let projectKeywords = projects[i].keywords;
-
-      if (typeof projectKeywords === 'string') {
-        projectKeywords = projectKeywords.split(',');
-      }
-      const keywordList = Array.isArray(projectKeywords) ? projectKeywords : [];
-
-      //We keep two lists one for comparison and one to insert the original values
-      const originalKeywords = keywordList.map((keyword) => keyword.trim());
-      const trimmedKeywords = keywordList.map((keyword) =>
-        keyword
-          .toLowerCase()
-          .replace(/[^a-z0-9+#]/g, '')
-          .trim(),
-      );
-
-      const keywordValues = new Map(
-        trimmedKeywords.map((keyword, index) => [
-          keyword,
-          originalKeywords[index],
-        ]),
-      );
-
+      const projectKeywords = projects[i].keywords ?? [];
       const projectId = insertedProjects[i]?.id;
 
-      if (projectId && projectKeywords && projectKeywords.length > 0) {
-        const keywordIds: number[] = [];
+      if (!projectId || projectKeywords.length === 0) continue;
 
-        try {
-          const { data: existingKeywords } = await this.supabase
+      const { existingKeywordIds, newKeywords } = processKeywords(
+        projectKeywords,
+        existingKeywords || [],
+      );
+
+      // Insert new keywords and update keyword mapping
+      const newKeywordIds: number[] = [];
+
+      if (newKeywords.length > 0) {
+        const { data: insertedKeywords, error: keywordInsertError } =
+          await this.supabase
             .from('keywords')
-            .select('id, name');
+            .insert(newKeywords.map((name) => ({ name })))
+            .select('id');
 
-          const keywordMap = new Map(
-            existingKeywords?.map((row) => [
-              row.name
-                .toLowerCase()
-                .replace(/[^a-z0-9+#]/g, '')
-                .trim(),
-              row.id,
-            ]),
-          );
-
-          for (const keyword of keywordValues.keys()) {
-            try {
-              console.log(`Processing new keyword "${keyword}"`);
-              let keywordId = keywordMap.get(keyword);
-              {
-                keywordId
-                  ? console.log(`Keyword "${keyword}" already exists`)
-                  : console.log(`Keyword "${keyword}" does not exist`);
-              }
-              if (!keywordId) {
-                const { data: newKeyword, error: keywordInsertError } =
-                  await this.supabase
-                    .from('keywords')
-                    .insert({ name: keywordValues.get(keyword) })
-                    .select('id')
-                    .single();
-
-                if (keywordInsertError) {
-                  throw new Error(`Failed to insert new keyword "${keyword}"`);
-                }
-
-                keywordId = newKeyword.id;
-
-                keywordMap.set(keyword, keywordId);
-              }
-
-              keywordIds.push(keywordId);
-            } catch (error) {
-              console.error(
-                `Error processing keyword "${keyword}" for project #${i + 1}:`,
-                error,
-              );
-            }
-          }
-        } catch (error) {
+        if (keywordInsertError) {
           console.error(
-            `Error fetching existing keywords for project #${i + 1}:`,
-            error,
+            `Failed to insert new keywords: ${keywordInsertError.message}`,
           );
-        }
-
-        try {
-          const keywordData = keywordIds.map((keywordId) => ({
-            project_id: projectId,
-            keyword_id: keywordId,
-          }));
-          await this.supabase.from('project_keywords').insert(keywordData);
-        } catch (error) {
-          console.error(
-            `Error inserting keywords for project #${i + 1}:`,
-            error,
-          );
+        } else {
+          newKeywordIds.push(...insertedKeywords.map((keyword) => keyword.id));
         }
       }
+
+      // Link keywords to projects
+      const keywordIds = [...existingKeywordIds, ...newKeywordIds];
+
+      if (keywordIds.length > 0) {
+        const keywordData = keywordIds.map((keywordId) => ({
+          project_id: projectId,
+          keyword_id: keywordId,
+        }));
+
+        await this.supabase.from('project_keywords').insert(keywordData);
+      }
     }
+
     return true;
   }
 
@@ -259,7 +212,55 @@ export class SupabaseCvImportService {
   }
 }
 
-export default function validateDate(data: unknown): string | null {
+export function processKeywords(
+  projectKeywords: string | string[],
+  existingKeywords: { id: number; name: string }[],
+) {
+  if (typeof projectKeywords === 'string') {
+    projectKeywords = projectKeywords.split(',');
+  }
+  const keywordList = Array.isArray(projectKeywords) ? projectKeywords : [];
+
+  // Keep two lists: one for comparison, one for inserting original values
+  const originalKeywords = keywordList.map((keyword) => keyword.trim());
+  const trimmedKeywords = keywordList.map((keyword) =>
+    keyword
+      .toLowerCase()
+      .replace(/[^a-z0-9+#]/g, '')
+      .trim(),
+  );
+
+  const keywordValues = new Map(
+    trimmedKeywords.map((keyword, index) => [keyword, originalKeywords[index]]),
+  );
+
+  const existingKeywordMap = new Map(
+    existingKeywords.map((row) => [
+      row.name
+        .toLowerCase()
+        .replace(/[^a-z0-9+#]/g, '')
+        .trim(),
+      row.id,
+    ]),
+  );
+
+  const newKeywords: string[] = [];
+  const existingKeywordIds: number[] = [];
+
+  for (const keyword of keywordValues.keys()) {
+    const keywordId = existingKeywordMap.get(keyword);
+
+    if (keywordId) {
+      existingKeywordIds.push(keywordId);
+    } else {
+      newKeywords.push(keywordValues.get(keyword)!);
+    }
+  }
+
+  return { existingKeywordIds, newKeywords };
+}
+
+export function validateDate(data: unknown): string | null {
   const dateStringOrNullSchema = z.string().date();
   try {
     dateStringOrNullSchema.parse(data);

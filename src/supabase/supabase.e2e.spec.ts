@@ -1,13 +1,14 @@
-import request from 'supertest';
+/*import request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseModule } from './supabase.module.js';
 import { INestApplication } from '@nestjs/common';
 import { EmployeeFullDetailDTO } from './dto/employees-response.dto.js';
-import validateDate from './supabase-cv-import.service.js';
 import * as dotenv from 'dotenv';
 import { SupabaseCvImportService } from './supabase-cv-import.service.js';
 import { SupabaseClientProvider } from './supabase-client.provider.js';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';*/
+
+import { validateDate, processKeywords } from './supabase-cv-import.service.js';
 
 /*describe('SupabaseController (e2e)', () => {
   let app: INestApplication;
@@ -129,48 +130,50 @@ describe('validateDate', () => {
   });
 });
 
-describe('SupabaseCvImportService', () => {
-  let service: SupabaseCvImportService;
-  let supabaseClientProvider: SupabaseClientProvider;
+describe('processKeywords', () => {
+  it('should identify existing keywords correctly', () => {
+    const projectKeywords = ['React', 'Node.js', 'GraphQL'];
+    const existingKeywords = [
+      { id: 1, name: 'react' },
+      { id: 2, name: 'node.js' },
+    ];
 
-  beforeEach(() => {
-    dotenv.config();
-    process.env.SUPABASE_URL = process.env.SUPABASE_URL;
-    process.env.SUPABASE_KEY = process.env.SUPABASE_KEY;
-    const configService = new ConfigService();
-    supabaseClientProvider = new SupabaseClientProvider(configService);
-    service = new SupabaseCvImportService(supabaseClientProvider);
+    const result = processKeywords(projectKeywords, existingKeywords);
+
+    expect(result.existingKeywordIds).toEqual([1, 2]);
+    expect(result.newKeywords).toEqual(['GraphQL']);
   });
 
-  describe('insertProjects', () => {
-    it('should insert projects and return true', async () => {
-      const mockProjects = [
-        {
-          name: 'Project Alpha',
-          description: 'Description Alpha',
-          company: 'Company Alpha',
-          start_date: '2023-01-01',
-          end_date: '2023-12-31',
-          role: 'Developer',
-          project_url: 'http://example.com/alpha',
-          image_url: 'http://example.com/alpha.jpg',
-          keywords: 'Next.JS, KissaMiau',
-          project_category: 120,
-        },
-      ];
+  it('should handle case insensitivity and special characters', () => {
+    const projectKeywords = ['React', 'NodeJS', 'GraphQL'];
+    const existingKeywords = [
+      { id: 1, name: 'react' },
+      { id: 2, name: 'node.js' },
+    ];
 
-      const mockCategoryConnections = [{ row_id: 1, id: 1 }];
-      const user_id = '4ae9517f-d71d-4c86-a32d-57066f78900b';
-      const cv_id = '006f73a1-1e0e-4482-8d02-4bfa62425dfc';
+    const result = processKeywords(projectKeywords, existingKeywords);
 
-      const result = await service.insertProjects(
-        mockProjects,
-        mockCategoryConnections,
-        user_id,
-        cv_id,
-      );
+    expect(result.existingKeywordIds).toEqual([1, 2]);
+    expect(result.newKeywords).toEqual(['GraphQL']);
+  });
 
-      expect(result).toBe(true);
-    });
+  it('should detect all keywords as new when none exist', () => {
+    const projectKeywords = ['TypeScript', 'Docker', 'Kubernetes'];
+    const existingKeywords: { id: number; name: string }[] = [];
+
+    const result = processKeywords(projectKeywords, existingKeywords);
+
+    expect(result.existingKeywordIds).toEqual([]);
+    expect(result.newKeywords).toEqual(['TypeScript', 'Docker', 'Kubernetes']);
+  });
+
+  it('should return an empty list when no keywords are provided', () => {
+    const projectKeywords: string[] = [];
+    const existingKeywords = [{ id: 1, name: 'react' }];
+
+    const result = processKeywords(projectKeywords, existingKeywords);
+
+    expect(result.existingKeywordIds).toEqual([]);
+    expect(result.newKeywords).toEqual([]);
   });
 });
