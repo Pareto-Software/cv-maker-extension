@@ -1,10 +1,14 @@
-import request from 'supertest';
+/*import request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseModule } from './supabase.module.js';
 import { INestApplication } from '@nestjs/common';
 import { EmployeeFullDetailDTO } from './dto/employees-response.dto.js';
-import validateDate from './supabase-cv-import.service.js';
 import * as dotenv from 'dotenv';
+import { SupabaseCvImportService } from './supabase-cv-import.service.js';
+import { SupabaseClientProvider } from './supabase-client.provider.js';
+import { ConfigService } from '@nestjs/config';*/
+
+import { validateDate, processKeywords } from './supabase-cv-import.service.js';
 
 /*describe('SupabaseController (e2e)', () => {
   let app: INestApplication;
@@ -123,5 +127,65 @@ describe('validateDate', () => {
   it('should return null for an invalid date', () => {
     expect(validateDate('2024-02-30')).toBeNull();
     expect(validateDate('2024-13-01')).toBeNull();
+  });
+});
+
+describe('processKeywords', () => {
+  it('should identify existing keywords correctly', () => {
+    const projectKeywords = ['React', 'Node.js', 'GraphQL'];
+    const existingKeywords = [
+      { id: 1, name: 'react' },
+      { id: 2, name: 'node.js' },
+    ];
+
+    const result = processKeywords(projectKeywords, existingKeywords);
+
+    expect(result.existingKeywordIds).toEqual([1, 2]);
+    expect(result.newKeywords).toEqual(['GraphQL']);
+  });
+
+  it('should handle case insensitivity and special characters', () => {
+    const projectKeywords = [
+      'React  ',
+      'NodeJS  ',
+      'C#C++  ',
+      'C  ',
+      'öÖäÄåÅ',
+      'GraphQL',
+    ];
+    const existingKeywords = [
+      { id: 1, name: 'react' },
+      { id: 2, name: 'node.js' },
+      { id: 3, name: 'c#c++' },
+      { id: 4, name: 'c' },
+      { id: 5, name: 'ööääåå' },
+    ];
+
+    const result = processKeywords(projectKeywords, existingKeywords);
+
+    console.log(result);
+
+    expect(result.existingKeywordIds).toEqual([1, 2, 3, 4, 5]);
+    expect(result.newKeywords).toEqual(['GraphQL']);
+  });
+
+  it('should detect all keywords as new when none exist', () => {
+    const projectKeywords = ['TypeScript', 'Docker', 'Kubernetes'];
+    const existingKeywords: { id: number; name: string }[] = [];
+
+    const result = processKeywords(projectKeywords, existingKeywords);
+
+    expect(result.existingKeywordIds).toEqual([]);
+    expect(result.newKeywords).toEqual(['TypeScript', 'Docker', 'Kubernetes']);
+  });
+
+  it('should return an empty list when no keywords are provided', () => {
+    const projectKeywords: string[] = [];
+    const existingKeywords = [{ id: 1, name: 'react' }];
+
+    const result = processKeywords(projectKeywords, existingKeywords);
+
+    expect(result.existingKeywordIds).toEqual([]);
+    expect(result.newKeywords).toEqual([]);
   });
 });

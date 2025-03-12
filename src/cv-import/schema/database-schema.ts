@@ -178,7 +178,8 @@ export const databaseSchema = {
             },
             keywords: {
               type: 'string',
-              description: 'Keywords for the project',
+              description:
+                'Keywords for the project. Always separate these from each other with a comma (e.g., "C#, Next.JS, Software Architecture, React, etc...").',
             },
           },
           required: [
